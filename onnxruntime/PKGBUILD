@@ -1,0 +1,28 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=onnxruntime
+pkgver=0.4.0
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/microsoft/onnxruntime"
+license=('MIT')
+makedepends=("git" "cmake")
+provides=("onnxruntime")
+
+prepare() {
+    git clone git://github.com/Microsoft/onnxruntime.git
+    cd onnxruntime
+    git checkout v${pkgver}
+    git checkout -b v${pkgver}
+    git submodule init
+    git submodule update
+}
+
+build() {
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -Donnxruntime_BUILD_UNIT_TESTS=OFF onnxruntime/cmake
+    make -j8 || return 1
+}
+
+package() {
+    make DESTDIR="$pkgdir/" install
+}
