@@ -1,0 +1,27 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=libfastforest
+pkgver=0.0.1
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/guitargeek/XGBoost-FastForest"
+license=('MIT')
+makedepends=("git" "cmake")
+provides=("fastforest")
+source=("git+https://github.com/guitargeek/XGBoost-FastForest#tag=${pkgver}")
+sha512sums=('SKIP')
+
+
+build() {
+    cd "${srcdir}/XGBoost-FastForest"
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=lib ..
+    make -j8 || return 1
+}
+
+package() {
+    cd "${srcdir}/XGBoost-FastForest"
+    cd build
+    make DESTDIR="$pkgdir/" install
+}
