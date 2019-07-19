@@ -1,0 +1,26 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=libcms-md5
+pkgver=1.0.0
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/cms-externals/md5"
+makedepends=("git")
+provides=("libcms-md5")
+source=("git+https://github.com/cms-externals/md5#branch=cms/${pkgver}")
+sha512sums=('SKIP')
+
+build() {
+    cd "${srcdir}/md5"
+    gcc md5.c -shared -fPIC -o libcms-md5.so
+}
+
+package() {
+    #echo lol
+    cd "${srcdir}/md5"
+    mkdir $pkgdir/usr
+    mkdir $pkgdir/usr/include
+    mkdir $pkgdir/usr/lib
+    cp md5.h $pkgdir/usr/include/
+    cp libcms-md5.so $pkgdir/usr/lib/
+}
