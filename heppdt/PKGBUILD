@@ -1,0 +1,21 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=heppdt
+pkgver=3.04.01
+pkgrel=1
+arch=("i686" "x86_64")
+url="http://lcgapp.cern.ch/project/simu/HepPDT"
+provides=("heppdt")
+source=("http://lcgapp.cern.ch/project/simu/HepPDT/download/HepPDT-${pkgver}.tar.gz")
+sha512sums=('SKIP')
+
+build() {
+    cd HepPDT-${pkgver}
+    ./configure --prefix=/usr
+    make -j8
+}
+
+package() {
+    cd HepPDT-${pkgver}
+    make DESTDIR="$pkgdir/" install
+}
