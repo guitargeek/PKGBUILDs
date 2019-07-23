@@ -1,0 +1,2821 @@
+From 7d0d6abd75ba8a38475a767f07c6301c391e2384 Mon Sep 17 00:00:00 2001
+From: Jonas Rembser <jonas.rembser@cern.ch>
+Date: Tue, 23 Jul 2019 21:03:28 +0200
+Subject: [PATCH] refresh coral for cmake compilation
+
+---
+ .../src/CredentialsTable.cpp                  |  6 +-
+ .../src/LC2PCTable.cpp                        |  6 +-
+ .../src/LogConTable.cpp                       |  2 +-
+ .../src/PhysConTable.cpp                      |  2 +-
+ .../src/QueryMgr.cpp                          |  8 +--
+ .../tests/QueryMgr/test_QueryMgr.cpp          | 40 ++++++-------
+ .../CoralServer/src/CoralServerFacade.cpp     |  4 +-
+ .../CoralServerBase/ICoralFacade.h            |  2 +-
+ .../CoralServerBase/IRequestHandler.h         |  2 +-
+ .../CoralServerBase/QueryDefinition.h         |  4 +-
+ CORAL_SERVER/CoralServerProxy/src/Packet.cpp  |  2 +-
+ .../CoralSockets/CoralSockets/SocketServer.h  |  2 +-
+ .../CoralSockets/src/DummyRequestHandler.cpp  |  4 +-
+ .../CoralSockets/src/PacketSocket.cpp         |  2 +-
+ CORAL_SERVER/CoralSockets/src/PacketSocket.h  |  6 +-
+ .../CoralSockets/src/ReplyManager.cpp         |  2 +-
+ CORAL_SERVER/CoralSockets/src/ReplyManager.h  |  2 +-
+ .../CoralSockets/src/SocketRequestHandler.h   |  4 +-
+ .../CoralSockets/src/SocketThread.cpp         |  2 +-
+ CORAL_SERVER/CoralSockets/src/SocketThread.h  |  2 +-
+ CORAL_SERVER/CoralSockets/src/SslSocket.cpp   |  2 +-
+ CORAL_SERVER/CoralSockets/src/SslSocket.h     |  2 +-
+ .../tests/PacketSocket/test_PacketSocket.cpp  |  6 +-
+ .../tests/ReplyManager/test_ReplyManager.cpp  |  4 +-
+ .../test_RingBufferSocket.cpp                 |  4 +-
+ .../tests/TcpSocket/test_TcpSocket.cpp        |  2 +-
+ .../CoralSockets/tests/common/common.h        |  6 +-
+ .../coralDummySocketClient.cpp                |  2 +-
+ .../coralReplayClient/coralReplayClient.cpp   |  2 +-
+ CORAL_SERVER/CoralStubs/src/ClientStub.cpp    |  8 +--
+ CORAL_SERVER/CoralStubs/src/DummyFacade.cpp   |  4 +-
+ CORAL_SERVER/CoralStubs/src/ServerStub.cpp    | 12 ++--
+ ConnectionService/src/ConnectionService.h     |  2 +-
+ ConnectionService/src/DataSource.cpp          |  2 +-
+ CoralBase/CoralBase/TimeStamp.h               |  2 +-
+ CoralBase/cmt/requirements                    |  2 +-
+ CoralBase/src/MessageStream.cpp               |  6 +-
+ CoralBase/src/TimeStamp.cpp                   | 14 ++---
+ CoralBase/tests/Common/CoralCppUnitDBTest.h   |  8 +--
+ CoralCommon/CoralCommon/MonitoringEvent.h     |  2 +-
+ CoralCommon/src/MonitoringEvent.cpp           |  4 +-
+ .../tests/CmsNewFrontier/QueriesApp.cpp       |  4 +-
+ .../test_MonitorController.cpp                |  2 +-
+ .../MultipleSchemas/MultipleSchemasApp.cpp    |  2 +-
+ .../tests/SegFault/test_FrontierSegFault.cpp  |  6 +-
+ .../tests/SimpleQueries/QueriesApp.cpp        |  4 +-
+ FrontierAccess/tests/TestAlias/test_Alias.cpp | 12 ++--
+ MySQLAccess/src/Transaction.cpp               |  4 +-
+ .../MultipleSchemas/MultipleSchemasApp.cpp    |  2 +-
+ MySQLAccess/tests/SegFault/test_SegFault.cpp  |  6 +-
+ MySQLAccess/tests/TestAlias/test_Alias.cpp    |  8 +--
+ OracleAccess/src/Cursor.cpp                   |  2 +-
+ OracleAccess/src/Cursor.h                     |  4 +-
+ OracleAccess/src/Query.cpp                    |  2 +-
+ OracleAccess/src/Schema.cpp                   | 10 ++--
+ OracleAccess/src/Sequence.cpp                 |  8 +--
+ OracleAccess/src/TableDescriptionProxy.cpp    |  2 +-
+ .../tests/BulkInserts/test_BulkInserts.cpp    |  6 +-
+ .../tests/Connection/test_Connection.cpp      |  2 +-
+ .../DataDictionary/test_DataDictionary.cpp    | 10 ++--
+ .../tests/DataEditor/test_DataEditor.cpp      |  2 +-
+ .../tests/DateAndTime/test_DateAndTime.cpp    |  8 +--
+ OracleAccess/tests/Dual/test_Dual.cpp         |  6 +-
+ OracleAccess/tests/GroupBy/test_GroupBy.cpp   |  8 +--
+ .../MultiThreading/test_MultiThreading.cpp    |  4 +-
+ .../MultipleSchemas/test_MultipleSchemas.cpp  |  2 +-
+ .../test_MultipleSessions.cpp                 |  6 +-
+ OracleAccess/tests/Schema/test_Schema.cpp     |  6 +-
+ .../SimpleQueries/test_SimpleQueries.cpp      |  6 +-
+ OracleAccess/tests/Views/test_Views.cpp       |  6 +-
+ PyCoral/src/ConnectionService.cpp             |  2 +-
+ .../ICertificateAuthenticationService.h       |  0
+ .../ICertificateConnectionService.h           |  0
+ .../tests/BulkInserts/test_BulkInserts.cpp    |  8 +--
+ .../BulkOperations/test_BulkOperations.cpp    |  2 +-
+ .../test_CreateListDropTable.cpp              |  2 +-
+ SQLiteAccess/tests/DataEditor/dataEditor.cpp  | 14 ++---
+ .../tests/DescribeTable/describeTable.cpp     |  4 +-
+ .../queriesInSingleTable.cpp                  |  6 +-
+ .../tests/SchemaEditor/schemaEditor.cpp       |  4 +-
+ .../src/test_InvalidReferences.cpp            | 60 +++++++++----------
+ .../src/test_MiscellaneousBugs.cpp            | 28 ++++-----
+ Tests/Integration_Monitoring/src/TestApp.cpp  |  8 +--
+ .../src/TestApp.cpp                           |  4 +-
+ .../src/SingleThreadRead.cpp                  |  2 +-
+ .../src/TableQueryThread.cpp                  |  2 +-
+ .../test_integration_ObjectConsistency.cpp    |  2 +-
+ .../src/test_integration_Quotes.cpp           |  8 +--
+ .../src/test_integration_RandomCycler.cpp     | 20 +++----
+ .../src/test_integration_Sequence.cpp         |  6 +-
+ .../src/test_WriteRead.cpp                    |  6 +-
+ .../src/ReadThread.cpp                        |  2 +-
+ .../src/TopThread.cpp                         |  6 +-
+ 93 files changed, 273 insertions(+), 273 deletions(-)
+ rename RelationalAccess/{src => RelationalAccess}/ICertificateAuthenticationService.h (100%)
+ rename RelationalAccess/{src => RelationalAccess}/ICertificateConnectionService.h (100%)
+
+diff --git a/CORAL_SERVER/CoralAuthenticationService/src/CredentialsTable.cpp b/CORAL_SERVER/CoralAuthenticationService/src/CredentialsTable.cpp
+index b566e49..7912b4c 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/src/CredentialsTable.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/src/CredentialsTable.cpp
+@@ -167,7 +167,7 @@ void CredentialsTable::listCredentials( const std::string& physConStr,
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "db" );
+@@ -204,7 +204,7 @@ bool CredentialsTable::existCredentials( const std::string& physConStr,
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "db" );
+@@ -231,7 +231,7 @@ const AuthenticationCredentials CredentialsTable::getCredentials( const std::str
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "db" );
+diff --git a/CORAL_SERVER/CoralAuthenticationService/src/LC2PCTable.cpp b/CORAL_SERVER/CoralAuthenticationService/src/LC2PCTable.cpp
+index 3860fbb..c4128df 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/src/LC2PCTable.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/src/LC2PCTable.cpp
+@@ -199,7 +199,7 @@ bool LC2PCTable::LC2PCExists( bool wildcards,
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "" );
+@@ -241,7 +241,7 @@ DatabaseServiceSet* LC2PCTable::lookup( const std::string& logicalName, AccessMo
+   coral::AttributeList whereData;
+   std::string whereString="";
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->addToTableList( defaultTableName(), "" );
+ 
+@@ -286,7 +286,7 @@ unsigned int LC2PCTable::getNextOrderNo( const std::string& logConStr)
+   coral::AttributeList whereData;
+   std::string whereString="";
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->addToTableList( defaultTableName(), "" );
+ 
+diff --git a/CORAL_SERVER/CoralAuthenticationService/src/LogConTable.cpp b/CORAL_SERVER/CoralAuthenticationService/src/LogConTable.cpp
+index e7b389f..ab51f05 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/src/LogConTable.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/src/LogConTable.cpp
+@@ -91,7 +91,7 @@ bool LogConTable::logConExists( const std::string& logConStr )
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "" );
+diff --git a/CORAL_SERVER/CoralAuthenticationService/src/PhysConTable.cpp b/CORAL_SERVER/CoralAuthenticationService/src/PhysConTable.cpp
+index a607271..4e2d777 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/src/PhysConTable.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/src/PhysConTable.cpp
+@@ -92,7 +92,7 @@ bool PhysConTable::physConExists( const std::string& physConStr )
+   coral::AttributeList rowBuffer;
+   m_table.dataEditor().rowBuffer( rowBuffer );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->defineOutput( rowBuffer );
+   query->addToTableList( defaultTableName(), "" );
+diff --git a/CORAL_SERVER/CoralAuthenticationService/src/QueryMgr.cpp b/CORAL_SERVER/CoralAuthenticationService/src/QueryMgr.cpp
+index f4b256d..328e67b 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/src/QueryMgr.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/src/QueryMgr.cpp
+@@ -178,8 +178,8 @@ void QueryMgr::addPermission( const std::string& lcString, const std::string& pc
+   {
+     // we have to resolve a logical connection string
+ 
+-    //std::auto_ptr<IOperationWithQuery> operation( m_permTable.dataEditor().insertWithQuery() );
+-    std::auto_ptr<IOperationWithQuery> operation( m_schema.tableHandle(PermissionsTable::defaultTableName()).dataEditor().insertWithQuery() );
++    //std::unique_ptr<IOperationWithQuery> operation( m_permTable.dataEditor().insertWithQuery() );
++    std::unique_ptr<IOperationWithQuery> operation( m_schema.tableHandle(PermissionsTable::defaultTableName()).dataEditor().insertWithQuery() );
+ 
+     IQueryDefinition *query( &operation->query() );
+     coral::AttributeList outputBuffer;
+@@ -451,7 +451,7 @@ void QueryMgr::queryConnections(
+                                 const std::string& user, const std::string& dbRole )
+ {
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   // main query is on credentials table
+   query->addToTableList( m_crTable.defaultTableName(), "cr" );
+@@ -642,7 +642,7 @@ const AuthenticationCredentials QueryMgr::getCredentials( const std::string& phy
+   if ( cert == 0 )
+     return m_crTable.getCredentials( physConStr, dbRole );
+ 
+-  std::auto_ptr<IQuery> query( m_schema.newQuery() );
++  std::unique_ptr<IQuery> query( m_schema.newQuery() );
+ 
+   query->addToTableList( m_crTable.defaultTableName(), "cr" );
+   query->addToTableList( m_permTable.defaultTableName(), "perm" );
+diff --git a/CORAL_SERVER/CoralAuthenticationService/tests/QueryMgr/test_QueryMgr.cpp b/CORAL_SERVER/CoralAuthenticationService/tests/QueryMgr/test_QueryMgr.cpp
+index d3b79ca..b6beb68 100644
+--- a/CORAL_SERVER/CoralAuthenticationService/tests/QueryMgr/test_QueryMgr.cpp
++++ b/CORAL_SERVER/CoralAuthenticationService/tests/QueryMgr/test_QueryMgr.cpp
+@@ -205,7 +205,7 @@ namespace coral
+         CPPUNIT_FAIL("test logical 2 connection not added");
+ 
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -221,7 +221,7 @@ namespace coral
+       if ( !mgr.m_pcTable.physConExists( "roTestPhysConStr" ) )
+         CPPUNIT_FAIL("test connection 3 not added");
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -230,7 +230,7 @@ namespace coral
+                                       set->replica(1).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 3, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -248,7 +248,7 @@ namespace coral
+       if ( !mgr.m_pcTable.physConExists( "roTestPhysConStr2" ) )
+         CPPUNIT_FAIL("test connection 4 not added");
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -257,7 +257,7 @@ namespace coral
+                                       set->replica(1).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 4, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -303,7 +303,7 @@ namespace coral
+         CPPUNIT_FAIL("test logical connection not deleted");
+ 
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 0, set->numberOfReplicas() );
+       }
+@@ -331,7 +331,7 @@ namespace coral
+         CPPUNIT_FAIL("test logical 2 connection not added");
+ 
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -347,7 +347,7 @@ namespace coral
+       if ( !mgr.m_pcTable.physConExists( "roTestPhysConStr" ) )
+         CPPUNIT_FAIL("test connection 3 not added");
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -356,7 +356,7 @@ namespace coral
+                                       set->replica(1).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 3, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -375,7 +375,7 @@ namespace coral
+         CPPUNIT_FAIL("test connection 4 not added");
+ 
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -384,7 +384,7 @@ namespace coral
+                                       set->replica(1).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 4, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr"),
+@@ -401,14 +401,14 @@ namespace coral
+       mgr.delConnection("testLogConStr" /* lcString*/, "testPhysConStr" /*pcString*/,
+                         "" /*user*/, "" /*role*/ );
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 1, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+                                       set->replica(0).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 3, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+@@ -423,14 +423,14 @@ namespace coral
+       mgr.delConnection("testLogConStr" /* lcString*/, "roTestPhysConStr2" /*pcString*/,
+                         "" /*user*/, "" /*role*/ );
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 1, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+                                       set->replica(0).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 2, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+@@ -442,14 +442,14 @@ namespace coral
+       mgr.delConnection("testLogConStr" /* lcString*/, "roTestPhysConStr" /*pcString*/,
+                         "" /*user*/, "" /*role*/ );
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 1, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+                                       set->replica(0).connectionString() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 1, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 2 ", std::string("testPhysConStr2"),
+@@ -459,12 +459,12 @@ namespace coral
+       mgr.delConnection("testLogConStr" /* lcString*/, "testPhysConStr2" /*pcString*/,
+                         "" /*user*/, "" /*role*/ );
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 0, set->numberOfReplicas() );
+       }
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("testLogConStr", ReadOnly, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 0, set->numberOfReplicas() );
+       }
+@@ -582,7 +582,7 @@ namespace coral
+         CPPUNIT_FAIL("test logical connection not added");
+ 
+       {
+-        std::auto_ptr<DatabaseServiceSet> set( mgr.lookup("alias1", Update, "") );
++        std::unique_ptr<DatabaseServiceSet> set( mgr.lookup("alias1", Update, "") );
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "number of replicas", 1, set->numberOfReplicas() );
+         CPPUNIT_ASSERT_EQUAL_MESSAGE( "replica 1 ", std::string("testPhysConStr25"),
+diff --git a/CORAL_SERVER/CoralServer/src/CoralServerFacade.cpp b/CORAL_SERVER/CoralServer/src/CoralServerFacade.cpp
+index e45c90a..cbd6bfc 100644
+--- a/CORAL_SERVER/CoralServer/src/CoralServerFacade.cpp
++++ b/CORAL_SERVER/CoralServer/src/CoralServerFacade.cpp
+@@ -336,7 +336,7 @@ CoralServerFacade::fetchAllRows( coral::Token sessionID,
+   IQuery* query = QueryMgr::newQuery( pOutputBuffer, *session, qd );
+   return IRowIteratorPtr( new CursorIterator( *query ) );
+   /*
+-  std::auto_ptr<IQuery> query( QueryMgr::newQuery( pOutputBuffer, *session, qd ) );
++  std::unique_ptr<IQuery> query( QueryMgr::newQuery( pOutputBuffer, *session, qd ) );
+   ICursor& cursor = query->execute();
+   std::vector<AttributeList> rows;
+   while ( cursor.next() ) rows.push_back( cursor.currentRow() );
+@@ -372,7 +372,7 @@ CoralServerFacade::fetchAllRows( coral::Token sessionID,
+   IQuery* query = QueryMgr::newQuery( outputTypes, *session, qd );
+   return IRowIteratorPtr( new CursorIterator( *query ) );
+   /*
+-  std::auto_ptr<IQuery> query( QueryMgr::newQuery( outputTypes, *session, qd ) );
++  std::unique_ptr<IQuery> query( QueryMgr::newQuery( outputTypes, *session, qd ) );
+   ICursor& cursor = query->execute();
+   std::vector<AttributeList> rows;
+   while ( cursor.next() ) rows.push_back( cursor.currentRow() );
+diff --git a/CORAL_SERVER/CoralServerBase/CoralServerBase/ICoralFacade.h b/CORAL_SERVER/CoralServerBase/CoralServerBase/ICoralFacade.h
+index 7ce5541..a5f32fd 100644
+--- a/CORAL_SERVER/CoralServerBase/CoralServerBase/ICoralFacade.h
++++ b/CORAL_SERVER/CoralServerBase/CoralServerBase/ICoralFacade.h
+@@ -20,7 +20,7 @@ namespace coral
+   typedef unsigned int Token;
+ 
+   /// Row iterator pointer.
+-  typedef std::auto_ptr<IRowIterator> IRowIteratorPtr;
++  typedef std::unique_ptr<IRowIterator> IRowIteratorPtr;
+ 
+   /** @class ICoralFacade
+    *
+diff --git a/CORAL_SERVER/CoralServerBase/CoralServerBase/IRequestHandler.h b/CORAL_SERVER/CoralServerBase/CoralServerBase/IRequestHandler.h
+index 2fc53a7..514b666 100644
+--- a/CORAL_SERVER/CoralServerBase/CoralServerBase/IRequestHandler.h
++++ b/CORAL_SERVER/CoralServerBase/CoralServerBase/IRequestHandler.h
+@@ -13,7 +13,7 @@ namespace coral
+   class ICertificateData;
+ 
+   /// Buffer iterator pointer.
+-  typedef std::auto_ptr<IByteBufferIterator> IByteBufferIteratorPtr;
++  typedef std::unique_ptr<IByteBufferIterator> IByteBufferIteratorPtr;
+ 
+   /** @class IRequestHandler
+    *
+diff --git a/CORAL_SERVER/CoralServerBase/CoralServerBase/QueryDefinition.h b/CORAL_SERVER/CoralServerBase/CoralServerBase/QueryDefinition.h
+index 4b23f03..265e0ac 100644
+--- a/CORAL_SERVER/CoralServerBase/CoralServerBase/QueryDefinition.h
++++ b/CORAL_SERVER/CoralServerBase/CoralServerBase/QueryDefinition.h
+@@ -162,8 +162,8 @@ namespace coral
+     AttributeList m_conditionData;
+     std::string m_groupBy;
+     std::vector< std::string > m_orderList;
+-    std::auto_ptr< std::pair<int,int> > m_rowLimitAndOffset;
+-    std::auto_ptr< std::pair<SetOperation,QueryDefinition> > m_setOperation;
++    std::unique_ptr< std::pair<int,int> > m_rowLimitAndOffset;
++    std::unique_ptr< std::pair<SetOperation,QueryDefinition> > m_setOperation;
+ 
+   };
+ 
+diff --git a/CORAL_SERVER/CoralServerProxy/src/Packet.cpp b/CORAL_SERVER/CoralServerProxy/src/Packet.cpp
+index 10de63e..2646378 100644
+--- a/CORAL_SERVER/CoralServerProxy/src/Packet.cpp
++++ b/CORAL_SERVER/CoralServerProxy/src/Packet.cpp
+@@ -369,7 +369,7 @@ Packet::write ( NetSocket& socket, const CTLPacketHeader& ctlh  )
+ 
+     // make buffer big enough
+ #ifdef __APPLE__
+-    std::auto_ptr<unsigned char> aBuf( new unsigned char[psize] );
++    std::unique_ptr<unsigned char> aBuf( new unsigned char[psize] );
+     unsigned char* buf = aBuf.get();
+ #else
+     unsigned char buf[psize] ;
+diff --git a/CORAL_SERVER/CoralSockets/CoralSockets/SocketServer.h b/CORAL_SERVER/CoralSockets/CoralSockets/SocketServer.h
+index 2070e6b..5d2cbf4 100644
+--- a/CORAL_SERVER/CoralSockets/CoralSockets/SocketServer.h
++++ b/CORAL_SERVER/CoralSockets/CoralSockets/SocketServer.h
+@@ -67,7 +67,7 @@ namespace coral {
+       int m_nHandlerThreadsPerSocket;
+ 
+       /// a thread manager
+-      std::auto_ptr<ThreadManager> m_thrManager;
++      std::unique_ptr<ThreadManager> m_thrManager;
+ 
+     };
+ 
+diff --git a/CORAL_SERVER/CoralSockets/src/DummyRequestHandler.cpp b/CORAL_SERVER/CoralSockets/src/DummyRequestHandler.cpp
+index 7f72177..e6e4a84 100644
+--- a/CORAL_SERVER/CoralSockets/src/DummyRequestHandler.cpp
++++ b/CORAL_SERVER/CoralSockets/src/DummyRequestHandler.cpp
+@@ -151,7 +151,7 @@ DummyRequestHandler::replyToRequest( const ByteBuffer& request )
+       num=10;
+ 
+     unsigned int count=0;
+-    std::auto_ptr<SimpleReplyIterator> iterator;
++    std::unique_ptr<SimpleReplyIterator> iterator;
+     do {
+       std::stringstream stream;
+       stream <<"Thank you for your request " << count << " '";
+@@ -165,7 +165,7 @@ DummyRequestHandler::replyToRequest( const ByteBuffer& request )
+ 
+       count++;
+       if ( iterator.get() == 0 )
+-        iterator = std::auto_ptr<SimpleReplyIterator>(
++        iterator = std::unique_ptr<SimpleReplyIterator>(
+                                                       new SimpleReplyIterator( reply, false ) );
+       else
+         iterator->addBuffer( reply, count>=num );
+diff --git a/CORAL_SERVER/CoralSockets/src/PacketSocket.cpp b/CORAL_SERVER/CoralSockets/src/PacketSocket.cpp
+index 65633fe..107e21d 100644
+--- a/CORAL_SERVER/CoralSockets/src/PacketSocket.cpp
++++ b/CORAL_SERVER/CoralSockets/src/PacketSocket.cpp
+@@ -157,7 +157,7 @@ PacketPtr PacketSocket::receivePacket( )
+       throw GenericSocketException("PANIC! packet size ==0?!",
+                                    "PacketSocket::receivePacket()");
+     // receive the payload
+-    std::auto_ptr<ByteBuffer> payload( new ByteBuffer(
++    std::unique_ptr<ByteBuffer> payload( new ByteBuffer(
+                                                       ctlHeader.packetSize()-CTLPACKET_HEADER_SIZE ) );
+     DEBUG("reading payload" << std::endl);
+     m_socket->readAll( payload->data(), payload->freeSize() );
+diff --git a/CORAL_SERVER/CoralSockets/src/PacketSocket.h b/CORAL_SERVER/CoralSockets/src/PacketSocket.h
+index 0d4c106..ba19491 100644
+--- a/CORAL_SERVER/CoralSockets/src/PacketSocket.h
++++ b/CORAL_SERVER/CoralSockets/src/PacketSocket.h
+@@ -20,7 +20,7 @@ namespace coral
+ 
+       /// constructor for receiving
+       PacketSLAC( CTLPacketHeader & header,
+-                  std::auto_ptr<ByteBuffer> payload)
++                  std::unique_ptr<ByteBuffer> payload)
+         : m_payload( payload )
+         , m_payloadRef( *m_payload)
+         , m_header( header)
+@@ -79,7 +79,7 @@ namespace coral
+         return m_payloadRef;
+       }
+ 
+-      std::auto_ptr<ByteBuffer>& getPayloadPointer()
++      std::unique_ptr<ByteBuffer>& getPayloadPointer()
+       {
+         return m_payload;
+       }
+@@ -87,7 +87,7 @@ namespace coral
+     private:
+ 
+       /// payload buffer (only when owned by PacketSLAC)
+-      std::auto_ptr<ByteBuffer> m_payload;
++      std::unique_ptr<ByteBuffer> m_payload;
+ 
+       /// payload reference
+       const ByteBuffer& m_payloadRef;
+diff --git a/CORAL_SERVER/CoralSockets/src/ReplyManager.cpp b/CORAL_SERVER/CoralSockets/src/ReplyManager.cpp
+index ff98bb7..24a8572 100644
+--- a/CORAL_SERVER/CoralSockets/src/ReplyManager.cpp
++++ b/CORAL_SERVER/CoralSockets/src/ReplyManager.cpp
+@@ -26,7 +26,7 @@ static coral::StatsTypeTimer myStatsTypeTimerFindSlot("CSocket_FindSlot", "find
+ 
+ //-----------------------------------------------------------------------------
+ 
+-void ReplySlot::appendReply( std::auto_ptr<ByteBuffer> reply,
++void ReplySlot::appendReply( std::unique_ptr<ByteBuffer> reply,
+                              int segmentNr,
+                              bool lastReply )
+ {
+diff --git a/CORAL_SERVER/CoralSockets/src/ReplyManager.h b/CORAL_SERVER/CoralSockets/src/ReplyManager.h
+index 0adc293..10a6b76 100644
+--- a/CORAL_SERVER/CoralSockets/src/ReplyManager.h
++++ b/CORAL_SERVER/CoralSockets/src/ReplyManager.h
+@@ -45,7 +45,7 @@ namespace coral {
+ 
+ 
+       /// appends a byte buffer to the replies
+-      void appendReply( std::auto_ptr<ByteBuffer> reply, int segmentNr,
++      void appendReply( std::unique_ptr<ByteBuffer> reply, int segmentNr,
+                         bool lastReply );
+ 
+       /// returns next reply and removes it from the list
+diff --git a/CORAL_SERVER/CoralSockets/src/SocketRequestHandler.h b/CORAL_SERVER/CoralSockets/src/SocketRequestHandler.h
+index 1c24710..ce5a8f2 100644
+--- a/CORAL_SERVER/CoralSockets/src/SocketRequestHandler.h
++++ b/CORAL_SERVER/CoralSockets/src/SocketRequestHandler.h
+@@ -62,7 +62,7 @@ namespace coral {
+       int m_requestID;
+ 
+       /// storage for the waiting requests
+-      std::auto_ptr<ReplyManager> m_rplMngr;
++      std::unique_ptr<ReplyManager> m_rplMngr;
+ 
+       // Forward declaration
+       class receiveThread; // thread for receiving packets
+@@ -71,7 +71,7 @@ namespace coral {
+       receiveThread *m_receiveThread;
+ 
+       /// thread manager to handle receive thread
+-      std::auto_ptr<ThreadManager> m_thrManager;
++      std::unique_ptr<ThreadManager> m_thrManager;
+     };
+ 
+   }
+diff --git a/CORAL_SERVER/CoralSockets/src/SocketThread.cpp b/CORAL_SERVER/CoralSockets/src/SocketThread.cpp
+index d0a5013..29d219d 100644
+--- a/CORAL_SERVER/CoralSockets/src/SocketThread.cpp
++++ b/CORAL_SERVER/CoralSockets/src/SocketThread.cpp
+@@ -95,7 +95,7 @@ void SocketThread::HandlerThread::operator()()
+              << " clientID " << clientID );
+       StopTimer replyTimer;
+       replyTimer.start();
+-      std::auto_ptr<IByteBufferIterator>
++      std::unique_ptr<IByteBufferIterator>
+         replyIt( handler->replyToRequest( request ) );
+       uint32_t segmentID=0;
+       while ( replyIt->next() )
+diff --git a/CORAL_SERVER/CoralSockets/src/SocketThread.h b/CORAL_SERVER/CoralSockets/src/SocketThread.h
+index 352d6ce..51c1bfa 100644
+--- a/CORAL_SERVER/CoralSockets/src/SocketThread.h
++++ b/CORAL_SERVER/CoralSockets/src/SocketThread.h
+@@ -93,7 +93,7 @@ namespace coral
+       SocketThread();
+ 
+       /// the request handler for this socket
+-      std::auto_ptr<coral::IRequestHandler> m_handler;
++      std::unique_ptr<coral::IRequestHandler> m_handler;
+ 
+       PacketSocketPtr m_cSocket;
+ 
+diff --git a/CORAL_SERVER/CoralSockets/src/SslSocket.cpp b/CORAL_SERVER/CoralSockets/src/SslSocket.cpp
+index 03aba58..0965f1b 100644
+--- a/CORAL_SERVER/CoralSockets/src/SslSocket.cpp
++++ b/CORAL_SERVER/CoralSockets/src/SslSocket.cpp
+@@ -550,7 +550,7 @@ SslSocketPtr SslSocket::acceptOn( int fd, const std::string& desc )
+     throw GenericSocketException( str.str(), "SslSocket::accept" );
+   }
+ 
+-  sslSocket->m_certificateData = std::auto_ptr<CertificateData>( new CertificateData() );
++  sslSocket->m_certificateData = std::unique_ptr<CertificateData>( new CertificateData() );
+   sslSocket->m_certificateData->setDistinguishedName( "FIXME");
+ 
+   volist = vd->data;
+diff --git a/CORAL_SERVER/CoralSockets/src/SslSocket.h b/CORAL_SERVER/CoralSockets/src/SslSocket.h
+index fa7a929..a30b0f1 100644
+--- a/CORAL_SERVER/CoralSockets/src/SslSocket.h
++++ b/CORAL_SERVER/CoralSockets/src/SslSocket.h
+@@ -153,7 +153,7 @@ namespace coral {
+       mutable boost::mutex m_sslMutex;
+ 
+       /// the remote certificate data
+-      std::auto_ptr<CertificateData> m_certificateData;
++      std::unique_ptr<CertificateData> m_certificateData;
+     };
+ 
+     class SslHandshakeException : public Exception
+diff --git a/CORAL_SERVER/CoralSockets/tests/PacketSocket/test_PacketSocket.cpp b/CORAL_SERVER/CoralSockets/tests/PacketSocket/test_PacketSocket.cpp
+index 0e56e64..106025a 100644
+--- a/CORAL_SERVER/CoralSockets/tests/PacketSocket/test_PacketSocket.cpp
++++ b/CORAL_SERVER/CoralSockets/tests/PacketSocket/test_PacketSocket.cpp
+@@ -21,7 +21,7 @@ using namespace coral::CoralSockets;
+ // port used for testing
+ const int testPort = 50007;
+ 
+-std::auto_ptr<RingBufferPipes> pipes;
++std::unique_ptr<RingBufferPipes> pipes;
+ 
+ namespace coral
+ {
+@@ -59,7 +59,7 @@ namespace coral
+     void createSockets( ISocketPtr &src, ISocketPtr &dst)
+     {
+ #if 0
+-      pipes = std::auto_ptr<RingBufferPipes>(
++      pipes = std::unique_ptr<RingBufferPipes>(
+                                              new RingBufferPipes( 10000, "test pipes") );
+ 
+       src=pipes->getSrc();
+@@ -762,7 +762,7 @@ namespace coral
+         PacketSocket dSocket( dst );
+         PacketSocket sSocket( src );
+ 
+-        std::auto_ptr<ByteBuffer> buffer( new ByteBuffer(1024*1024*17) );
++        std::unique_ptr<ByteBuffer> buffer( new ByteBuffer(1024*1024*17) );
+         //for (unsigned int i=0; i<buffer.maxSize(); i++)
+         //  *(buffer.data()+i)=(unsigned char)(i&0xff);
+         buffer->setUsedSize( buffer->maxSize() );
+diff --git a/CORAL_SERVER/CoralSockets/tests/ReplyManager/test_ReplyManager.cpp b/CORAL_SERVER/CoralSockets/tests/ReplyManager/test_ReplyManager.cpp
+index ac9a127..6e87a83 100644
+--- a/CORAL_SERVER/CoralSockets/tests/ReplyManager/test_ReplyManager.cpp
++++ b/CORAL_SERVER/CoralSockets/tests/ReplyManager/test_ReplyManager.cpp
+@@ -37,7 +37,7 @@ namespace coral
+     void tearDown() {
+     }
+ 
+-    typedef std::auto_ptr<ByteBuffer> BufferPtr;
++    typedef std::unique_ptr<ByteBuffer> BufferPtr;
+     typedef boost::shared_ptr<ByteBuffer> BufferSPtr;
+ 
+     static BufferPtr createBuffer( int num ) {
+@@ -61,7 +61,7 @@ namespace coral
+       ReplySlot slot;
+ 
+       // can't append messages befor taking the slot
+-      std::auto_ptr<ByteBuffer> buffer( new ByteBuffer(10) );
++      std::unique_ptr<ByteBuffer> buffer( new ByteBuffer(10) );
+       CPPUNIT_ASSERT_THROW( slot.appendReply( buffer, 0, false ),
+                             GenericSocketException );
+ 
+diff --git a/CORAL_SERVER/CoralSockets/tests/RingBufferSocket/test_RingBufferSocket.cpp b/CORAL_SERVER/CoralSockets/tests/RingBufferSocket/test_RingBufferSocket.cpp
+index 6ae3eb2..9659686 100644
+--- a/CORAL_SERVER/CoralSockets/tests/RingBufferSocket/test_RingBufferSocket.cpp
++++ b/CORAL_SERVER/CoralSockets/tests/RingBufferSocket/test_RingBufferSocket.cpp
+@@ -276,8 +276,8 @@ namespace coral
+         ISocketPtr connect=pipes.getSrc();
+         ISocketPtr accept=pipes.getDst();;
+         senderClass sender( connect );
+-        std::auto_ptr<boost::thread> sendThread =
+-          std::auto_ptr<boost::thread>( new boost::thread( sender ));
++        std::unique_ptr<boost::thread> sendThread =
++          std::unique_ptr<boost::thread>( new boost::thread( sender ));
+         int *recbuf= new int[ largePacketLen ];
+         memset( (unsigned char*)recbuf, 0,
+                 largePacketLen * sizeof( recbuf[0] ) );
+diff --git a/CORAL_SERVER/CoralSockets/tests/TcpSocket/test_TcpSocket.cpp b/CORAL_SERVER/CoralSockets/tests/TcpSocket/test_TcpSocket.cpp
+index 63e580b..31690e6 100644
+--- a/CORAL_SERVER/CoralSockets/tests/TcpSocket/test_TcpSocket.cpp
++++ b/CORAL_SERVER/CoralSockets/tests/TcpSocket/test_TcpSocket.cpp
+@@ -462,7 +462,7 @@ namespace coral
+       {
+ 
+         senderClass sender;
+-        std::auto_ptr<boost::thread> sendThread = std::auto_ptr<boost::thread>(
++        std::unique_ptr<boost::thread> sendThread = std::unique_ptr<boost::thread>(
+                                                                                new boost::thread( sender ));
+ 
+         listen->poll(TcpSocket::P_READ, -1); // wait until the thread has connected
+diff --git a/CORAL_SERVER/CoralSockets/tests/common/common.h b/CORAL_SERVER/CoralSockets/tests/common/common.h
+index 447a235..dae9d50 100644
+--- a/CORAL_SERVER/CoralSockets/tests/common/common.h
++++ b/CORAL_SERVER/CoralSockets/tests/common/common.h
+@@ -4,7 +4,7 @@
+ 
+ namespace coral
+ {
+-  typedef std::auto_ptr<ByteBuffer> ByteBufferPtr;
++  typedef std::unique_ptr<ByteBuffer> ByteBufferPtr;
+ 
+   namespace CoralSockets
+   {
+@@ -13,7 +13,7 @@ namespace coral
+     int testPort = 50007;
+ 
+ #if 0
+-    std::auto_ptr<RingBufferPipes> pipes;
++    std::unique_ptr<RingBufferPipes> pipes;
+ #endif
+ 
+     // ---------------------------------------------------
+@@ -23,7 +23,7 @@ namespace coral
+     {
+       TcpSocketPtr listenSocket = TcpSocketPtr( (TcpSocket*)0);
+ #if 0
+-      pipes = std::auto_ptr<RingBufferPipes>( new RingBufferPipes( 10000, "test pipes") );
++      pipes = std::unique_ptr<RingBufferPipes>( new RingBufferPipes( 10000, "test pipes") );
+       src=pipes->getSrc();
+       dst=pipes->getDst();
+ #else
+diff --git a/CORAL_SERVER/CoralSockets/utilities/coralDummySocketClient/coralDummySocketClient.cpp b/CORAL_SERVER/CoralSockets/utilities/coralDummySocketClient/coralDummySocketClient.cpp
+index 9b89a26..98c2c9e 100644
+--- a/CORAL_SERVER/CoralSockets/utilities/coralDummySocketClient/coralDummySocketClient.cpp
++++ b/CORAL_SERVER/CoralSockets/utilities/coralDummySocketClient/coralDummySocketClient.cpp
+@@ -24,7 +24,7 @@ namespace coral
+ 
+     //-------------------------------------------------------------------------
+ 
+-    typedef std::auto_ptr<ByteBuffer> ByteBufferPtr;
++    typedef std::unique_ptr<ByteBuffer> ByteBufferPtr;
+ 
+     //-------------------------------------------------------------------------
+ 
+diff --git a/CORAL_SERVER/CoralSockets/utilities/coralReplayClient/coralReplayClient.cpp b/CORAL_SERVER/CoralSockets/utilities/coralReplayClient/coralReplayClient.cpp
+index e8a2894..8048b73 100644
+--- a/CORAL_SERVER/CoralSockets/utilities/coralReplayClient/coralReplayClient.cpp
++++ b/CORAL_SERVER/CoralSockets/utilities/coralReplayClient/coralReplayClient.cpp
+@@ -129,7 +129,7 @@ namespace coral
+              << "requestID : " << ctlHeader.requestID() );
+ 
+       // read the payload
+-      std::auto_ptr<ByteBuffer> payload( new ByteBuffer(
++      std::unique_ptr<ByteBuffer> payload( new ByteBuffer(
+                                                         ctlHeader.packetSize()-CTLPACKET_HEADER_SIZE ) );
+ 
+       size_t read = 0;
+diff --git a/CORAL_SERVER/CoralStubs/src/ClientStub.cpp b/CORAL_SERVER/CoralStubs/src/ClientStub.cpp
+index 584b9eb..e7eaa37 100644
+--- a/CORAL_SERVER/CoralStubs/src/ClientStub.cpp
++++ b/CORAL_SERVER/CoralStubs/src/ClientStub.cpp
+@@ -188,7 +188,7 @@ namespace coral { namespace CoralStubs {
+ 
+     RowIteratorFetch* tfetch = new RowIteratorFetch(m_requestHandler, cursorID, cacheSize, pRowBuffer);
+     //return the iterator packed into a smart pointer
+-    return std::auto_ptr<IRowIterator>(tfetch);
++    return std::unique_ptr<IRowIterator>(tfetch);
+   }
+ 
+   IRowIteratorPtr
+@@ -215,7 +215,7 @@ namespace coral { namespace CoralStubs {
+ 
+     RowIteratorFetch* tfetch = new RowIteratorFetch(m_requestHandler, cursorID, cacheSize, NULL);
+     //return the iterator packed into a smart pointer
+-    return std::auto_ptr<IRowIterator>(tfetch);
++    return std::unique_ptr<IRowIterator>(tfetch);
+   }
+ 
+   IRowIteratorPtr
+@@ -251,7 +251,7 @@ namespace coral { namespace CoralStubs {
+ 
+     RowIteratorAll* tall = new RowIteratorAll( reply.release(), rowBuffer, coral::CALOpcodes::FetchAllRows );
+ 
+-    return std::auto_ptr<IRowIterator>(tall);
++    return std::unique_ptr<IRowIterator>(tall);
+   }
+ 
+   IRowIteratorPtr
+@@ -269,7 +269,7 @@ namespace coral { namespace CoralStubs {
+ 
+     RowIteratorAll* tall = new RowIteratorAll( reply.release(), NULL, coral::CALOpcodes::FetchAllRowsOT );
+ 
+-    return std::auto_ptr<IRowIterator>(tall);
++    return std::unique_ptr<IRowIterator>(tall);
+   }
+ 
+   const std::set<std::string>
+diff --git a/CORAL_SERVER/CoralStubs/src/DummyFacade.cpp b/CORAL_SERVER/CoralStubs/src/DummyFacade.cpp
+index 13f5fd5..4a7f4d0 100644
+--- a/CORAL_SERVER/CoralStubs/src/DummyFacade.cpp
++++ b/CORAL_SERVER/CoralStubs/src/DummyFacade.cpp
+@@ -137,7 +137,7 @@ DummyFacade::fetchRows( Token /*sessionID*/,
+     for ( size_t j = 1; j < maxcby256; ++j ) std::memcpy( p0+j*256, p0, 256 );
+     std::cout << "Done" << std::endl;
+   }
+-  return std::auto_ptr<IRowIterator>(tall);
++  return std::unique_ptr<IRowIterator>(tall);
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -189,7 +189,7 @@ DummyFacade::fetchAllRows( Token /*sessionID*/,
+     for ( size_t j = 1; j < maxcby256; ++j ) std::memcpy( p0+j*256, p0, 256 );
+     std::cout << "Done" << std::endl;
+   }
+-  return std::auto_ptr<IRowIterator>(tall);
++  return std::unique_ptr<IRowIterator>(tall);
+ }
+ 
+ //-----------------------------------------------------------------------------
+diff --git a/CORAL_SERVER/CoralStubs/src/ServerStub.cpp b/CORAL_SERVER/CoralStubs/src/ServerStub.cpp
+index 650bd36..920715f 100644
+--- a/CORAL_SERVER/CoralStubs/src/ServerStub.cpp
++++ b/CORAL_SERVER/CoralStubs/src/ServerStub.cpp
+@@ -947,7 +947,7 @@ namespace coral { namespace CoralStubs {
+ 
+       prepareCoralException( swi, e );
+ 
+-      return std::auto_ptr<IByteBufferIterator>( swi );
++      return std::unique_ptr<IByteBufferIterator>( swi );
+     }
+     //get the opcode
+     CALOpcode opcode = sri.opcode();
+@@ -963,7 +963,7 @@ namespace coral { namespace CoralStubs {
+ 
+       swi->exception(0x00, 0x10, s.str(), "ServerStub::replyToRequest", "");
+ 
+-      return std::auto_ptr<IByteBufferIterator>( swi );
++      return std::unique_ptr<IByteBufferIterator>( swi );
+     }
+     //execute the facade implementation
+     try
+@@ -977,7 +977,7 @@ namespace coral { namespace CoralStubs {
+       execTimer.stop();
+       mon->add(execTimer.getUserTime(),execTimer.getSystemTime(),execTimer.getRealTime());
+ 
+-      return std::auto_ptr<IByteBufferIterator>( iter );
++      return std::unique_ptr<IByteBufferIterator>( iter );
+     }
+     catch ( coral::Exception& e )
+     {
+@@ -991,7 +991,7 @@ namespace coral { namespace CoralStubs {
+ 
+       prepareCoralException( swi, e );
+ 
+-      return std::auto_ptr<IByteBufferIterator>( swi );
++      return std::unique_ptr<IByteBufferIterator>( swi );
+     }
+     catch ( std::exception& e )
+     {
+@@ -1004,7 +1004,7 @@ namespace coral { namespace CoralStubs {
+ 
+       swi->exception(0x00, 0x01, e.what(), "ServerStub::replyToRequest", "");
+ 
+-      return std::auto_ptr<IByteBufferIterator>( swi );
++      return std::unique_ptr<IByteBufferIterator>( swi );
+     }
+     catch (...)
+     {
+@@ -1018,7 +1018,7 @@ namespace coral { namespace CoralStubs {
+ 
+       swi->exception(0x00, 0x00, "Unkown exception caught", "ServerStub::replyToRequest", "");
+ 
+-      return std::auto_ptr<IByteBufferIterator>( swi );
++      return std::unique_ptr<IByteBufferIterator>( swi );
+     }
+   }
+ 
+diff --git a/ConnectionService/src/ConnectionService.h b/ConnectionService/src/ConnectionService.h
+index 38d78ac..86c19b6 100644
+--- a/ConnectionService/src/ConnectionService.h
++++ b/ConnectionService/src/ConnectionService.h
+@@ -1,7 +1,7 @@
+ #ifndef CONNECTIONSERVICE_CONNECTIONSERVICE_H
+ #define CONNECTIONSERVICE_CONNECTIONSERVICE_H
+ 
+-#include "RelationalAccess/../src/ICertificateConnectionService.h"
++#include "RelationalAccess/ICertificateConnectionService.h"
+ #include "RelationalAccess/AccessMode.h"
+ 
+ #include "CoralKernel/Service.h"
+diff --git a/ConnectionService/src/DataSource.cpp b/ConnectionService/src/DataSource.cpp
+index 8c4faee..128abb8 100644
+--- a/ConnectionService/src/DataSource.cpp
++++ b/ConnectionService/src/DataSource.cpp
+@@ -3,7 +3,7 @@
+ #include "CoralBase/MessageStream.h"
+ #include "RelationalAccess/AuthenticationServiceException.h"
+ #include "RelationalAccess/IAuthenticationCredentials.h"
+-#include "RelationalAccess/../src/ICertificateAuthenticationService.h"
++#include "RelationalAccess/ICertificateAuthenticationService.h"
+ #include "RelationalAccess/IRelationalDomain.h"
+ #include "RelationalAccess/IRelationalService.h"
+ 
+diff --git a/CoralBase/CoralBase/TimeStamp.h b/CoralBase/CoralBase/TimeStamp.h
+index 38b4eea..0d661c1 100644
+--- a/CoralBase/CoralBase/TimeStamp.h
++++ b/CoralBase/CoralBase/TimeStamp.h
+@@ -104,7 +104,7 @@ namespace coral
+     /// Is the point in time UTC or a local time?
+     bool                                    m_isLocal;
+     /// In case a Timestamp is flagged as local time we initialize this one too
+-    std::auto_ptr<boost::posix_time::ptime> m_localTime;
++    std::unique_ptr<boost::posix_time::ptime> m_localTime;
+   };
+ 
+   /// The epoch constant timestamp used to calculate the total number of nanoseconds since the epoch time UTC
+diff --git a/CoralBase/cmt/requirements b/CoralBase/cmt/requirements
+index d8d698b..607bba4 100644
+--- a/CoralBase/cmt/requirements
++++ b/CoralBase/cmt/requirements
+@@ -32,7 +32,7 @@ macro_append use_cppflags '' target-vc9 ' /D_CRT_SECURE_NO_WARNINGS'
+ macro_append use_cppflags '' target-vc9 ' /D_SCL_SECURE_NO_WARNINGS'
+ 
+ # Test -std=c++0x for gcc 4.5.1 as in CMS (see task #18131)
+-# Disable "auto_ptr is deprecated" warning for gcc 4.5.
++# Disable "unique_ptr is deprecated" warning for gcc 4.5.
+ macro_append use_cppflags '' target-gccmax ' -std=c++0x -Wno-deprecated'
+ 
+ # --- Configure icc build options ---
+diff --git a/CoralBase/src/MessageStream.cpp b/CoralBase/src/MessageStream.cpp
+index 5ec3d2b..bb162d1 100644
+--- a/CoralBase/src/MessageStream.cpp
++++ b/CoralBase/src/MessageStream.cpp
+@@ -17,7 +17,7 @@
+ #include "MsgReporter2.h"
+ 
+ // Preset default message reporter to None
+-static std::auto_ptr<coral::IMsgReporter> s_msgReporter( new coral::CoralBase::MsgReporter2 );
++static std::unique_ptr<coral::IMsgReporter> s_msgReporter( new coral::CoralBase::MsgReporter2 );
+ 
+ /// Install new message reporter object
+ void coral::MessageStream::installMsgReporter( IMsgReporter* reporter )
+@@ -29,11 +29,11 @@ void coral::MessageStream::installMsgReporter( IMsgReporter* reporter )
+       s_msgReporter->release();
+       s_msgReporter.release();
+     }
+-    s_msgReporter = std::auto_ptr<coral::IMsgReporter>(reporter);
++    s_msgReporter = std::unique_ptr<coral::IMsgReporter>(reporter);
+     return;
+   }
+ 
+-  s_msgReporter = std::auto_ptr<coral::IMsgReporter>(new coral::MsgReporter);
++  s_msgReporter = std::unique_ptr<coral::IMsgReporter>(new coral::MsgReporter);
+ }
+ 
+ /// Set the verbosity of the default message reporter.
+diff --git a/CoralBase/src/TimeStamp.cpp b/CoralBase/src/TimeStamp.cpp
+index fcde394..f14d5f9 100644
+--- a/CoralBase/src/TimeStamp.cpp
++++ b/CoralBase/src/TimeStamp.cpp
+@@ -16,7 +16,7 @@ const boost::posix_time::ptime& coral::TimeStamp::Epoch = coral::getTimeStampEpo
+ coral::TimeStamp::TimeStamp()
+   : m_time( boost::posix_time::microsec_clock::universal_time() )
+   , m_isLocal(false)
+-  , m_localTime( 0 )
++  , m_localTime( nullptr )
+ {
+ }
+ 
+@@ -26,20 +26,20 @@ coral::TimeStamp::TimeStamp( int year, int month,  int day, int hour, int minute
+   , m_isLocal( isLocalTime )
+ {
+   if( m_isLocal )
+-    m_localTime = std::auto_ptr<boost::posix_time::ptime>(
++    m_localTime = std::unique_ptr<boost::posix_time::ptime>(
+                                                           new boost::posix_time::ptime( coral::time::local_adj::utc_to_local( m_time ) ) );
+ }
+ 
+ coral::TimeStamp::TimeStamp( const boost::posix_time::ptime& pT, bool isLocalTime )
+-  : m_time( pT ), m_isLocal(isLocalTime), m_localTime( 0 )
++  : m_time( pT ), m_isLocal(isLocalTime), m_localTime( nullptr )
+ {
+   if( m_isLocal )
+-    m_localTime = std::auto_ptr<boost::posix_time::ptime>(
++    m_localTime = std::unique_ptr<boost::posix_time::ptime>(
+                                                           new boost::posix_time::ptime( coral::time::local_adj::utc_to_local( m_time ) ) );
+ }
+ 
+ coral::TimeStamp::TimeStamp( coral::TimeStamp::ValueType& nsecs )
+-  : m_time(), m_isLocal( false ), m_localTime( 0 )
++  : m_time(), m_isLocal( false ), m_localTime( nullptr )
+ {
+   // This contructs the timestamp only assuming UTC
+   coral::TimeStamp::ValueType lSecs  = nsecs/1000000000; // extract seconds     part
+@@ -110,7 +110,7 @@ coral::TimeStamp::TimeStamp( const coral::TimeStamp& rhs ) :
+ {
+   if( m_isLocal )
+   {
+-    m_localTime = std::auto_ptr<boost::posix_time::ptime>(
++    m_localTime = std::unique_ptr<boost::posix_time::ptime>(
+                                                           new boost::posix_time::ptime( coral::time::local_adj::utc_to_local( m_time ) ) );
+   }
+ }
+@@ -125,7 +125,7 @@ coral::TimeStamp::operator=( const coral::TimeStamp& rhs )
+ 
+     if( m_isLocal )
+     {
+-      m_localTime = std::auto_ptr<boost::posix_time::ptime>(
++      m_localTime = std::unique_ptr<boost::posix_time::ptime>(
+                                                             new boost::posix_time::ptime( coral::time::local_adj::utc_to_local( m_time ) ) );
+     }
+   }
+diff --git a/CoralBase/tests/Common/CoralCppUnitDBTest.h b/CoralBase/tests/Common/CoralCppUnitDBTest.h
+index 37ab2bf..f9bd9d6 100644
+--- a/CoralBase/tests/Common/CoralCppUnitDBTest.h
++++ b/CoralBase/tests/Common/CoralCppUnitDBTest.h
+@@ -176,15 +176,15 @@ namespace coral
+       return s_urlRO;
+     }
+ 
+-    static std::auto_ptr<ISessionProxy>& SessRW()
++    static std::unique_ptr<ISessionProxy>& SessRW()
+     {
+-      static std::auto_ptr<ISessionProxy> s_sessRW;
++      static std::unique_ptr<ISessionProxy> s_sessRW;
+       return s_sessRW;
+     }
+ 
+-    static std::auto_ptr<ISessionProxy>& SessRO()
++    static std::unique_ptr<ISessionProxy>& SessRO()
+     {
+-      static std::auto_ptr<ISessionProxy> s_sessRO;
++      static std::unique_ptr<ISessionProxy> s_sessRO;
+       return s_sessRO;
+     }
+ 
+diff --git a/CoralCommon/CoralCommon/MonitoringEvent.h b/CoralCommon/CoralCommon/MonitoringEvent.h
+index e4878d5..0675cdd 100644
+--- a/CoralCommon/CoralCommon/MonitoringEvent.h
++++ b/CoralCommon/CoralCommon/MonitoringEvent.h
+@@ -33,7 +33,7 @@ namespace coral
+         Source m_source; // Origin of the event
+         Type m_type; // Type of the event
+         std::string m_description; // Event description
+-        std::auto_ptr<Payload> m_data; // Actual data related to an event, 0 if data irrelevant
++        std::shared_ptr<Payload> m_data; // Actual data related to an event, 0 if data irrelevant
+ 
+         static ID id();
+       };
+diff --git a/CoralCommon/src/MonitoringEvent.cpp b/CoralCommon/src/MonitoringEvent.cpp
+index b806aa4..c507893 100644
+--- a/CoralCommon/src/MonitoringEvent.cpp
++++ b/CoralCommon/src/MonitoringEvent.cpp
+@@ -29,7 +29,7 @@ namespace coral
+         m_source      = right.m_source;
+         m_type        = right.m_type;
+         m_description = right.m_description;
+-        m_data        = const_cast<std::auto_ptr<Payload>&>(right.m_data); // Needed to avoid double delete
++        m_data        = const_cast<std::shared_ptr<Payload>&>(right.m_data); // Needed to avoid double delete
+       }
+ 
+       Record& Record::operator=( const Record& right )
+@@ -41,7 +41,7 @@ namespace coral
+           m_source      = right.m_source;
+           m_type        = right.m_type;
+           m_description = right.m_description;
+-          m_data        = const_cast<std::auto_ptr<Payload>&>(right.m_data); // Needed to avoid double delete
++          m_data        = const_cast<std::shared_ptr<Payload>&>(right.m_data); // Needed to avoid double delete
+         }
+ 
+         return *this;
+diff --git a/FrontierAccess/tests/CmsNewFrontier/QueriesApp.cpp b/FrontierAccess/tests/CmsNewFrontier/QueriesApp.cpp
+index 1f87b1d..85a2a02 100644
+--- a/FrontierAccess/tests/CmsNewFrontier/QueriesApp.cpp
++++ b/FrontierAccess/tests/CmsNewFrontier/QueriesApp.cpp
+@@ -51,7 +51,7 @@ void QueriesApp::fillData()
+ {
+   try
+   {
+-    std::auto_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString1 ) );
++    std::unique_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString1 ) );
+ 
+     session->transaction().start();
+ 
+@@ -156,7 +156,7 @@ void QueriesApp::readData()
+ {
+   try
+   {
+-    std::auto_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString2, coral::ReadOnly ) );
++    std::unique_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString2, coral::ReadOnly ) );
+ 
+     session->transaction().start( true );
+ 
+diff --git a/FrontierAccess/tests/MonitorController/test_MonitorController.cpp b/FrontierAccess/tests/MonitorController/test_MonitorController.cpp
+index 3830cdd..95e371c 100644
+--- a/FrontierAccess/tests/MonitorController/test_MonitorController.cpp
++++ b/FrontierAccess/tests/MonitorController/test_MonitorController.cpp
+@@ -90,7 +90,7 @@ namespace coral
+       };
+ 
+       // ----- Create the Session -----
+-      std::auto_ptr<ISessionProxy> session( connSvc().connect( UrlRO(), ReadOnly ) );
++      std::unique_ptr<ISessionProxy> session( connSvc().connect( UrlRO(), ReadOnly ) );
+ 
+       // ----- Start the transaction -----
+       session->transaction().start(true);
+diff --git a/FrontierAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp b/FrontierAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
+index 7485411..251595a 100644
+--- a/FrontierAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
++++ b/FrontierAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
+@@ -31,7 +31,7 @@ MultipleSchemasApp::~MultipleSchemasApp()
+ void
+ MultipleSchemasApp::run()
+ {
+-  std::auto_ptr< coral::ISession> session( this->connect( m_connectionString, m_userName, m_password ) );
++  std::unique_ptr< coral::ISession> session( this->connect( m_connectionString, m_userName, m_password ) );
+ 
+   if ( ! session->isUserSessionActive() )
+   {
+diff --git a/FrontierAccess/tests/SegFault/test_FrontierSegFault.cpp b/FrontierAccess/tests/SegFault/test_FrontierSegFault.cpp
+index 84e6d75..c8887c2 100644
+--- a/FrontierAccess/tests/SegFault/test_FrontierSegFault.cpp
++++ b/FrontierAccess/tests/SegFault/test_FrontierSegFault.cpp
+@@ -33,7 +33,7 @@ int main( int, char** )
+     // 1. Write sample data
+     std::cout << "_TEST Write sample data" << std::endl;
+     coral::AccessMode accessModeW = coral::Update;
+-    std::auto_ptr<coral::ISessionProxy>
++    std::unique_ptr<coral::ISessionProxy>
+       sessionW( connSvc->connect( connectW, accessModeW ) );
+     sessionW->transaction().start( false );
+     sessionW->transaction().commit();
+@@ -41,10 +41,10 @@ int main( int, char** )
+     // 2. Read sample data
+     std::cout << "_TEST Read sample data" << std::endl;
+     coral::AccessMode accessModeR = coral::ReadOnly;
+-    std::auto_ptr<coral::ISessionProxy>
++    std::unique_ptr<coral::ISessionProxy>
+       sessionR( connSvc->connect( connectR, accessModeR ) );
+     sessionR->transaction().start( true );
+-    std::auto_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
+     query->addToTableList( "DUAL" );
+     query->addToOutputList( "1" );
+     std::cout << "_TEST Execute the query" << std::endl;
+diff --git a/FrontierAccess/tests/SimpleQueries/QueriesApp.cpp b/FrontierAccess/tests/SimpleQueries/QueriesApp.cpp
+index ece350e..e212955 100644
+--- a/FrontierAccess/tests/SimpleQueries/QueriesApp.cpp
++++ b/FrontierAccess/tests/SimpleQueries/QueriesApp.cpp
+@@ -48,7 +48,7 @@ void QueriesApp::fillData()
+ {
+   try
+   {
+-    std::auto_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString1 ) );
++    std::unique_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString1 ) );
+ 
+     session->transaction().start();
+ 
+@@ -123,7 +123,7 @@ void QueriesApp::readData()
+ {
+   try
+   {
+-    std::auto_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString2, coral::ReadOnly ) );
++    std::unique_ptr<coral::ISessionProxy> session( connectionService()->connect( m_connectionString2, coral::ReadOnly ) );
+ 
+     session->transaction().start( true );
+ 
+diff --git a/FrontierAccess/tests/TestAlias/test_Alias.cpp b/FrontierAccess/tests/TestAlias/test_Alias.cpp
+index 19ce478..4158247 100644
+--- a/FrontierAccess/tests/TestAlias/test_Alias.cpp
++++ b/FrontierAccess/tests/TestAlias/test_Alias.cpp
+@@ -22,11 +22,11 @@
+ #include <iostream>
+ #include <sstream>
+ 
+-void readWithAlias( std::auto_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
++void readWithAlias( std::unique_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
+ {
+   std::cout << "__TEST Read with table alias '" << alias << "'" << std::endl;
+   try {
+-    std::auto_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
+ 
+     if( alias.empty() )
+     {
+@@ -58,13 +58,13 @@ void readWithAlias( std::auto_ptr<coral::ISessionProxy>& sessionR, const std::st
+   }
+ }
+ 
+-void readCmsAlias( std::auto_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
++void readCmsAlias( std::unique_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
+ {
+   std::cout << "__TEST Read with table alias '" << alias << "'" << std::endl;
+   try
+   {
+     std::string treetablename = alias;
+-    std::auto_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
+ 
+     query->addToTableList( treetablename, "p1" );
+     query->addToTableList( treetablename, "p2" );
+@@ -145,7 +145,7 @@ int main( int argc, char* argv[] )
+       // COOL bug report due to an table alias error
+       std::cout << "_TEST Write sample data" << std::endl;
+       coral::AccessMode accessModeW = coral::Update;
+-      std::auto_ptr<coral::ISessionProxy>
++      std::unique_ptr<coral::ISessionProxy>
+         sessionW( connSvc->connect( connectW, accessModeW ) );
+       sessionW->transaction().start( false );
+       coral::ISchema& schema = sessionW->nominalSchema();
+@@ -249,7 +249,7 @@ int main( int argc, char* argv[] )
+     std::cout << "_TEST Read sample data" << std::endl;
+ 
+     coral::AccessMode accessModeR = coral::ReadOnly;
+-    std::auto_ptr<coral::ISessionProxy> sessionR( connSvc->connect( connectR, accessModeR ) );
++    std::unique_ptr<coral::ISessionProxy> sessionR( connSvc->connect( connectR, accessModeR ) );
+ 
+     sessionR->transaction().start( true );
+     readWithAlias( sessionR, "" );
+diff --git a/MySQLAccess/src/Transaction.cpp b/MySQLAccess/src/Transaction.cpp
+index 2b2e887..e8ab65a 100644
+--- a/MySQLAccess/src/Transaction.cpp
++++ b/MySQLAccess/src/Transaction.cpp
+@@ -164,7 +164,7 @@ void coral::MySQLAccess::Transaction::commit()
+ 
+   if ( ! m_isReadOnly )
+   {
+-    std::auto_ptr<coral::MySQLAccess::Committer>
++    std::unique_ptr<coral::MySQLAccess::Committer>
+       committer( coral::MySQLAccess::CommitterFactory::getCommitter( m_sessionProperties ) );
+ 
+     if ( ! committer->commit() )
+@@ -210,7 +210,7 @@ void coral::MySQLAccess::Transaction::rollback()
+ 
+   if ( ! m_isReadOnly )
+   {
+-    std::auto_ptr<coral::MySQLAccess::Committer>
++    std::unique_ptr<coral::MySQLAccess::Committer>
+       committer( coral::MySQLAccess::CommitterFactory::getCommitter( m_sessionProperties ) );
+ 
+     if ( ! committer->rollback() )
+diff --git a/MySQLAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp b/MySQLAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
+index 5effd28..44ab768 100644
+--- a/MySQLAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
++++ b/MySQLAccess/tests/MultipleSchemas/MultipleSchemasApp.cpp
+@@ -27,7 +27,7 @@ MultipleSchemasApp::~MultipleSchemasApp()
+ 
+ void MultipleSchemasApp::run()
+ {
+-  std::auto_ptr< coral::ISession> session( this->connect( m_connectionString, m_userName, m_password, m_accessMode ) );
++  std::unique_ptr< coral::ISession> session( this->connect( m_connectionString, m_userName, m_password, m_accessMode ) );
+ 
+   if ( ! session->isUserSessionActive() )
+   {
+diff --git a/MySQLAccess/tests/SegFault/test_SegFault.cpp b/MySQLAccess/tests/SegFault/test_SegFault.cpp
+index e99b498..37f2847 100644
+--- a/MySQLAccess/tests/SegFault/test_SegFault.cpp
++++ b/MySQLAccess/tests/SegFault/test_SegFault.cpp
+@@ -23,7 +23,7 @@ int main( int, char** )
+     std::cout << "_TEST Write sample data" << std::endl;
+     coral::AccessMode accessModeW = coral::Update;
+ 
+-    std::auto_ptr<coral::ISessionProxy>  sessionW( connSvc.connect( connectW, accessModeW ) );
++    std::unique_ptr<coral::ISessionProxy>  sessionW( connSvc.connect( connectW, accessModeW ) );
+     sessionW->transaction().start( false );
+     sessionW->transaction().commit();
+ 
+@@ -31,10 +31,10 @@ int main( int, char** )
+     std::cout << "_TEST Read sample data" << std::endl;
+     coral::AccessMode accessModeR = coral::ReadOnly;
+ 
+-    std::auto_ptr<coral::ISessionProxy>  sessionR( connSvc.connect( connectR, accessModeR ) );
++    std::unique_ptr<coral::ISessionProxy>  sessionR( connSvc.connect( connectR, accessModeR ) );
+ 
+     sessionR->transaction().start( true );
+-    std::auto_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
+     query->addToTableList( "DUAL" );
+     query->addToOutputList( "1" );
+     std::cout << "_TEST Execute the query" << std::endl;
+diff --git a/MySQLAccess/tests/TestAlias/test_Alias.cpp b/MySQLAccess/tests/TestAlias/test_Alias.cpp
+index beff393..c7fcc0e 100644
+--- a/MySQLAccess/tests/TestAlias/test_Alias.cpp
++++ b/MySQLAccess/tests/TestAlias/test_Alias.cpp
+@@ -18,11 +18,11 @@
+ #include <sstream>
+ #include <memory>
+ 
+-void readWithAlias( std::auto_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
++void readWithAlias( std::unique_ptr<coral::ISessionProxy>& sessionR, const std::string& alias )
+ {
+   std::cout << "__TEST Read with table alias '" << alias << "'" << std::endl;
+   try {
+-    std::auto_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( sessionR->nominalSchema().newQuery() );
+     query->addToTableList( "TEST", alias );
+ 
+     if( alias.empty() )
+@@ -81,7 +81,7 @@ int main( int argc, char* argv[] )
+     if ( ! skipWrite ) {
+       std::cout << "_TEST Write sample data" << std::endl;
+       coral::AccessMode accessModeW = coral::Update;
+-      std::auto_ptr<coral::ISessionProxy>
++      std::unique_ptr<coral::ISessionProxy>
+         sessionW( connSvc.connect( connectW, accessModeW ) );
+       sessionW->transaction().start( false );
+       coral::ISchema& schema = sessionW->nominalSchema();
+@@ -113,7 +113,7 @@ int main( int argc, char* argv[] )
+ 
+     std::cout << "_TEST Read sample data" << std::endl;
+     coral::AccessMode accessModeR = coral::ReadOnly;
+-    std::auto_ptr<coral::ISessionProxy>
++    std::unique_ptr<coral::ISessionProxy>
+       sessionR( connSvc.connect( connectR, accessModeR ) );
+     sessionR->transaction().start( true );
+     readWithAlias( sessionR, "" );
+diff --git a/OracleAccess/src/Cursor.cpp b/OracleAccess/src/Cursor.cpp
+index 9931acc..14f3c3b 100644
+--- a/OracleAccess/src/Cursor.cpp
++++ b/OracleAccess/src/Cursor.cpp
+@@ -6,7 +6,7 @@
+ #include "Cursor.h"
+ #include "OracleStatement.h"
+ 
+-coral::OracleAccess::Cursor::Cursor( std::auto_ptr<OracleStatement> statement,
++coral::OracleAccess::Cursor::Cursor( std::unique_ptr<OracleStatement> statement,
+                                      const coral::AttributeList& rowBuffer )
+   : m_statement( statement )
+   , m_rowBuffer( rowBuffer )
+diff --git a/OracleAccess/src/Cursor.h b/OracleAccess/src/Cursor.h
+index 7907c84..4defd84 100644
+--- a/OracleAccess/src/Cursor.h
++++ b/OracleAccess/src/Cursor.h
+@@ -16,7 +16,7 @@ namespace coral
+     public:
+ 
+       /// Constructor
+-      Cursor( std::auto_ptr<OracleStatement> statement,
++      Cursor( std::unique_ptr<OracleStatement> statement,
+               const coral::AttributeList& rowBuffer );
+ 
+       /// Destructor
+@@ -42,7 +42,7 @@ namespace coral
+     private:
+ 
+       /// The statement handler
+-      std::auto_ptr<OracleStatement> m_statement; // fix memory leak bug #90898
++      std::unique_ptr<OracleStatement> m_statement; // fix memory leak bug #90898
+ 
+       /// The row buffer
+       const coral::AttributeList& m_rowBuffer;
+diff --git a/OracleAccess/src/Query.cpp b/OracleAccess/src/Query.cpp
+index f65543a..e18f8d0 100644
+--- a/OracleAccess/src/Query.cpp
++++ b/OracleAccess/src/Query.cpp
+@@ -119,7 +119,7 @@ coral::OracleAccess::Query::execute()
+   // Lock for update
+   if ( m_forUpdate ) sqlStatement += " FOR UPDATE";
+   // Prepare the statement.
+-  std::auto_ptr<OracleStatement> statement( new coral::OracleAccess::OracleStatement( this->sessionProperties(), m_schemaName, sqlStatement ) );
++  std::unique_ptr<OracleStatement> statement( new coral::OracleAccess::OracleStatement( this->sessionProperties(), m_schemaName, sqlStatement ) );
+   // Set the prefetch-caches for rows and memory
+   //std::cout << "Query::execute calling setCacheSize" << std::endl; // debug bug #54968
+   statement->setCacheSize( m_memoryCache );
+diff --git a/OracleAccess/src/Schema.cpp b/OracleAccess/src/Schema.cpp
+index 6468f18..81bfdb1 100644
+--- a/OracleAccess/src/Schema.cpp
++++ b/OracleAccess/src/Schema.cpp
+@@ -1013,7 +1013,7 @@ coral::OracleAccess::Schema::readTablesFromDataDictionary() const
+   bindData.extend<std::string>( "OWNER" );
+   bindData.begin()->data<std::string>() = m_schemaName;
+ 
+-  std::auto_ptr<coral::OracleAccess::OracleStatement> pStatement;
++  std::unique_ptr<coral::OracleAccess::OracleStatement> pStatement;
+ 
+   // Task #10775 (performance optimization for data dictionary queries)
+   // Optimization (requires read access to sys tables)
+@@ -1271,7 +1271,7 @@ coral::OracleAccess::Schema::createSequence( const coral::ISequenceDescription&
+ 
+   // Create the sequence via an SQL statement
+   {
+-    std::auto_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, stmstream.str() ) );
++    std::unique_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, stmstream.str() ) );
+     if ( !( statement->execute( coral::AttributeList() ) ) )
+       throw coral::SchemaException( m_sessionProperties->domainServiceName(), "Can't create sequence in the database " + description.name(), "Schema::createSequence" );
+   }
+@@ -1352,7 +1352,7 @@ coral::OracleAccess::Schema::dropSequence( const std::string& sequenceName )
+     }
+     // Drop the sequence
+     // First create the sql statement
+-    std::auto_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "DROP SEQUENCE " + i->second->description().name() ) );
++    std::unique_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "DROP SEQUENCE " + i->second->description().name() ) );
+     // Execute
+     if( !( statement->execute( coral::AttributeList() ) ) )
+     {
+@@ -1389,7 +1389,7 @@ coral::OracleAccess::Schema::dropIfExistsSequence( const std::string& sequenceNa
+     std::map< std::string, coral::OracleAccess::Sequence* >::iterator i = m_sequences.find( sequenceName );
+     // Drop the sequence
+     // First create the sql statement
+-    std::auto_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "DROP SEQUENCE " + i->second->description().name() ) );
++    std::unique_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "DROP SEQUENCE " + i->second->description().name() ) );
+     // Execute
+     if( !( statement->execute( coral::AttributeList() ) ) )
+     {
+@@ -1421,7 +1421,7 @@ coral::OracleAccess::Schema::listSequences() const
+   /*
+     SELECT sequence_name FROM all_sequences;
+   */
+-  std::auto_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "SELECT sequence_name FROM all_sequences" ) );
++  std::unique_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "SELECT sequence_name FROM all_sequences" ) );
+   /* empty bind data here */
+   coral::AttributeList binddata;
+   if( statement->execute( binddata ) )
+diff --git a/OracleAccess/src/Sequence.cpp b/OracleAccess/src/Sequence.cpp
+index c239bfc..78915f6 100644
+--- a/OracleAccess/src/Sequence.cpp
++++ b/OracleAccess/src/Sequence.cpp
+@@ -43,7 +43,7 @@ Sequence::~Sequence()
+ unsigned long long
+ Sequence::nextValue()
+ {
+-  std::auto_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "SELECT " + m_description.name() + ".nextval AS new_id FROM dual" ) );
++  std::unique_ptr<OracleStatement> statement( new OracleStatement( m_sessionProperties, m_schemaName, "SELECT " + m_description.name() + ".nextval AS new_id FROM dual" ) );
+   /* empty bind data here */
+   coral::AttributeList binddata;
+   if( statement->execute( binddata ) )
+@@ -82,7 +82,7 @@ Sequence::scan( boost::shared_ptr<const SessionProperties> sessionProperties,
+   /*
+     SELECT sequence_name, last_number FROM all_sequences;
+   */
+-  std::auto_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, "SELECT sequence_name, last_number FROM all_sequences" ) );
++  std::unique_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, "SELECT sequence_name, last_number FROM all_sequences" ) );
+   /* empty bind data here */
+   coral::AttributeList binddata;
+   if( statement->execute( binddata ) )
+@@ -133,7 +133,7 @@ Sequence::checkIfExists( boost::shared_ptr<const SessionProperties> sessionPrope
+   std::stringstream query;
+   query << "SELECT ORDER_FLAG FROM all_sequences WHERE SEQUENCE_NAME = '" << name << "'";
+ 
+-  std::auto_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, query.str() ) );
++  std::unique_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, query.str() ) );
+   /* empty bind data here */
+   coral::AttributeList binddata;
+   if( statement->execute( binddata ) )
+@@ -174,7 +174,7 @@ Sequence::checkIfStillExists( boost::shared_ptr<const SessionProperties> session
+   std::stringstream query;
+   query << "SELECT ORDER_FLAG FROM all_sequences WHERE SEQUENCE_NAME = '" << name << "'";
+ 
+-  std::auto_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, query.str() ) );
++  std::unique_ptr<OracleStatement> statement( new OracleStatement( sessionProperties, schemaName, query.str() ) );
+   /* empty bind data here */
+   coral::AttributeList binddata;
+   if( statement->execute( binddata ) )
+diff --git a/OracleAccess/src/TableDescriptionProxy.cpp b/OracleAccess/src/TableDescriptionProxy.cpp
+index 3bfec3a..fe38427 100644
+--- a/OracleAccess/src/TableDescriptionProxy.cpp
++++ b/OracleAccess/src/TableDescriptionProxy.cpp
+@@ -595,7 +595,7 @@ coral::OracleAccess::TableDescriptionProxy::refreshForeignKeyInfo() const
+   bindData[0].data<std::string>() = m_schemaName;
+   bindData[1].data<std::string>() = m_description->name();
+ 
+-  std::auto_ptr<coral::OracleAccess::OracleStatement> pStatement;
++  std::unique_ptr<coral::OracleAccess::OracleStatement> pStatement;
+ 
+   // Task #10775 (performance optimization for data dictionary queries)
+   // Second optimization (requires read access to sys tables)
+diff --git a/OracleAccess/tests/BulkInserts/test_BulkInserts.cpp b/OracleAccess/tests/BulkInserts/test_BulkInserts.cpp
+index 465504e..92dc8f4 100644
+--- a/OracleAccess/tests/BulkInserts/test_BulkInserts.cpp
++++ b/OracleAccess/tests/BulkInserts/test_BulkInserts.cpp
+@@ -46,7 +46,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -173,7 +173,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+@@ -240,7 +240,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/Connection/test_Connection.cpp b/OracleAccess/tests/Connection/test_Connection.cpp
+index 8e46b26..9473c0f 100644
+--- a/OracleAccess/tests/Connection/test_Connection.cpp
++++ b/OracleAccess/tests/Connection/test_Connection.cpp
+@@ -180,7 +180,7 @@ namespace coral
+       long long start = coral::TimeStamp::now(true).total_nanoseconds();
+       try
+       {
+-        std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/expired" ) );
++        std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/expired" ) );
+       }
+       catch( coral::ConnectionNotAvailableException& e )
+       {
+diff --git a/OracleAccess/tests/DataDictionary/test_DataDictionary.cpp b/OracleAccess/tests/DataDictionary/test_DataDictionary.cpp
+index 24da34a..20e9416 100644
+--- a/OracleAccess/tests/DataDictionary/test_DataDictionary.cpp
++++ b/OracleAccess/tests/DataDictionary/test_DataDictionary.cpp
+@@ -63,7 +63,7 @@ namespace coral
+     {
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
+ 
+       session->transaction().start();
+ 
+@@ -148,7 +148,7 @@ namespace coral
+     {
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
+ 
+       session->transaction().start();
+       coral::ISchema& schema = session->nominalSchema();
+@@ -165,7 +165,7 @@ namespace coral
+     {
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
+ 
+       session->transaction().start();
+ 
+@@ -222,7 +222,7 @@ namespace coral
+     {
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
+ 
+       session->transaction().start();
+ 
+@@ -295,7 +295,7 @@ namespace coral
+     {
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( connectionString ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/DataEditor/test_DataEditor.cpp b/OracleAccess/tests/DataEditor/test_DataEditor.cpp
+index e147042..bcd65ea 100644
+--- a/OracleAccess/tests/DataEditor/test_DataEditor.cpp
++++ b/OracleAccess/tests/DataEditor/test_DataEditor.cpp
+@@ -53,7 +53,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/DateAndTime/test_DateAndTime.cpp b/OracleAccess/tests/DateAndTime/test_DateAndTime.cpp
+index 6ac1161..2e285c9 100644
+--- a/OracleAccess/tests/DateAndTime/test_DateAndTime.cpp
++++ b/OracleAccess/tests/DateAndTime/test_DateAndTime.cpp
+@@ -42,7 +42,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -111,13 +111,13 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+       coral::ISchema& schema = session->nominalSchema();
+ 
+-      std::auto_ptr<coral::IQuery> query( schema.tableHandle(T1).newQuery() );
++      std::unique_ptr<coral::IQuery> query( schema.tableHandle(T1).newQuery() );
+ 
+       query->setRowCacheSize( 20 );
+       coral::ICursor& cursor = query->execute();
+@@ -144,7 +144,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/Dual/test_Dual.cpp b/OracleAccess/tests/Dual/test_Dual.cpp
+index ca41d95..cc023ac 100644
+--- a/OracleAccess/tests/Dual/test_Dual.cpp
++++ b/OracleAccess/tests/Dual/test_Dual.cpp
+@@ -97,7 +97,7 @@ namespace coral
+     {
+       std::string T1 = BuildUniqueTableName( "ORA01466" );
+       coral::ConnectionService connSvc;
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+       session->transaction().start( false );
+       session->nominalSchema().dropIfExistsTable( T1 );
+       coral::TableDescription description;
+@@ -109,7 +109,7 @@ namespace coral
+       try
+       {
+         session->transaction().start( true );
+-        std::auto_ptr<coral::IQuery> query( session->nominalSchema().tableHandle(T1).newQuery() );
++        std::unique_ptr<coral::IQuery> query( session->nominalSchema().tableHandle(T1).newQuery() );
+         query->execute(); // This may (probably will) fail with ORA-01466
+         session->transaction().commit();
+       }
+@@ -119,7 +119,7 @@ namespace coral
+       }
+       coral::sleepSeconds(1);
+       session->transaction().start( true );
+-      std::auto_ptr<coral::IQuery> query( session->nominalSchema().tableHandle(T1).newQuery() );
++      std::unique_ptr<coral::IQuery> query( session->nominalSchema().tableHandle(T1).newQuery() );
+       query->execute(); // This should no longer fail with ORA-01466
+       session->transaction().commit();
+     }
+diff --git a/OracleAccess/tests/GroupBy/test_GroupBy.cpp b/OracleAccess/tests/GroupBy/test_GroupBy.cpp
+index ec801de..ec285af 100644
+--- a/OracleAccess/tests/GroupBy/test_GroupBy.cpp
++++ b/OracleAccess/tests/GroupBy/test_GroupBy.cpp
+@@ -39,7 +39,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -91,13 +91,13 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+       coral::ISchema& schema = session->nominalSchema();
+ 
+-      std::auto_ptr<coral::IQuery> query( schema.tableHandle(T1).newQuery() );
++      std::unique_ptr<coral::IQuery> query( schema.tableHandle(T1).newQuery() );
+ 
+       coral::AttributeList rowBuffer;
+       rowBuffer.extend<int>( "GrB" );
+@@ -136,7 +136,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/MultiThreading/test_MultiThreading.cpp b/OracleAccess/tests/MultiThreading/test_MultiThreading.cpp
+index e2621f8..4028514 100644
+--- a/OracleAccess/tests/MultiThreading/test_MultiThreading.cpp
++++ b/OracleAccess/tests/MultiThreading/test_MultiThreading.cpp
+@@ -89,7 +89,7 @@ namespace
+ 
+       std::cout << "TableCreateAndQueryThread no " << m_threadID << " about to perform a query" << std::endl;
+ 
+-      std::auto_ptr<coral::IQuery> query( table.newQuery() );
++      std::unique_ptr<coral::IQuery> query( table.newQuery() );
+ 
+       coral::AttributeList outputBuffer;
+       outputBuffer.extend<double>( "RES" );
+@@ -155,7 +155,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/MultipleSchemas/test_MultipleSchemas.cpp b/OracleAccess/tests/MultipleSchemas/test_MultipleSchemas.cpp
+index 45124cf..fb16fbf 100644
+--- a/OracleAccess/tests/MultipleSchemas/test_MultipleSchemas.cpp
++++ b/OracleAccess/tests/MultipleSchemas/test_MultipleSchemas.cpp
+@@ -47,7 +47,7 @@ namespace coral
+     test_Read()
+     {
+       coral::ConnectionService connSvc;
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+diff --git a/OracleAccess/tests/MultipleSessions/test_MultipleSessions.cpp b/OracleAccess/tests/MultipleSessions/test_MultipleSessions.cpp
+index b68b0f0..a2cc94c 100644
+--- a/OracleAccess/tests/MultipleSessions/test_MultipleSessions.cpp
++++ b/OracleAccess/tests/MultipleSessions/test_MultipleSessions.cpp
+@@ -55,7 +55,7 @@ namespace
+     {
+       //std::cout << "Entering thread no " << m_threadID << std::endl;
+       // Write data
+-      std::auto_ptr<coral::ISessionProxy> session( m_connscv.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( m_connscv.connect( "CORAL-Oracle-lcgnight/admin" ) );
+       session->transaction().start();
+       coral::ISchema& schema = session->nominalSchema();
+       std::ostringstream osTableName;
+@@ -88,7 +88,7 @@ namespace
+       coral::sleepSeconds(1);
+       // Read back data
+       session->transaction().start( true );
+-      std::auto_ptr<coral::IQuery> query( schema.tableHandle( tableName ).newQuery() );
++      std::unique_ptr<coral::IQuery> query( schema.tableHandle( tableName ).newQuery() );
+       coral::AttributeList outputBuffer;
+       outputBuffer.extend<double>( "RES" );
+       query->addToOutputList( "F+D", "RES" );
+@@ -158,7 +158,7 @@ namespace coral
+       // Workaround for bug #81005 on MacOSX (related to lazy symbol binding)
+       // Load the OracleAccess plugin in the main thread so that its symbols
+       // are available to all threads (loading it in a thread causes BPT trap)
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+       session->transaction().start();
+       session->transaction().commit();
+ #endif
+diff --git a/OracleAccess/tests/Schema/test_Schema.cpp b/OracleAccess/tests/Schema/test_Schema.cpp
+index f0c085b..0d85f72 100644
+--- a/OracleAccess/tests/Schema/test_Schema.cpp
++++ b/OracleAccess/tests/Schema/test_Schema.cpp
+@@ -47,7 +47,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -181,7 +181,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       coral::ISchema& schema = session->nominalSchema();
+ 
+@@ -213,7 +213,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/SimpleQueries/test_SimpleQueries.cpp b/OracleAccess/tests/SimpleQueries/test_SimpleQueries.cpp
+index 2e87e54..45bf72e 100644
+--- a/OracleAccess/tests/SimpleQueries/test_SimpleQueries.cpp
++++ b/OracleAccess/tests/SimpleQueries/test_SimpleQueries.cpp
+@@ -45,7 +45,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -120,7 +120,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+@@ -171,7 +171,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/OracleAccess/tests/Views/test_Views.cpp b/OracleAccess/tests/Views/test_Views.cpp
+index 142dd3a..e7d66b5 100644
+--- a/OracleAccess/tests/Views/test_Views.cpp
++++ b/OracleAccess/tests/Views/test_Views.cpp
+@@ -47,7 +47,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+@@ -95,7 +95,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start( true );
+ 
+@@ -124,7 +124,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-Oracle-lcgnight/admin" ) );
+ 
+       session->transaction().start();
+ 
+diff --git a/PyCoral/src/ConnectionService.cpp b/PyCoral/src/ConnectionService.cpp
+index c3bc39a..9bc306e 100644
+--- a/PyCoral/src/ConnectionService.cpp
++++ b/PyCoral/src/ConnectionService.cpp
+@@ -140,7 +140,7 @@ ConnectionService_init( PyObject* self, PyObject* /*args*/, PyObject* /* kwds */
+ 
+   // Load the Connection Service into the context
+ 
+-  //  std::auto_ptr<coral::ConnectionService> connectionService( new coral::ConnectionService() );
++  //  std::unique_ptr<coral::ConnectionService> connectionService( new coral::ConnectionService() );
+ 
+   py_this->object = new coral::ConnectionService();
+ 
+diff --git a/RelationalAccess/src/ICertificateAuthenticationService.h b/RelationalAccess/RelationalAccess/ICertificateAuthenticationService.h
+similarity index 100%
+rename from RelationalAccess/src/ICertificateAuthenticationService.h
+rename to RelationalAccess/RelationalAccess/ICertificateAuthenticationService.h
+diff --git a/RelationalAccess/src/ICertificateConnectionService.h b/RelationalAccess/RelationalAccess/ICertificateConnectionService.h
+similarity index 100%
+rename from RelationalAccess/src/ICertificateConnectionService.h
+rename to RelationalAccess/RelationalAccess/ICertificateConnectionService.h
+diff --git a/SQLiteAccess/tests/BulkInserts/test_BulkInserts.cpp b/SQLiteAccess/tests/BulkInserts/test_BulkInserts.cpp
+index 6a11faa..191028f 100755
+--- a/SQLiteAccess/tests/BulkInserts/test_BulkInserts.cpp
++++ b/SQLiteAccess/tests/BulkInserts/test_BulkInserts.cpp
+@@ -57,7 +57,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+       session->transaction().start(false) ;
+ 
+@@ -99,7 +99,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+       session->transaction().start(false) ;
+ 
+@@ -199,7 +199,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+       session->transaction().start(true) ;
+ 
+@@ -288,7 +288,7 @@ namespace coral
+ 
+       coral::ConnectionService connSvc;
+ 
+-      std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+       session->transaction().start(false) ;
+ 
+diff --git a/SQLiteAccess/tests/BulkOperations/test_BulkOperations.cpp b/SQLiteAccess/tests/BulkOperations/test_BulkOperations.cpp
+index 1f7f763..00fb737 100644
+--- a/SQLiteAccess/tests/BulkOperations/test_BulkOperations.cpp
++++ b/SQLiteAccess/tests/BulkOperations/test_BulkOperations.cpp
+@@ -69,7 +69,7 @@ public:
+ 
+     coral::ConnectionService connSvc;
+ 
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+     session->transaction().start(false) ;
+ 
+diff --git a/SQLiteAccess/tests/CreateListDrop/test_CreateListDropTable.cpp b/SQLiteAccess/tests/CreateListDrop/test_CreateListDropTable.cpp
+index e35dbf5..a51a803 100644
+--- a/SQLiteAccess/tests/CreateListDrop/test_CreateListDropTable.cpp
++++ b/SQLiteAccess/tests/CreateListDrop/test_CreateListDropTable.cpp
+@@ -61,7 +61,7 @@ public:
+ 
+     coral::ConnectionService connSvc;
+ 
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+     session->transaction().start(false);
+ 
+diff --git a/SQLiteAccess/tests/DataEditor/dataEditor.cpp b/SQLiteAccess/tests/DataEditor/dataEditor.cpp
+index b58d023..9aeb53f 100755
+--- a/SQLiteAccess/tests/DataEditor/dataEditor.cpp
++++ b/SQLiteAccess/tests/DataEditor/dataEditor.cpp
+@@ -46,7 +46,7 @@ public:
+   {
+     std::string T1 = BuildUniqueTableName( "SQL_UT_DE_T1" );
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+     coral::ISchema& schema = session->nominalSchema();
+     session->transaction().start();
+     schema.dropIfExistsTable( T1 );
+@@ -77,7 +77,7 @@ public:
+   {
+     std::string T1 = BuildUniqueTableName( "SQL_UT_DE_T1" );
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+     coral::ISchema& schema = session->nominalSchema();
+     // common variables
+     coral::AttributeList emptybinddata;
+@@ -140,7 +140,7 @@ public:
+     {
+       session->transaction().start();
+       coral::ITable& table = schema.tableHandle(T1);
+-      std::auto_ptr<coral::IQuery> query( table.newQuery() );
++      std::unique_ptr<coral::IQuery> query( table.newQuery() );
+       query->addToOutputList( "a" );
+       coral::AttributeList outBuffer;
+       outBuffer.extend( "a",typeid(std::string)  );
+@@ -209,7 +209,7 @@ public:
+     {
+       session->transaction().start();
+       coral::ITable& table = schema.tableHandle(T1);
+-      std::auto_ptr<coral::IQuery> query2( table.newQuery() );
++      std::unique_ptr<coral::IQuery> query2( table.newQuery() );
+       query2->addToOutputList( "id" );
+       coral::AttributeList output;
+       output.extend( "id",typeid(unsigned int)  );
+@@ -250,7 +250,7 @@ public:
+     {
+       session->transaction().start();
+       coral::ITable& table = schema.tableHandle(T1);
+-      std::auto_ptr<coral::IQuery> query3( table.newQuery() );
++      std::unique_ptr<coral::IQuery> query3( table.newQuery() );
+       query3->addToOutputList( "id" );
+       coral::AttributeList output3;
+       output3.extend( "id",typeid(unsigned int)  );
+@@ -289,7 +289,7 @@ public:
+     {
+       session->transaction().start();
+       coral::ITable& table = schema.tableHandle(T1);
+-      std::auto_ptr<coral::IQuery> queryc( table.newQuery() );
++      std::unique_ptr<coral::IQuery> queryc( table.newQuery() );
+       queryc->addToOutputList( "c" );
+       coral::AttributeList qoutput;
+       qoutput.extend( "c",typeid(std::string)  );
+@@ -327,7 +327,7 @@ public:
+   {
+     std::string T1 = BuildUniqueTableName( "SQL_UT_DE_T1" );
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+     coral::ISchema& schema = session->nominalSchema();
+     session->transaction().start();
+     schema.dropTable( T1 );
+diff --git a/SQLiteAccess/tests/DescribeTable/describeTable.cpp b/SQLiteAccess/tests/DescribeTable/describeTable.cpp
+index 0ac1057..17f546a 100755
+--- a/SQLiteAccess/tests/DescribeTable/describeTable.cpp
++++ b/SQLiteAccess/tests/DescribeTable/describeTable.cpp
+@@ -57,7 +57,7 @@ public:
+     std::string T2 = BuildUniqueTableName( "SQL_UT_DT_T2" );
+     std::string T3 = BuildUniqueTableName( "SQL_UT_DT_T3" );
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+     coral::ISchema& schema = session->nominalSchema();
+     //
+     // create test table x1
+@@ -169,7 +169,7 @@ public:
+ 
+     // re-check #tables for coral_sqlite_fk in another session (bug #82563)
+     {
+-      std::auto_ptr<coral::ISessionProxy> session2( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++      std::unique_ptr<coral::ISessionProxy> session2( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+       std::cout << "Rechecking #tables, was: " << ntables << std::endl;
+       session2->transaction().start(true);
+       int ntables2 = session2->nominalSchema().listTables().size();
+diff --git a/SQLiteAccess/tests/QueriesInSingleTable/queriesInSingleTable.cpp b/SQLiteAccess/tests/QueriesInSingleTable/queriesInSingleTable.cpp
+index c3e38b8..35307a0 100755
+--- a/SQLiteAccess/tests/QueriesInSingleTable/queriesInSingleTable.cpp
++++ b/SQLiteAccess/tests/QueriesInSingleTable/queriesInSingleTable.cpp
+@@ -50,7 +50,7 @@ public:
+     std::string T1 = BuildUniqueTableName( "SQL_UT_ST_T1" );
+ 
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+     session->transaction().start(false);
+     coral::ISchema& schema = session->nominalSchema();
+@@ -119,7 +119,7 @@ public:
+     std::string T1 = BuildUniqueTableName( "SQL_UT_ST_T1" );
+ 
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+     coral::ISchema& schema = session->nominalSchema();
+ 
+@@ -235,7 +235,7 @@ public:
+     std::string T1 = BuildUniqueTableName( "SQL_UT_ST_T1" );
+ 
+     coral::ConnectionService connSvc;
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc.connect( "CORAL-SQLite-lcgnight/admin" ) );
+ 
+     coral::ISchema& schema = session->nominalSchema();
+ 
+diff --git a/SQLiteAccess/tests/SchemaEditor/schemaEditor.cpp b/SQLiteAccess/tests/SchemaEditor/schemaEditor.cpp
+index 8cce657..6011f1d 100644
+--- a/SQLiteAccess/tests/SchemaEditor/schemaEditor.cpp
++++ b/SQLiteAccess/tests/SchemaEditor/schemaEditor.cpp
+@@ -211,7 +211,7 @@ int main( int, char** )
+     session->transaction().start( false ); // read-write
+     try {
+       {
+-        std::auto_ptr<coral::IQuery> query
++        std::unique_ptr<coral::IQuery> query
+           ( session->nominalSchema().newQuery() );
+         query->addToTableList( "coral_sqlite_fk" );
+         std::cout << std::endl;
+@@ -226,7 +226,7 @@ int main( int, char** )
+       session->nominalSchema().dropIfExistsTable( empDesc.name() );
+       session->nominalSchema().dropIfExistsTable( depDesc.name() );
+       {
+-        std::auto_ptr<coral::IQuery> query
++        std::unique_ptr<coral::IQuery> query
+           ( session->nominalSchema().newQuery() );
+         query->addToTableList( "coral_sqlite_fk" );
+         std::cout << std::endl;
+diff --git a/Tests/Integration_InvalidReferences/src/test_InvalidReferences.cpp b/Tests/Integration_InvalidReferences/src/test_InvalidReferences.cpp
+index 0536aae..854dfff 100644
+--- a/Tests/Integration_InvalidReferences/src/test_InvalidReferences.cpp
++++ b/Tests/Integration_InvalidReferences/src/test_InvalidReferences.cpp
+@@ -84,13 +84,13 @@ namespace coral
+       {
+         // Readonly
+         std::cout << "*** Connect RO to " << UrlRO() << std::endl;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         std::cout << "*** Connected; create and execute query1" << std::endl;
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -99,7 +99,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -161,13 +161,13 @@ namespace coral
+       {
+         // Readonly
+         std::cout << "*** Connect RO to " << UrlRO() << std::endl;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         std::cout << "*** Connected; create and execute query1" << std::endl;
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -176,7 +176,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 done; create/execute query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         coral::ICursor& cursor = query->execute();
+@@ -237,13 +237,13 @@ namespace coral
+       {
+         // Readonly
+         std::cout << "*** Connect RO to " << UrlRO() << std::endl;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         std::cout << "*** Connected; create and execute query1" << std::endl;
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -252,7 +252,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Execute query2 without fetching rows" << std::endl;
+@@ -324,7 +324,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         // Readonly
+@@ -335,7 +335,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -344,7 +344,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -430,7 +430,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         // Readonly
+@@ -441,7 +441,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -450,7 +450,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -519,7 +519,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         // Readonly
+@@ -530,7 +530,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -539,7 +539,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -623,7 +623,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         // Readonly
+@@ -634,7 +634,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -643,7 +643,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -726,7 +726,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         // Readonly
+@@ -737,7 +737,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -746,7 +746,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -829,7 +829,7 @@ namespace coral
+       // Then increase verbosity to keep track of connecting and disconnecting
+       coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+       coral::MessageStream::setMsgVerbosity( coral::Info );
+-      std::auto_ptr<boost::thread> pThread;
++      std::unique_ptr<boost::thread> pThread;
+       try
+       {
+         std::string schemaName;
+@@ -852,7 +852,7 @@ namespace coral
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->schema( schemaName ).newQuery() ); // schema1
+           query->addToTableList( tableName );
+           coral::ICursor& cursor = query->execute();
+@@ -861,7 +861,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->schema( schemaName ).newQuery() ); // schema1
+         query->addToTableList( tableName );
+         std::cout << "*** Disconnect RO" << std::endl;
+@@ -962,7 +962,7 @@ namespace coral
+           const std::string connectString = UrlRW();
+           coral::AccessMode accessMode = coral::Update;
+           std::cout << "*** Connect RW to " << connectString << std::endl;
+-          std::auto_ptr<coral::ISessionProxy>
++          std::unique_ptr<coral::ISessionProxy>
+             session( connSvc.connect( connectString, accessMode ) );
+           std::cout << "*** Connected, now disconnect" << std::endl;
+           session.reset();
+@@ -977,7 +977,7 @@ namespace coral
+         // --- CREATE THE RELEVANT TEST TABLES ---
+         std::cout << "*** Create the test tables" << std::endl;
+         //std::cout << "*** Connect RW" << std::endl;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRW( connSvc.connect( UrlRW(), coral::Update ) );
+         //std::cout << "*** Connected; create tables" << std::endl;
+         std::string tableName1 = testTableName();
+@@ -1017,7 +1017,7 @@ namespace coral
+         std::cout << "*** Drop the test tables" << std::endl;
+         //std::cout << "*** Connect RW" << std::endl;
+         coral::ConnectionService connSvc;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRW( connSvc.connect( UrlRW(), coral::Update ) );
+         //std::cout << "*** Connected; drop tables" << std::endl;
+         std::string tableName1 = testTableName();
+diff --git a/Tests/Integration_MiscellaneousBugs/src/test_MiscellaneousBugs.cpp b/Tests/Integration_MiscellaneousBugs/src/test_MiscellaneousBugs.cpp
+index 1755cd7..3b7d6fc 100644
+--- a/Tests/Integration_MiscellaneousBugs/src/test_MiscellaneousBugs.cpp
++++ b/Tests/Integration_MiscellaneousBugs/src/test_MiscellaneousBugs.cpp
+@@ -78,13 +78,13 @@ namespace coral
+       // Readonly
+       {
+         std::cout << "*** Connect RO to " << UrlRO() << std::endl;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         std::cout << "*** Connected; create and execute query1" << std::endl;
+         sessionRO->transaction().start(true);
+         std::string tableName = testTableName();
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName );
+           query->addToOutputList( "ID" );
+@@ -97,7 +97,7 @@ namespace coral
+           CPPUNIT_ASSERT_EQUAL_MESSAGE( "No Row3", false, cursor.next() );
+           std::cout << "*** Query1 executed; create query2" << std::endl;
+         }
+-        std::auto_ptr<coral::IQuery>
++        std::unique_ptr<coral::IQuery>
+           query( sessionRO->nominalSchema().newQuery() );
+         query->addToTableList( tableName );
+         query->addToOutputList( "ID" );
+@@ -137,14 +137,14 @@ namespace coral
+       coral::ConnectionService connSvc;
+       // Readonly
+       {
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         sessionRO->transaction().start(true);
+         std::string tableName1 = testTableName(1);
+         std::string tableName2 = testTableName(2);
+         std::string tableName3 = testTableName(3);
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName1 );
+           query->addToTableList( tableName2 );
+@@ -166,7 +166,7 @@ namespace coral
+           }
+         }
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName1 );
+           query->addToTableList( tableName3 );
+@@ -200,14 +200,14 @@ namespace coral
+       coral::ConnectionService connSvc;
+       // Readonly
+       {
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         sessionRO->transaction().start(true);
+         std::string tableName1 = testTableName(1);
+         coral::MsgLevel oldLvl = coral::MessageStream::msgVerbosity();
+         coral::MessageStream::setMsgVerbosity( coral::Verbose );
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName1 );
+           query->addToOutputList( "ID" );
+@@ -261,7 +261,7 @@ namespace coral
+       coral::AttributeList rowBuffer;
+       // Update
+       {
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRW( connSvc.connect( UrlRW(), coral::Update ) );
+         sessionRW->transaction().start(false);
+         sessionRW->nominalSchema().dropIfExistsTable(tableName0);
+@@ -285,11 +285,11 @@ namespace coral
+       }
+       // Readonly
+       {
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRO( connSvc.connect( UrlRO(), coral::ReadOnly ) );
+         sessionRO->transaction().start(true);
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName0 );
+           query->addToOutputList( "ID" );
+@@ -315,7 +315,7 @@ namespace coral
+           coral::MessageStream::setMsgVerbosity( oldLvl );
+         }
+         {
+-          std::auto_ptr<coral::IQuery>
++          std::unique_ptr<coral::IQuery>
+             query( sessionRO->nominalSchema().newQuery() );
+           query->addToTableList( tableName0, "T" );
+           query->addToOutputList( "T.ID" );
+@@ -373,7 +373,7 @@ namespace coral
+         // --- DROP THE RELEVANT TEST TABLES ---
+         std::cout << "*** Drop the test tables" << std::endl;
+         coral::ConnectionService connSvc;
+-        std::auto_ptr<coral::ISessionProxy>
++        std::unique_ptr<coral::ISessionProxy>
+           sessionRW( connSvc.connect( UrlRW(), coral::Update ) );
+         std::string tableName1 = testTableName(1);
+         std::string tableName2 = testTableName(2);
+@@ -410,7 +410,7 @@ namespace coral
+       coral::ConnectionService connSvc;
+       // --- CREATE THE RELEVANT TEST TABLES ---
+       std::cout << "*** Create " << nTables << " test tables" << std::endl;
+-      std::auto_ptr<coral::ISessionProxy>
++      std::unique_ptr<coral::ISessionProxy>
+         sessionRW( connSvc.connect( UrlRW(), coral::Update ) );
+       std::string tableName1 = testTableName(1);
+       std::string tableName2 = testTableName(2);
+diff --git a/Tests/Integration_Monitoring/src/TestApp.cpp b/Tests/Integration_Monitoring/src/TestApp.cpp
+index 9078e80..9b443af 100644
+--- a/Tests/Integration_Monitoring/src/TestApp.cpp
++++ b/Tests/Integration_Monitoring/src/TestApp.cpp
+@@ -80,11 +80,11 @@ void TestApp::writeData()
+   std::pair<std::string,std::string> cs = sw.getDomain( connectionString ).decodeUserConnectionString( connectionString );
+   //create a new connection
+   std::cout << "Create connection to database='" << cs.first << "'" << std::endl;
+-  std::auto_ptr<coral::IConnection> connection( sw.getDomain( connectionString ).newConnection( cs.first ) );
++  std::unique_ptr<coral::IConnection> connection( sw.getDomain( connectionString ).newConnection( cs.first ) );
+   connection->connect();
+   //create a new session
+   std::cout << "Create session for schema='" << cs.second << "'" << std::endl;
+-  std::auto_ptr<coral::ISession> session( connection->newSession( cs.second, coral::Update ) );
++  std::unique_ptr<coral::ISession> session( connection->newSession( cs.second, coral::Update ) );
+   //start monitoring
+   std::cout << "Start monitoring for the session" << std::endl;
+   session->monitoring().start( coral::monitor::Trace );
+@@ -217,11 +217,11 @@ TestApp::readData()
+   //get the domain
+   std::pair<std::string,std::string> cs = sw.getDomain( connectionString ).decodeUserConnectionString( connectionString );
+ 
+-  std::auto_ptr<coral::IConnection> connection( sw.getDomain( connectionString ).newConnection( cs.first ) );
++  std::unique_ptr<coral::IConnection> connection( sw.getDomain( connectionString ).newConnection( cs.first ) );
+ 
+   connection->connect();
+ 
+-  std::auto_ptr<coral::ISession> session( connection->newSession( cs.second, coral::ReadOnly ) );
++  std::unique_ptr<coral::ISession> session( connection->newSession( cs.second, coral::ReadOnly ) );
+ 
+   session->monitoring().start( coral::monitor::Trace );
+ 
+diff --git a/Tests/Integration_MonitoringService/src/TestApp.cpp b/Tests/Integration_MonitoringService/src/TestApp.cpp
+index b30c206..2f59a6c 100644
+--- a/Tests/Integration_MonitoringService/src/TestApp.cpp
++++ b/Tests/Integration_MonitoringService/src/TestApp.cpp
+@@ -83,7 +83,7 @@ void TestApp::run()
+ 
+ void TestApp::writeData(coral::IConnectionService& connservice)
+ {
+-  std::auto_ptr<coral::ISessionProxy> session( connservice.connect( getServiceName(0) ) );
++  std::unique_ptr<coral::ISessionProxy> session( connservice.connect( getServiceName(0) ) );
+ 
+   session->transaction().start();
+ 
+@@ -202,7 +202,7 @@ void TestApp::writeData(coral::IConnectionService& connservice)
+ 
+ void TestApp::readData(coral::IConnectionService& connservice)
+ {
+-  std::auto_ptr<coral::ISessionProxy> session( connservice.connect( getServiceName(0) ) );
++  std::unique_ptr<coral::ISessionProxy> session( connservice.connect( getServiceName(0) ) );
+ 
+   session->transaction().start( /* read-only is */ true );
+ 
+diff --git a/Tests/Integration_MultiThreading/src/SingleThreadRead.cpp b/Tests/Integration_MultiThreading/src/SingleThreadRead.cpp
+index b6bfbf8..fdbce51 100644
+--- a/Tests/Integration_MultiThreading/src/SingleThreadRead.cpp
++++ b/Tests/Integration_MultiThreading/src/SingleThreadRead.cpp
+@@ -30,7 +30,7 @@ SingleThreadRead::operator()()
+   osTableName << T2 << "_" << m_tableno;
+   const std::string tableName = osTableName.str();
+ 
+-  std::auto_ptr<coral::IQuery> query( schema.tableHandle( tableName ).newQuery() );
++  std::unique_ptr<coral::IQuery> query( schema.tableHandle( tableName ).newQuery() );
+ 
+   coral::AttributeList outputBuffer;
+   outputBuffer.extend<double>( "RES" );
+diff --git a/Tests/Integration_MultiThreading/src/TableQueryThread.cpp b/Tests/Integration_MultiThreading/src/TableQueryThread.cpp
+index a0dfaa9..dd367e4 100644
+--- a/Tests/Integration_MultiThreading/src/TableQueryThread.cpp
++++ b/Tests/Integration_MultiThreading/src/TableQueryThread.cpp
+@@ -18,7 +18,7 @@ void TableQueryThread::operator()()
+     os2 << "TableCreateAndQueryThread no " << m_tableNumber << " about to perform a query";
+     //m_reporter.reportToSTDOUT( os2.str() );
+ 
+-    std::auto_ptr<coral::IQuery> query( m_schema.tableHandle( tableName ).newQuery() );
++    std::unique_ptr<coral::IQuery> query( m_schema.tableHandle( tableName ).newQuery() );
+ 
+     coral::AttributeList outputBuffer;
+     outputBuffer.extend<double>( "RES" );
+diff --git a/Tests/Integration_ObjectConsistency/src/test_integration_ObjectConsistency.cpp b/Tests/Integration_ObjectConsistency/src/test_integration_ObjectConsistency.cpp
+index ebc51ce..8ca69d1 100644
+--- a/Tests/Integration_ObjectConsistency/src/test_integration_ObjectConsistency.cpp
++++ b/Tests/Integration_ObjectConsistency/src/test_integration_ObjectConsistency.cpp
+@@ -556,7 +556,7 @@ public:
+ 
+     std::string T1 = BuildUniqueTableName( "OBJCONSIST_T1" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+     // open an update transaction
+     session->transaction().start(false);
+     // drop the table if it already exists
+diff --git a/Tests/Integration_Quotes/src/test_integration_Quotes.cpp b/Tests/Integration_Quotes/src/test_integration_Quotes.cpp
+index 8ee6d72..822b8d8 100644
+--- a/Tests/Integration_Quotes/src/test_integration_Quotes.cpp
++++ b/Tests/Integration_Quotes/src/test_integration_Quotes.cpp
+@@ -38,7 +38,7 @@ public:
+   {
+     std::string T1 = BuildUniqueTableName( "QUOTES_T1" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     coral::TableDescription desc01;
+     desc01.insertColumn( "ID", "string", 255, false );
+@@ -78,7 +78,7 @@ public:
+   {
+     std::string T2 = BuildUniqueTableName( "QUOTES_T2" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     coral::TableDescription desc02;
+     desc02.insertColumn( "ID", "string", 255, false );
+@@ -120,11 +120,11 @@ public:
+     std::string T1 = BuildUniqueTableName( "QUOTES_T1" );
+     std::string T2 = BuildUniqueTableName( "QUOTES_T2" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
+ 
+     session->transaction().start(true);
+     // create the query
+-    std::auto_ptr<coral::IQuery> query( session->nominalSchema().newQuery() );
++    std::unique_ptr<coral::IQuery> query( session->nominalSchema().newQuery() );
+ 
+     unsigned int nExpRows = 3;
+ 
+diff --git a/Tests/Integration_RandomCycler/src/test_integration_RandomCycler.cpp b/Tests/Integration_RandomCycler/src/test_integration_RandomCycler.cpp
+index 856f800..cdeb71f 100644
+--- a/Tests/Integration_RandomCycler/src/test_integration_RandomCycler.cpp
++++ b/Tests/Integration_RandomCycler/src/test_integration_RandomCycler.cpp
+@@ -41,7 +41,7 @@ public:
+ 
+   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+-  void test_r01(std::auto_ptr<coral::ISessionProxy>& session)
++  void test_r01(std::unique_ptr<coral::ISessionProxy>& session)
+   {
+     std::string T1 = BuildUniqueTableName( "RANDOM_T1" );
+     // open a read only transaction
+@@ -49,7 +49,7 @@ public:
+ 
+     coral::ISchema& schema = session->nominalSchema();
+     coral::ITable& table = schema.tableHandle(T1);
+-    std::auto_ptr<coral::IQuery> query( table.newQuery() );
++    std::unique_ptr<coral::IQuery> query( table.newQuery() );
+ 
+     query->addToOrderList( "id" );
+ 
+@@ -83,7 +83,7 @@ public:
+ 
+   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+-  void test_r02(std::auto_ptr<coral::ISessionProxy>& session)
++  void test_r02(std::unique_ptr<coral::ISessionProxy>& session)
+   {
+     std::string T1 = BuildUniqueTableName( "RANDOM_T1" );
+     // open a read only transaction
+@@ -91,7 +91,7 @@ public:
+ 
+     coral::ISchema& schema = session->nominalSchema();
+     coral::ITable& table = schema.tableHandle(T1);
+-    std::auto_ptr<coral::IQuery> query( table.newQuery() );
++    std::unique_ptr<coral::IQuery> query( table.newQuery() );
+ 
+     query->addToOrderList( "id" );
+ 
+@@ -125,17 +125,17 @@ public:
+ 
+   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+-  void test_r03(std::auto_ptr<coral::ISessionProxy>& session)
++  void test_r03(std::unique_ptr<coral::ISessionProxy>& session)
+   {
+     std::string T2 = BuildUniqueTableName( "RANDOM_T2" );
+ 
+-    //std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
++    //std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
+     // open a read only transaction
+     session->transaction().start(true);
+ 
+     coral::ISchema& schema = session->nominalSchema();
+     coral::ITable& table = schema.tableHandle(T2);
+-    std::auto_ptr<coral::IQuery> query( table.newQuery() );
++    std::unique_ptr<coral::IQuery> query( table.newQuery() );
+ 
+     //  coral::MsgLevel oldLevel = coral::MessageStream::msgVerbosity();
+     // coral::MessageStream::setMsgVerbosity( coral::Verbose );
+@@ -175,7 +175,7 @@ public:
+ 
+   void operator()()
+   {
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRO(), coral::ReadOnly ) );
+ 
+     for( size_t i = 0; i < 10; ++i )
+     {
+@@ -245,7 +245,7 @@ public:
+ 
+     std::string T1 = BuildUniqueTableName( "RANDOM_T1" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     // open an update transaction
+     session->transaction().start(false);
+@@ -298,7 +298,7 @@ public:
+ 
+     std::string T2 = BuildUniqueTableName( "RANDOM_T2" );
+     // create the session
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     // open an update transaction
+     session->transaction().start(false);
+diff --git a/Tests/Integration_Sequence/src/test_integration_Sequence.cpp b/Tests/Integration_Sequence/src/test_integration_Sequence.cpp
+index ae9ac32..79946a8 100644
+--- a/Tests/Integration_Sequence/src/test_integration_Sequence.cpp
++++ b/Tests/Integration_Sequence/src/test_integration_Sequence.cpp
+@@ -50,7 +50,7 @@ public:
+ #ifdef CORAL240SQ
+     std::string T1 = BuildUniqueTableName( "SEQUENCE_T1" );
+ 
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     LOG(" **** TestSequence: TEST01...start **** ");
+     // This part tests all create and drop methods
+@@ -110,7 +110,7 @@ public:
+ #ifdef CORAL240SQ
+     std::string T1 = BuildUniqueTableName( "SEQUENCE_T1" );
+ 
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     LOG(" **** TestSequence: TEST02...start **** ");
+ 
+@@ -180,7 +180,7 @@ public:
+ #ifdef CORAL240SQ
+     std::string T1 = BuildUniqueTableName( "SEQUENCE_T1" );
+ 
+-    std::auto_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
++    std::unique_ptr<coral::ISessionProxy> session( connSvc().connect( UrlRW(), coral::Update ) );
+ 
+     LOG(" **** TestSequence: SETUP...start **** ");
+     // This setup garanties there is no sequence registered
+diff --git a/Tests/Integration_WriteRead/src/test_WriteRead.cpp b/Tests/Integration_WriteRead/src/test_WriteRead.cpp
+index e8b9ec0..2d711aa 100644
+--- a/Tests/Integration_WriteRead/src/test_WriteRead.cpp
++++ b/Tests/Integration_WriteRead/src/test_WriteRead.cpp
+@@ -387,7 +387,7 @@ namespace coral
+                 << referenceTableDescription().name() << std::endl;
+       coral::IConnectionService& connSvc = connectionService();
+       coral::AccessMode accessMode = coral::Update;
+-      std::auto_ptr<coral::ISessionProxy>
++      std::unique_ptr<coral::ISessionProxy>
+         session( connSvc.connect( connectString, accessMode ) );
+       session->transaction().start( false ); // read-write
+       // ** START ** write reference data
+@@ -502,7 +502,7 @@ namespace coral
+       std::cout << "Read from reference table..." << std::endl;
+       coral::IConnectionService& connSvc = connectionService();
+       coral::AccessMode accessMode = coral::ReadOnly;
+-      std::auto_ptr<coral::ISessionProxy>
++      std::unique_ptr<coral::ISessionProxy>
+         session( connSvc.connect( connectString, accessMode ) );
+       session->transaction().start( true ); // read-only
+       // Dump the supported C++ and SQL types for this backend
+@@ -535,7 +535,7 @@ namespace coral
+       }
+       // ** START ** read reference data
+       coral::ISchema& schema = session->nominalSchema();
+-      std::auto_ptr<coral::IQuery> query( schema.newQuery() );
++      std::unique_ptr<coral::IQuery> query( schema.newQuery() );
+       query->addToTableList( referenceTableDescription().name() );
+       query->addToOrderList( "ID" );
+       coral::AttributeList dataBuffer;
+diff --git a/Tests/System_SessionsInMultipleThreads/src/ReadThread.cpp b/Tests/System_SessionsInMultipleThreads/src/ReadThread.cpp
+index 86be88d..b323a78 100644
+--- a/Tests/System_SessionsInMultipleThreads/src/ReadThread.cpp
++++ b/Tests/System_SessionsInMultipleThreads/src/ReadThread.cpp
+@@ -27,7 +27,7 @@ ReadThread::operator()()
+     m_env->addTablePrefix(tableName, osTableName.str() );
+     coral::ITable& table = m_schema.tableHandle( tableName );
+ 
+-    std::auto_ptr<coral::IQuery> query( table.newQuery() );
++    std::unique_ptr<coral::IQuery> query( table.newQuery() );
+ 
+     coral::AttributeList rowBuffer;
+     rowBuffer.extend<int>( "DATA" );
+diff --git a/Tests/System_SessionsInMultipleThreads/src/TopThread.cpp b/Tests/System_SessionsInMultipleThreads/src/TopThread.cpp
+index a9104a6..9845236 100644
+--- a/Tests/System_SessionsInMultipleThreads/src/TopThread.cpp
++++ b/Tests/System_SessionsInMultipleThreads/src/TopThread.cpp
+@@ -34,7 +34,7 @@ TopThread::operator()()
+ 
+       //      std::ostringstream osServiceName;
+       //      osServiceName << "/system/service_" << m_id;
+-      std::auto_ptr<coral::ISessionProxy> session( m_connectionService.connect( m_env->getServiceName( m_id ) ) );
++      std::unique_ptr<coral::ISessionProxy> session( m_connectionService.connect( m_env->getServiceName( m_id ) ) );
+       session->transaction().start();
+ 
+       coral::ISchema& schema = session->nominalSchema();
+@@ -57,7 +57,7 @@ TopThread::operator()()
+     // Create three tables
+     //    std::ostringstream osServiceName;
+     //    osServiceName << "/system/service_" << m_id;
+-    std::auto_ptr<coral::ISessionProxy> session( m_connectionService.connect( m_env->getServiceName( m_id ) ) );
++    std::unique_ptr<coral::ISessionProxy> session( m_connectionService.connect( m_env->getServiceName( m_id ) ) );
+     session->transaction().start();
+ 
+     coral::ISchema& schema = session->nominalSchema();
+@@ -88,7 +88,7 @@ TopThread::operator()()
+       int& id = rowBuffer[0].data<int>();
+       int& data = rowBuffer[1].data<int>();
+ 
+-      std::auto_ptr<coral::IBulkOperation> operation( table.dataEditor().bulkInsert( rowBuffer, 100 ) );
++      std::unique_ptr<coral::IBulkOperation> operation( table.dataEditor().bulkInsert( rowBuffer, 100 ) );
+ 
+       for ( id = 0; id < 1000; ++id ) {
+         data = id + 1000 * i + 10000 * m_id;
+-- 
+2.22.0
+

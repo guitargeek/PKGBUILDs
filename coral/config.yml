@@ -1,0 +1,27 @@
+whitelisted-packages:
+  - ConnectionService
+  - CoralBase
+  - CoralCommon
+  - CoralKernel
+  - RelationalAccess
+  - MonitoringService
+  - SQLiteAccess
+  - XMLAuthenticationService
+  - EnvironmentAuthenticationService
+  - XMLLookupService
+  - PyCoral
+
+requirements-rename:
+    libuuid: uuid
+    LCGCoralCommon: CoralCommon
+    LCGRelationalAccess: RelationalAccess
+    LCGCoralBase: CoralBase
+    LCGCoralKernel: CoralKernel
+    sqlite: sqlite3
+
+cmake-lib-base:
+  - cmake_minimum_required(VERSION 3.2)
+  - set(CMAKE_CXX_STANDARD 17)
+  - set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+  - file(GLOB_RECURSE SOURCE_FILES "src/*.c*")
+  - include_directories(.)

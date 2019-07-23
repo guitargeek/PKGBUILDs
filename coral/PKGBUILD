@@ -1,0 +1,48 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=coral
+pkgver=2.3.21
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/cms-externals/coral"
+makedepends=("git")
+provides=("coral")
+source=("git+https://github.com/cms-externals/coral"
+        "generate_cmake.py"
+        "config.yml"
+        "CMakeLists.txt"
+        "0001-refresh-coral-for-cmake-compilation.patch")
+sha512sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+build() {
+    ORIGINAL_PWD=$PWD
+    cd "${srcdir}/coral"
+    git am < $startdir/0001-refresh-coral-for-cmake-compilation.patch
+    cd $ORIGINAL_PWD
+
+    mkdir include
+    cp -r coral/CoralBase/CoralBase include
+    cp -r coral/CoralCommon/CoralCommon include
+    cp -r coral/CoralKernel/CoralKernel include
+    cp -r coral/RelationalAccess/RelationalAccess include
+    cp -r coral/PyCoral/PyCoral include
+
+    python generate_cmake.py
+
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=lib ..
+
+    make -j8
+}
+
+package() {
+    mkdir $pkgdir/usr
+    cp -r include $pkgdir/usr
+    cd build
+    make DESTDIR="$pkgdir/" install
+}
