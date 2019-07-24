@@ -10,10 +10,8 @@ provides=("coral")
 source=("git+https://github.com/cms-externals/coral"
         "generate_cmake.py"
         "config.yml"
-        "CMakeLists.txt"
         "0001-refresh-coral-for-cmake-compilation.patch")
 sha512sums=('SKIP'
-            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP')
@@ -32,6 +30,13 @@ build() {
     cp -r coral/PyCoral/PyCoral include
 
     python generate_cmake.py
+
+    echo "cmake_minimum_required(VERSION 3.2)
+    set(CMAKE_CXX_STANDARD 17)
+    project(Coral)
+    include_directories(include)
+    add_subdirectory(coral)
+    include(GNUInstallDirs)" > CMakeLists.txt
 
     mkdir build
     cd build
