@@ -1,0 +1,62 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=classlib
+pkgver=3.1.3
+pkgrel=1
+arch=("i686" "x86_64")
+url="http://cmsrep.cern.ch/cmssw/cms/SOURCES/slc5_amd64_gcc472/external/classlib/3.1.3/"
+provides=("classlib")
+source=("http://cmsrep.cern.ch/cmssw/cms/SOURCES/slc5_amd64_gcc472/external/classlib/3.1.3/classlib-3.1.3.tar.bz2"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-gcc46.patch"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-sl6.patch"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-fix-gcc47-cxx11.patch"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-fix-unwind-x86_64.patch"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-memset-fix.patch"
+        "https://raw.githubusercontent.com/cms-sw/cmsdist/IB/CMSSW_11_0_X/gcc700/classlib-3.1.3-fix-obsolete-CLK_TCK.patch"
+        "ptrdiff_t.patch"
+        "TempFile.patch"
+        "Time.patch"
+)
+sha512sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+build() {
+    cd classlib-${pkgver}
+
+    git apply ../classlib-3.1.3-gcc46.patch
+    git apply ../classlib-3.1.3-sl6.patch
+    git apply ../classlib-3.1.3-fix-gcc47-cxx11.patch
+    git apply ../classlib-3.1.3-fix-unwind-x86_64.patch
+    git apply ../classlib-3.1.3-memset-fix.patch
+    git apply ../classlib-3.1.3-fix-obsolete-CLK_TCK.patch
+    git apply ../ptrdiff_t.patch
+    git apply ../TempFile.patch
+    git apply ../Time.patch
+
+    # no use for that and does not compile without patches, so leave the zip part out
+    rm -rf src/zip
+    rm -rf classlib/zip
+
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+          -DBUILD_SHARED_LIBS=true \
+          -DCMAKE_CXX_FLAGS="-Wno-unused-parameter -Wno-format-overflow -Wno-all -Wno-stringop-truncation" \
+          ..
+    make -j8
+}
+
+package() {
+    cd classlib-${pkgver}
+    mkdir $pkgdir/usr
+    cd build
+    make DESTDIR="$pkgdir/" install
+}

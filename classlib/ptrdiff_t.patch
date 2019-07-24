@@ -1,0 +1,11 @@
+--- classlib-3.1.3/classlib/iobase/DirIterator.h	2019-07-24 03:08:35.536315117 +0200
++++ classlib-3.1.3/classlib/iobase/DirIterator.h	2019-07-24 03:09:20.012979814 +0200
+@@ -49,7 +49,7 @@
+ 
+     The end indicator for the iteration range is the default
+     constructed iterator.  */
+-class DirIterator : public std::iterator<std::input_iterator_tag, std::string, ptrdiff_t>
++class DirIterator : public std::iterator<std::input_iterator_tag, std::string, std::ptrdiff_t>
+ {
+ public:
+     typedef std::input_iterator_tag	iterator_category;
