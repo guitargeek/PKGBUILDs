@@ -10,7 +10,7 @@ provides=("coral")
 source=("git+https://github.com/cms-externals/coral"
         "0001-refresh-coral-for-cmake-compilation.patch")
 sha512sums=('SKIP'
-            'SKIP')
+            '201503fb3a064429da39028832d3e7724abeb0aafffdf7e13dfcd2bbee4d9a9581091fb6be5dcb16a4a6d30da125a396d3d69c2b848f9cb165162b2642721ecb')
 
 build() {
     ORIGINAL_PWD=$PWD

@@ -7,7 +7,7 @@ arch=("i686" "x86_64")
 url="http://lcgapp.cern.ch/project/simu/HepPDT"
 provides=("heppdt")
 source=("http://lcgapp.cern.ch/project/simu/HepPDT/download/HepPDT-${pkgver}.tar.gz")
-sha512sums=('SKIP')
+sha512sums=('33a93b7d18c0cc64ab13923eb5edca89ed753a7f888a31c1d6a5f84f735e4042e2eaaf04e221d487976603a40fbd84cede4b4dd2bcd2e7479d97cc637dda637b')
 
 build() {
     cd HepPDT-${pkgver}

@@ -17,16 +17,16 @@ source=("http://cmsrep.cern.ch/cmssw/cms/SOURCES/slc5_amd64_gcc472/external/clas
         "TempFile.patch"
         "Time.patch"
 )
-sha512sums=('SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP')
+sha512sums=('730c8f7a26e91c429893d1886004131f7275bbfe37a0a81593746d0d350c736ebbe751e8984fe57691ebf7bafdd1558a03755991b5db8d985ffc4ced78af56ec'
+            'be88630703d80ae9df56ff5aea00d48b3a8ac5a30e3015f6f042bb812430a48895ff1461de60a99fb5b3f9ce31757d1dd68a65510cab46301f4880e24006ef58'
+            'a3580f2fdfa96b07bc48d768e965b10c4e4609fa3645288ebaf69fdcd9be6e4ab59bcbfc0ffa80b4258e5f422ca6f7b9b7aa5774add0d0f7f6a086d2c4a0f7d7'
+            'e8faabcc0a07e335424f4a5de6ba1228e4fdb1b478a920eef2cae83152eb11d8ca0dd082ed15284c07ddedaee7aaf8303688db8cde79555e8dc3aa5c203fb270'
+            '65da710cec74bab03f2d4417eaac6f1a338ec95fa04849ac467cc99ce441c5449d21f9a7a5026ee7daedca1400c30fe39024f7920525dcb392b8f581a1a4ff37'
+            '062fef4ed9db0d7b74bc0a855c32b0f8b1ad86f570d01d0b7b04265dc42937968be0f7b8257634a4609acde6f3811e599413d407024b460cd8dd671eec40cc76'
+            'e006e93e13cf471fa3b339a7690ff0042ff3a3ea8e25055b8e3302c669e11780f04ae81e759ace5802e80f0ffec5944ecf23b014354223fb87e8c892321deb49'
+            'beacf14daf51298c5c50a19287d127e44c2605536cd86149bb31808df3cc143f88d50af700fe5f5ce47759f60aa645bbb831b5183a70e3c1183056d97d0f5347'
+            '2a716c6b0481bf8935d83bd9eb7501a98d83aba49713fc89d4c433501290ba4dd9f6f9ef04ef25d87856ff71cc7c516031a7a01d39150c3002eec552da86f488'
+            'ce148a706234a517dd9942f9b7dd10af91f4a020e901512664fb6c2c9c9a867818a83edb357ea2bf89f51a16fe2b2f618f02cd6ac222f3e040e8f67f1ac681ca')
 
 build() {
     cd classlib-${pkgver}
