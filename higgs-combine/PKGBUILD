@@ -1,0 +1,99 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=higgs-combine
+pkgver=8.0.1
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit"
+depends=("python" "root" "cmake")
+provides=("higgs-combine")
+source=(https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/archive/v8.0.1.tar.gz)
+md5sums=('b50c47cae0f100124a2455effddeae07')
+
+build() {
+    mkdir HiggsAnalysis
+    mv HiggsAnalysis-CombinedLimit-$pkgver HiggsAnalysis/CombinedLimit
+    echo 'project(HiggsAnalysis-CombinedLimit CXX)
+cmake_minimum_required(VERSION 3.2)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++17 -lvdt -m64 -O2 -rdynamic -Wno-deprecated-declarations ")
+
+find_package(ROOT REQUIRED COMPONENTS Core RooFit RooFitCore RooStats Minuit HistFactory)
+include(${ROOT_USE_FILE})
+
+find_package(Boost 1.45.0 COMPONENTS program_options filesystem system)
+include(${ROOT_USE_FILE})
+
+set(LIBNAME HiggsAnalysisCombinedLimit)
+set(COMBINE_DIR HiggsAnalysis/CombinedLimit)
+
+include_directories(.)
+include_directories(${COMBINE_DIR}/interface)
+
+file(GLOB SOURCE_FILES ${COMBINE_DIR}/src/*.c*)
+file(GLOB HEADER_FILES ${COMBINE_DIR}/interface/*.h)
+
+ROOT_GENERATE_DICTIONARY(${LIBNAME}_xr ${COMBINE_DIR}/interface/classes.h LINKDEF ${COMBINE_DIR}/src/classes_def.xml)
+
+add_library(${LIBNAME} SHARED ${SOURCE_FILES} ${LIBNAME}_xr.cxx)
+set_target_properties(${LIBNAME} PROPERTIES PUBLIC_HEADER "${HEADER_FILES}")
+
+target_link_libraries(${LIBNAME} PUBLIC ${ROOT_LIBRARIES})
+target_link_libraries(${LIBNAME} PUBLIC ${Boost_LIBRARIES})
+
+add_executable(combine ${COMBINE_DIR}/bin/combine.cpp)
+target_link_libraries(combine PUBLIC ${LIBNAME})
+
+install(FILES ${PROJECT_BINARY_DIR}/lib${LIBNAME}_xr_rdict.pcm DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${LIBNAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${COMBINE_DIR}/interface
+)
+install(TARGETS combine DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)' > CMakeLists.txt
+
+    cd HiggsAnalysis/CombinedLimit
+
+    # This is necessary so that the file gets installed in the system,
+    # as it is required by ROOT to load the dictionaries or something like that
+    mv src/classes.h interface/classes.h
+
+    # This step takes some time, but otherwise the code gives indentation errors
+    echo "formatting python code to avoid indentation errors..."
+    autopep8 -i -r .
+
+    # We want to use python3
+    python-modernize -w -n . > /dev/null
+
+    # This was done in the original Makefile, so we do it here too
+    python -m compileall -q python
+
+    cd ../..
+
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+    make -j8 || return 1
+}
+
+package() {
+    mkdir -p $pkgdir/usr/bin
+    cp HiggsAnalysis/CombinedLimit/scripts/* $pkgdir/usr/bin/
+
+    # The python package will be installed in such a way that the  original CMSSW-style
+    # directory structure is kept, for maximal compatibility
+
+    PYTHON_VERSION=$(python -c "import sys; print('{0}.{1}'.format(sys.version_info.major, sys.version_info.minor))")
+    PYTHON_SITE_PACKAGES=$pkgdir/usr/lib/python$PYTHON_VERSION/site-packages
+    PYTHON_INSTALL_DIR=$PYTHON_SITE_PACKAGES/HiggsAnalysis/CombinedLimit
+
+    mkdir -p $PYTHON_INSTALL_DIR
+
+    cp -r HiggsAnalysis/CombinedLimit/python/* $PYTHON_INSTALL_DIR/
+
+    touch $PYTHON_SITE_PACKAGES/HiggsAnalysis/__init__.py
+    touch $PYTHON_SITE_PACKAGES/HiggsAnalysis/CombinedLimit/__init__.py
+
+    cd build
+    make DESTDIR="$pkgdir/" install
+}
