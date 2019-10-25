@@ -40,4 +40,6 @@ package() {
     mkdir -p $PYTHON_SITE_PACKAGES
 
     mv syncfiles/pyfiles/* $PYTHON_SITE_PACKAGES/
+
+    find  $PYTHON_SITE_PACKAGES -type f -exec sed -i -e 's/u"\\u00B1".encode("utf-8")/"±"/g' {} \;
 }

@@ -23,7 +23,6 @@ find_package(ROOT REQUIRED COMPONENTS Core RooFit RooFitCore RooStats Minuit His
 include(${ROOT_USE_FILE})
 
 find_package(Boost 1.45.0 COMPONENTS program_options filesystem system)
-include(${ROOT_USE_FILE})
 
 set(LIBNAME HiggsAnalysisCombinedLimit)
 set(COMBINE_DIR HiggsAnalysis/CombinedLimit)
