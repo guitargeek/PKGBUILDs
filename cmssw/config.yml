@@ -1,0 +1,100 @@
+subsystems:
+    CommonTools:
+        whitelist:
+          - UtilAlgos
+          - Utils
+    DataFormats:
+        blacklist:
+          - L1TMuon
+    SimDataFormats:
+        blacklist:
+          - ValidationFormats
+    Geometry:
+        whitelist:
+          - CommonDetUnit
+          - CommonTopologies
+          - Records
+          - CaloGeometry
+    CondFormats:
+        whitelist:
+          - RPCObjects
+          - L1TObjects
+          - AlignmentRecord
+          - HIObjects
+          - DataRecord
+          - Common
+          - Alignment
+          - RPCObjects
+          - Serialization
+    FWCore:
+        blacklist:
+          - TestProcessor
+    IOPool:
+        whitelist:
+          - TFileAdaptor
+          - Input
+          - Common
+    Utilities:
+        whitelist:
+          - StorageFactory
+          - XrdAdaptor
+
+requirements-nolink:
+  - boost_header
+  - clhepheader
+  - vdt_headers
+  - ofast-flag
+  - sigcpp
+  - CondFormatsExternal
+  - SimDataFormatsJetMatching
+  - DataFormatsCLHEP 
+  - DataFormatsStdDictionaries
+  - DataFormatsWrappedStdDictionaries
+  - DataFormatsPhase2TrackerCluster 
+  - DataFormatsPhase2TrackerDigi
+  - DataFormatsTrackCandidate
+  - DataFormatsTrajectorySeed
+  - DataFormatsTrajectoryState
+  - CondCorePluginSystem
+  - RecoCaloToolsSelectors
+  - roofit
+  - eigen
+  - gcc-atomic
+  - xrootd
+  - catch2
+
+requirements-rename:
+    libuuid: uuid
+    md5: cms-md5
+    clhep: CLHEP
+    hepmc: HepMC
+    heppdt: HepPDT
+    xz: lzma
+    #openssl: ssl
+    openssl: crypto
+    zlib: z
+    tensorflow-cc: tensorflow_cc
+    py2-pybind11: python2.7
+    python: python2.7
+    python3: python3.7m
+
+requirements-include-dir:
+    py2-pybind11: /usr/include/python2.7
+    boost_python: /usr/include/python2.7
+    xrootd: /usr/include/xrootd
+    XrdCl: /usr/include/xrootd
+    catch2: /usr/include/catch2
+    tensorflow-cc: /usr/include/tensorflow
+    geant4: /usr/include/Geant4
+    eigen: /usr/include/eigen3
+    geant4core: /usr/include/Geant4
+
+cmake-lists-root:
+  - cmake_minimum_required(VERSION 3.2)
+  - set(CMAKE_CXX_STANDARD 17)
+  - project(CMSSW)
+  - set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wno-attributes")
+  - add_subdirectory(cmssw)
+
+build-test: False
+build-bin: True

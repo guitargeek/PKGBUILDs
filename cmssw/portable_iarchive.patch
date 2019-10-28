@@ -1,0 +1,18 @@
+113d112
+< #include <boost/math/fpclassify.hpp>
+116d114
+< #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
+119d116
+< #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
+120a118
+> #include <boost/math/special_functions/fpclassify.hpp>
+123d120
+< #if BOOST_VERSION < 103800
+125,127d121
+< #else
+< namespace fp = boost::spirit::math;
+< #endif
+385c379
+<       typedef typename fp::detail::fp_traits<T>::type traits;
+---
+>       typedef typename fp::detail::fp_traits_non_native<T, fp::detail::double_precision> traits;

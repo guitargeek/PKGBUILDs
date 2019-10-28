@@ -1,0 +1,113 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+#PKGEXT='.pkg.tar.xz'
+PKGEXT='.pkg.tar'
+
+MAKEFLAGS="-j$(nproc)"
+
+pkgname=cmssw
+pkgver=11.0.0
+_pkgver=$( echo ${pkgver} | tr '.' '_' ) 
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/cms-sw/cmssw"
+depends=("python" "root" "cmake")
+provides=("rooutil")
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre10.tar.gz"
+        "portable_iarchive.patch"
+        "portable_oarchive.patch"
+        "templateInstantiations.patch"
+        "AnalyticalCurvilinearJacobianSSE.patch"
+        "cmssw_cmake.py"
+        "config.yml"
+        )
+md5sums=('19a9448a1df6e54c5c68dc03f07235b8'
+         'f516923ed8c0d0b7f83322ff23e475c0'
+         'e6d2bf971e6581de0953e9950283cb54'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         )
+options=('!strip')
+
+prepare() {
+    PATCH_DIR=$PWD
+    mv cmssw-CMSSW_11_0_0_pre10 cmssw
+    patch cmssw/CondFormats/Serialization/interface/eos/portable_iarchive.hpp $PATCH_DIR/portable_iarchive.patch
+    patch cmssw/CondFormats/Serialization/interface/eos/portable_oarchive.hpp $PATCH_DIR/portable_oarchive.patch
+    patch cmssw/CondFormats/Serialization/src/templateInstantiations.cc $PATCH_DIR/templateInstantiations.patch
+    patch cmssw/TrackingTools/AnalyticalJacobians/src/AnalyticalCurvilinearJacobianSSE.icc $PATCH_DIR/AnalyticalCurvilinearJacobianSSE.patch
+
+    # empty anyway and confusing BuildFile
+    rm -rf cmssw/CondCore/DBOutputService/bin
+
+    mkdir build
+}
+
+build() {
+    python cmssw_cmake.py config.yml
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/CMSSW_${_pkgver} ..
+    make || return 1
+}
+
+package() {
+
+    CMSSW_BASE=/opt/CMSSW_${_pkgver}
+    CMSSW_BASE=$pkgdir/opt/CMSSW_${_pkgver}
+
+    cd build
+    make DESTDIR="$pkgdir" install
+    cp lib/*.pcm $CMSSW_BASE/lib
+    cp lib/*.rootmap $CMSSW_BASE/lib
+    cd ..
+
+    mkdir -p $CMSSW_BASE
+    cp -r cmssw $CMSSW_BASE/src
+
+    cd $CMSSW_BASE/src
+
+    # Install python directory structure
+    for dir in $(find . -maxdepth 3 -mindepth 3 -type d | grep "/python")
+    do
+        touch ${dir}/__init__.py
+        mkdir -p $CMSSW_BASE/python/${dir::-7}
+        rmdir $CMSSW_BASE/python/${dir::-7}
+        ln -s /opt/CMSSW_${_pkgver}/src/${dir:2} $CMSSW_BASE/python/${dir::-7}
+    done
+
+    for dir in $(find $CMSSW_BASE/python -maxdepth 1 -mindepth 1 -type d)
+    do
+        touch ${dir}/__init__.py
+    done
+
+    touch $CMSSW_BASE/python/__init__.py
+
+    cd $CMSSW_BASE/python
+    cd $CMSSW_BASE/src
+
+    # To get scripts like edmDumpEventContent
+    cp FWCore/PythonUtilities/scripts/* ../bin/
+    autopep8 -i -r ../bin
+    python-modernize -w -n ../bin/ > /dev/null
+    autopep8 -i -r ../bin/edmDumpEventContent
+    python-modernize -w -n ../bin/edmDumpEventContent > /dev/null
+    python-modernize -w -n ../src/PhysicsTools/PythonAnalysis/python > /dev/null
+
+    # Refresh EDM Plugins
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CMSSW_BASE/lib
+    $CMSSW_BASE/bin/edmPluginRefresh $CMSSW_BASE/lib
+
+    # Set up the environment variables
+    mkdir -p $pkgdir/etc/profile.d
+    echo "export CMSSW_BASE=/opt/CMSSW_${_pkgver}"> $pkgdir/etc/profile.d/cmssw.sh
+    echo '
+export PATH=$PATH:$CMSSW_BASE/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CMSSW_BASE/lib
+export PYTHONPATH=$PYTHONPATH:$CMSSW_BASE/python
+export PYTHON3PATH=$PYTHON3PATH:$CMSSW_BASE/python
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:$CMSSW_BASE/src
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$CMSSW_BASE/src' >> $pkgdir/etc/profile.d/cmssw.sh
+    chmod +x $pkgdir/etc/profile.d/cmssw.sh
+}

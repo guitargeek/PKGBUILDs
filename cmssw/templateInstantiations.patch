@@ -1,0 +1,13 @@
+--- CondFormats/Serialization/src/templateInstantiations.cc	2019-10-28 17:58:15.586483176 +0100
++++ CondFormats/Serialization/src/templateInstantiations.cc	2019-10-28 17:58:12.363149867 +0100
+@@ -4,8 +4,8 @@
+ 
+ #ifndef NO_EXPLICIT_TEMPLATE_INSTANTIATION
+ 
+-#include <boost/archive/impl/basic_binary_iarchive.ipp>
+-#include <boost/archive/impl/basic_binary_iprimitive.ipp>
++//#include <boost/archive/impl/basic_binary_iarchive.ipp>
++//#include <boost/archive/impl/basic_binary_iprimitive.ipp>
+ 
+ #if BOOST_VERSION < 104000
+ #include <boost/archive/impl/archive_pointer_iserializer.ipp>

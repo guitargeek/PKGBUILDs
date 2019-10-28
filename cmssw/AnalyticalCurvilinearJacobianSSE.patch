@@ -1,0 +1,4 @@
+51c51
+<   tt = mathSSE::sqrt(hadd(tt, tt));
+---
+>   tt = mathSSE::sqrt(tt + tt);
