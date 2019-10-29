@@ -1,8 +1,20 @@
 subsystems:
+    # Alignment:
+    # AnalysisAlgos:
+    # AnalysisDataFormats:
+    # BigProducts:
+    # CalibCalorimetry:
+    # CalibFormats:
+    # CalibMuon:
+    # CalibPPS:
+    # CalibTracker:
+    # Calibration:
+    # CalibOnlineTools:
     CommonTools:
         whitelist:
           - UtilAlgos
           - Utils
+    # CondCore:
     CondFormats:
         whitelist:
           - RPCObjects
@@ -14,31 +26,108 @@ subsystems:
           - Alignment
           - RPCObjects
           - Serialization
+    # CondTools:
+    # Configuration
+    # DPGAnalysis
+    # DQM
+    # DQMOffline
+    # DQMServices
     DataFormats:
         blacklist:
           - L1TMuon
+    # DetectorDescription:
+    # DiffractiveForwardAnalysis
+    # Documentation
+    # EgammaAnalysis
+    # ElectroWeakAnalysis
+    # EventFilter:
     FWCore:
         blacklist:
           - TestProcessor
+    # FastSimDataFormats:
+    # FastSimulation
+    # Fireworks
+    # GeneratorInterface
     Geometry:
         whitelist:
           - CommonDetUnit
           - CommonTopologies
           - Records
           - CaloGeometry
+    # GeometryReaders
+    # HLTrigger:
+    # HLTriggerOffline
+    # HeavyFlavorAnalysis
+    # HeterogeneousCore
+    # HiggsAnalysis:
+    # IOMC
     IOPool:
         whitelist:
           - TFileAdaptor
           - Input
           - Common
+    # IORawData:
+    # IgTools
+    # JetMETAnalysis
+    # JetMETCorrections:
+    # L1Trigger:
+    # L1TriggerConfig:
+    # L1TriggerOffline:
+    # MagneticField:
+    # Mixing:
+    # MuonAnalysis
+    # OnlineDB
+    # PerfTools
+    # PhysicsTools:
+    # QCDAnalysis:
+    # RecoBTag:
+    # RecoBTau:
+    # RecoCTPPS:
+    # RecoCaloTools:
+    # RecoEcal:
+    # RecoEgamma:
+    # RecoHGCal:
+    # RecoHI
+    # RecoJets:
+    # RecoLocalCalo:
+    # RecoLocalFastTime:
+    # RecoLocalMuon:
+    # RecoLocalTracker:
+    # RecoLuminosity:
+    # RecoMET:
+    # RecoMTD:
+    # RecoMuon:
+    # RecoParticleFlow:
+    # RecoPixelVertexing:
+    # RecoRomanPot
+    # RecoTBCalo:
+    # RecoTauTag
+    # RecoTracker:
+    # RecoVertex:
+    # SLHCUpgradeSimulations:
+    # SUSYBSMAnalysis:
+    # SimCalorimetry:
     SimDataFormats:
         blacklist:
           - ValidationFormats
+    # SimFastTiming
+    # SimG4CMS
+    # SimG4Core
+    # SimGeneral:
+    # SimMuon:
+    # SimPPS:
+    # SimRomanPot
+    # SimTracker:
     TBDataFormats:
+    # TauAnalysis
+    # TopQuarkAnalysis
+    # TrackPropagation:
+    # TrackingTools:
     Utilities:
         whitelist:
           - StorageFactory
           - XrdAdaptor
+    # Validation
 
 requirements-nolink:
   - boost_header

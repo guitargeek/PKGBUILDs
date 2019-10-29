@@ -24,11 +24,10 @@ source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre10.tar.gz"
 md5sums=('19a9448a1df6e54c5c68dc03f07235b8'
          'f516923ed8c0d0b7f83322ff23e475c0'
          'e6d2bf971e6581de0953e9950283cb54'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         )
+         '182c36a3d8daaa63dffac905333c4915'
+         'f6b7b16467001124e47e4666a987277e'
+         'a205c7b58c4f126302888345a9d63d75'
+         'dab247744fcdde0cb5ef22b87b3cfd9f')
 options=('!strip')
 
 prepare() {
