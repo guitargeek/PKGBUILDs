@@ -3,18 +3,6 @@ subsystems:
         whitelist:
           - UtilAlgos
           - Utils
-    DataFormats:
-        blacklist:
-          - L1TMuon
-    SimDataFormats:
-        blacklist:
-          - ValidationFormats
-    Geometry:
-        whitelist:
-          - CommonDetUnit
-          - CommonTopologies
-          - Records
-          - CaloGeometry
     CondFormats:
         whitelist:
           - RPCObjects
@@ -26,14 +14,27 @@ subsystems:
           - Alignment
           - RPCObjects
           - Serialization
+    DataFormats:
+        blacklist:
+          - L1TMuon
     FWCore:
         blacklist:
           - TestProcessor
+    Geometry:
+        whitelist:
+          - CommonDetUnit
+          - CommonTopologies
+          - Records
+          - CaloGeometry
     IOPool:
         whitelist:
           - TFileAdaptor
           - Input
           - Common
+    SimDataFormats:
+        blacklist:
+          - ValidationFormats
+    TBDataFormats:
     Utilities:
         whitelist:
           - StorageFactory

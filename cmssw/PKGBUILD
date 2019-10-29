@@ -105,9 +105,11 @@ package() {
     echo '
 export PATH=$PATH:$CMSSW_BASE/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CMSSW_BASE/lib
-export PYTHONPATH=$PYTHONPATH:$CMSSW_BASE/python
-export PYTHON3PATH=$PYTHON3PATH:$CMSSW_BASE/python
+export PYTHONPATH=$PYTHONPATH:$CMSSW_BASE/python:$CMSSW_BASE/lib
+export PYTHON3PATH=$PYTHON3PATH:$CMSSW_BASE/python:$CMSSW_BASE/lib
 export C_INCLUDE_PATH=$C_INCLUDE_PATH:$CMSSW_BASE/src
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$CMSSW_BASE/src' >> $pkgdir/etc/profile.d/cmssw.sh
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$CMSSW_BASE/src
+
+export CMSSW_SEARCH_PATH=$CMSSW_BASE/src' >> $pkgdir/etc/profile.d/cmssw.sh
     chmod +x $pkgdir/etc/profile.d/cmssw.sh
 }

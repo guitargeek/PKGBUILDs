@@ -185,35 +185,35 @@ def lcg_dict_generation(lib_name, headers, xmls):
     for header, xml, source in zip(headers, xmls, sources):
         cmake += [
             """
-    add_custom_command(OUTPUT """
-            + source
-            + """
-            COMMAND genreflex ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-            + header
-            + """
-            -s ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-            + xml
-            + """
-            -o """
-            + source
-            + """
-            --deep
-            --rootmap=${CMAKE_BINARY_DIR}/lib/"""
-            + lib_name
-            + """_xr.rootmap
-            --rootmap-lib=${CMAKE_BINARY_DIR}/lib/lib"""
-            + lib_name
-            + """.so
-            --library ${CMAKE_BINARY_DIR}/lib/lib"""
-            + lib_name
-            + """.so --multiDict
-            -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-            + header
-            + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-            + xml
-            + """
-            )""",
+add_custom_command(OUTPUT """
+    + source
+    + """
+    COMMAND genreflex ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+    + header
+    + """
+    -s ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+    + xml
+    + """
+    -o """
+    + source
+    + """
+    --deep
+    --rootmap=${CMAKE_BINARY_DIR}/lib/"""
+    + lib_name
+    + """_xr.rootmap
+    --rootmap-lib=${CMAKE_BINARY_DIR}/lib/lib"""
+    + lib_name
+    + """.so
+    --library ${CMAKE_BINARY_DIR}/lib/lib"""
+    + lib_name
+    + """.so --multiDict
+    -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+    + header
+    + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+    + xml
+    + """
+)""",
             "",
         ]
     return cmake
