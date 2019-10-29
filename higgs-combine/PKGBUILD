@@ -10,7 +10,7 @@ provides=("higgs-combine")
 source=(https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/archive/v8.0.1.tar.gz)
 md5sums=('b50c47cae0f100124a2455effddeae07')
 
-build() {
+prepare() {
     mkdir HiggsAnalysis
     mv HiggsAnalysis-CombinedLimit-$pkgver HiggsAnalysis/CombinedLimit
     echo 'project(HiggsAnalysis-CombinedLimit CXX)
@@ -67,9 +67,10 @@ install(TARGETS combine DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)' > CMakeLists.t
     # This was done in the original Makefile, so we do it here too
     python -m compileall -q python
 
-    cd ../..
-
     mkdir build
+}
+
+build() {
     cd build
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
     make -j8 || return 1
