@@ -8,14 +8,17 @@ arch=("i686" "x86_64")
 url="https://github.com/AIDASoft/DD4hep"
 provides=("dd4hep")
 source=("https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
-        "tbb.patch")
+        "tbb_fix_1.patch"
+        "tbb_fix_2.patch")
 sha512sums=('3acd4e4e002e3a9fa4c72632c3b6b222b0e6ccbe5e92852ae7dfe4a3992c8e337783e9308a97427278ebc1a4c0079b7f518a9127a483335abfecc96cacb6d30d'
-            '4f28c4abf23c73cfb5529d1ee3ca6ffe3f90d730a15778a753d8c23730fe1a59a2b899ab3faeda55322c272673d486264f2177ce9da0c8e11ddfdefad802fe60')
+            '4f28c4abf23c73cfb5529d1ee3ca6ffe3f90d730a15778a753d8c23730fe1a59a2b899ab3faeda55322c272673d486264f2177ce9da0c8e11ddfdefad802fe60'
+            '3893c932175d28bfdfe420408962ba21321234543f8a7a47aece1b672cd07eddcf16d2c2722546c84fb08e24d29b290d60cdd2d837b8ce8cf032f109d274d5a9')
 
 prepare() {
-    mkdir -p build
+    patch DD4hep-${_pkgver}/DDDigi/CMakeLists.txt tbb_fix_1.patch
+    patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp tbb_fix_2.patch
 
-    patch DD4hep-${_pkgver}/DDDigi/CMakeLists.txt tbb.patch
+    mkdir build
 }
 
 build() {

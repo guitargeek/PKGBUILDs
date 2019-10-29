@@ -71,7 +71,6 @@ requirements-rename:
     hepmc: HepMC
     heppdt: HepPDT
     xz: lzma
-    #openssl: ssl
     openssl: crypto
     zlib: z
     tensorflow-cc: tensorflow_cc
