@@ -1,0 +1,94 @@
+language: c++
+compiler: gcc
+dist: xenial
+cache: false
+
+os: linux
+
+addons:
+  apt:
+    sources:
+      - travis-ci/sqlite3
+      - ubuntu-toolchain-r-test
+    update: true
+    packages:
+      - sqlite3
+      - cmake
+      - gcc-7
+      - g++-7
+      - build-essential
+      - gcc-multilib
+      - g++-multilib
+      - libboost-all-dev
+      - dpkg-dev
+      - binutils
+      - libx11-dev
+      - libxpm-dev
+      - libxft-dev
+      - libxext-dev
+      - gfortran libssl-dev
+      - libpcre3-dev
+      - xlibmesa-glu-dev
+      - libglew1.5-dev
+      - libftgl-dev
+      - libmysqlclient-dev
+      - libfftw3-dev
+      - libcfitsio-dev
+      - graphviz-dev
+      - libavahi-compat-libdnssd-dev
+      - libldap2-dev
+      - libxml2-dev
+      - libkrb5-dev
+      - libgsl0-dev
+      - libqt4-dev
+      - libxerces-c-dev
+
+before_install:
+- |
+  # Link gcc-6 and g++-7 to their standard commands
+  sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
+  sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
+  # Export CC and CXX to tell cmake which compiler to use
+  export CC=/usr/bin/gcc-7
+  export CXX=/usr/bin/g++-7
+  # Check versions of gcc, g++ and cmake
+  gcc -v && g++ -v && cmake --version
+  # Run other before_install commands next
+  OPT_DIR=~/opt
+  ROOT_TAR=root_v6.18.00.Linux-ubuntu18-x86_64-gcc7.4.tar.gz
+  mkdir $OPT_DIR
+  wget https://root.cern/download/$ROOT_TAR -O $OPT_DIR/$ROOT_TAR
+  tar -xf $OPT_DIR/$ROOT_TAR --directory=$OPT_DIR/
+  git clone https://github.com/leethomason/tinyxml2
+  cd tinyxml2
+  mkdir build
+  cd build
+  cmake ..
+  make -j8
+  sudo make install
+  cd ../..
+  wget https://github.com/intel/tbb/archive/2019_U8.tar.gz
+  tar -xf 2019_U8.tar.gz
+  cd tbb-2019_U8
+  make -j8 stdver=c++14
+  sudo cp -r include/tbb /usr/include/
+  ls build
+  sudo cp build/linux_intel64_gcc_cc5.4.0_libc2.23_kernel4.15.0_release/libtbb.so.2 /usr/lib/
+  sudo cp build/linux_intel64_gcc_cc5.4.0_libc2.23_kernel4.15.0_release/libtbbmalloc.so.2 /usr/lib/
+  sudo cp build/linux_intel64_gcc_cc5.4.0_libc2.23_kernel4.15.0_release/libtbbmalloc_proxy.so.2 /usr/lib/
+  sudo ln -s /usr/lib/libtbb.so.2 /usr/lib/libtbb.so
+  sudo ln -s /usr/lib/libtbbmalloc.so.2 /usr/lib/libtbbmalloc.so
+  sudo ln -s /usr/lib/libtbbmalloc_proxy.so.2 /usr/lib/libtbbmalloc_proxy.so
+  cd ..
+
+install:
+- |
+  source $OPT_DIR/root/bin/thisroot.sh
+
+script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - python3 checkout.py
+  - mkdir build
+  - cd build
+  - cmake ..
+  - time make -j8

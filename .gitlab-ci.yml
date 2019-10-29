@@ -1,0 +1,10 @@
+cmssw-cmake-tests:
+    script:
+      - CMSSW_RELEASE=CMSSW_11_0_0_pre4
+      - wget https://github.com/cms-sw/cmssw/archive/$CMSSW_RELEASE.tar.gz
+      - python cmssw_cmake.py
+      - sh scripts/setup-libcms-md5.sh
+      - mkdir build
+      - cd build
+      - cmake3 ..
+      - make -j8
