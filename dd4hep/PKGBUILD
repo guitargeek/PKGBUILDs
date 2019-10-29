@@ -1,18 +1,24 @@
-# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+# Maintainer: Jonas Rembser <jonas.rembser gmail com>
 
 pkgname=dd4hep
-pkgver=01.10
+pkgver=01.11
+_pkgver=$( echo ${pkgver} | tr '.' '-' ) 
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/AIDASoft/DD4hep"
 provides=("dd4hep")
-source=("git+https://github.com/AIDASoft/DD4hep#tag=v01-10")
-sha512sums=('SKIP')
+source=("https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
+        "tbb.patch")
+sha512sums=('3acd4e4e002e3a9fa4c72632c3b6b222b0e6ccbe5e92852ae7dfe4a3992c8e337783e9308a97427278ebc1a4c0079b7f518a9127a483335abfecc96cacb6d30d'
+            '4f28c4abf23c73cfb5529d1ee3ca6ffe3f90d730a15778a753d8c23730fe1a59a2b899ab3faeda55322c272673d486264f2177ce9da0c8e11ddfdefad802fe60')
+
+prepare() {
+    mkdir -p build
+
+    patch DD4hep-${_pkgver}/DDDigi/CMakeLists.txt tbb.patch
+}
 
 build() {
-    cd "${srcdir}/DD4hep"
-
-    mkdir build
     cd build
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -23,13 +29,14 @@ build() {
           -DBUILD_TESTING=ON \
           -DROOT_DIR=$ROOTSYS \
           -DCMAKE_CXX_STANDARD=17 \
-          ..
+          -DTBB_INCLUDE_DIR=/usr/include/tbb \
+          -DTBB_LIBRARY=tbb \
+          ../DD4hep-${_pkgver}
 
     make -j8
 }
 
 package() {
-    cd "${srcdir}/DD4hep"
     mkdir $pkgdir/usr
     cd build
     make DESTDIR="$pkgdir/" install
