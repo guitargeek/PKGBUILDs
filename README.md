@@ -19,7 +19,7 @@ represent CMSSW itself:
 The idea was to have a python script that converts the `BuildFile.xml` files for scram to `CMakeLists.txt` files.
 Unfortunately, not the whole CMSSW is contained in this package (because it would take way to long to compile), but just
 the **FWCore** and **DataFormats** subsystems. This is already pretty cool: you can now open CMS AOD and MiniAOD files
-on you laptop and read all the objects, and you can write a little test analyzier to check if the framework works in
+on your laptop and read all the objects, and you can write a little test analyzier to check if the framework works in
 general, which you can find in the [examples directory](cmssw/examples).
 
 This is actually all the functionality I want from CMSSW on my laptop, so I won't work on this much anymore. Probably I
