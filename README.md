@@ -26,6 +26,10 @@ This is actually all the functionality I want from CMSSW on my laptop, so I won'
 will just streamline the currently very messy cmake conversion script at some point when I have time but that's about it.
 However, you are interested in making the cmssw package for Arch Linux more complete, I would be happy to work with you!
 
+**Hint:** the package takes long to build! If you get an error on the way because a requirement is missing, you should
+relaunch the build process with `makepkg --noextract` such that the sources are not overwritten and cmake can just
+continue where it left off after you fixed the error.
+
 
 ## Other general CMS packages
 
