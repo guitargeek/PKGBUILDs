@@ -46,7 +46,6 @@ prepare() {
 
 build() {
     python cmssw_cmake.py config.yml
-    python cmssw_cmake.py config.yml # works around stupid bug in cmss_cmake
     cd build
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/CMSSW_${_pkgver} ..
     make || return 1

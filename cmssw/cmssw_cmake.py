@@ -161,13 +161,6 @@ def cmake_install_executable(bin_name):
     return ["install(TARGETS ", bin_name, "DESTINATION ${CMAKE_INSTALL_BINDIR})"]
 
 
-def make_subsystems_cmake(subsystems):
-    cmake = ["include_directories(.)", ""]
-    for subsystem in subsystems:
-        cmake += ["add_subdirectory(" + subsystem + ")"]
-    write_cmake_if_not_same("cmssw", cmake)
-
-
 def interpret_files(file):
     files = []
     for f in file.split(","):
@@ -291,9 +284,6 @@ if __name__ == "__main__":
 
     config = load_config(args.config)
 
-    # Create the CMakeLists to include the subsystems
-    make_subsystems_cmake(config["subsystems"])
-
     os.chdir("cmssw")
 
     packages_in_subsystem = {subsystem: set() for subsystem in config["subsystems"]}
@@ -328,19 +318,6 @@ if __name__ == "__main__":
             cmake = []
 
             subfolders = [f.path for f in os.scandir(root) if f.is_dir()]
-
-            for subfolder in subfolders:
-                if subfolder.endswith("python"):
-                    continue
-                if (
-                    subfolder.endswith("test")
-                    and not config["build-test"]
-                    or subfolder.endswith("bin")
-                    and not config["build-bin"]
-                ):
-                    continue
-                if os.path.exists(os.path.join(subfolder, "CMakeLists.txt")):
-                    cmake += ["add_subdirectory(" + os.path.basename(subfolder) + ")"]
 
             if os.path.exists(os.path.join(root, "BuildFile.xml")):
 
@@ -409,21 +386,14 @@ if __name__ == "__main__":
                 )
                 write_cmake_if_not_same(root, build_xml_to_cmake(build_file, root_node))
 
+    # Finally, include all subdirectories into which we have written CMakeList files
+    cmake = ["include_directories(.)", ""]
     for subsystem, packages in packages_in_subsystem.items():
-
-        subdirectories = []
-
         for package in packages:
-            subdirectories.append(package)
-            write_cmake_if_not_existing(os.path.join(subsystem, package), "")
-
-        cmake = []
-
-        for subdirectory in sorted(subdirectories):
-            cmake += ["add_subdirectory(" + subdirectory + ")"]
-
-        if len(cmake) > 0:
-            write_cmake_if_not_same(subsystem, cmake)
+            for root, _, files in os.walk(os.path.join(subsystem, package)):
+                if "CMakeLists.txt" in files:
+                    cmake += ["add_subdirectory(" + root + ")"]
+    write_cmake_if_not_same(".", cmake)
 
     os.chdir("..")
 
