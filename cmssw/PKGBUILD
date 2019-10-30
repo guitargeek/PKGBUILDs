@@ -13,33 +13,40 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre10.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre11.tar.gz"
         "portable_iarchive.patch"
         "portable_oarchive.patch"
         "templateInstantiations.patch"
         "AnalyticalCurvilinearJacobianSSE.patch"
         "cmssw_cmake.py"
         "config.yml"
+        "clean_buildfiles.py"
         )
-md5sums=('19a9448a1df6e54c5c68dc03f07235b8'
+md5sums=('6cf7c1f2cb926bb796d3406566da857f'
          'f516923ed8c0d0b7f83322ff23e475c0'
          'e6d2bf971e6581de0953e9950283cb54'
          '182c36a3d8daaa63dffac905333c4915'
          'f6b7b16467001124e47e4666a987277e'
+         'SKIP'
          'SKIP'
          'SKIP')
 options=('!strip')
 
 prepare() {
     PATCH_DIR=$PWD
-    mv cmssw-CMSSW_11_0_0_pre10 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre11 cmssw
     patch cmssw/CondFormats/Serialization/interface/eos/portable_iarchive.hpp $PATCH_DIR/portable_iarchive.patch
     patch cmssw/CondFormats/Serialization/interface/eos/portable_oarchive.hpp $PATCH_DIR/portable_oarchive.patch
     patch cmssw/CondFormats/Serialization/src/templateInstantiations.cc $PATCH_DIR/templateInstantiations.patch
     patch cmssw/TrackingTools/AnalyticalJacobians/src/AnalyticalCurvilinearJacobianSSE.icc $PATCH_DIR/AnalyticalCurvilinearJacobianSSE.patch
 
-    # empty anyway and confusing BuildFile
+    # remove empty and confusing BuildFile
     rm -rf cmssw/CondCore/DBOutputService/bin
+
+    # clean BuildFiles so we don't include some unneeded dependencies
+    cd cmssw/DataFormats
+    python ../../clean_buildfiles.py
+    cd ../../
 
     mkdir build
 }
