@@ -43,6 +43,13 @@ prepare() {
     # remove empty and confusing BuildFile
     rm -rf cmssw/CondCore/DBOutputService/bin
 
+    # remove unnsecessary BuildFiles
+    cd cmssw
+    rm IORawData/DTCommissioning/BuildFile.xml
+    rm RecoCaloTools/Navigation/BuildFile.xml
+    rm RecoCaloTools/Selectors/BuildFile.xml
+    cd ..
+
     # clean BuildFiles so we don't include some unneeded dependencies
     cd cmssw/DataFormats
     python ../../clean_buildfiles.py

@@ -1,13 +1,42 @@
 import glob
 
 
-def write_cmake_if_not_existing(path, text):
-    if type(text) == list:
-        text = "\n".join(text)
-    filename = os.path.join(path, "CMakeLists.txt")
-    if not os.path.exists(filename):
-        with open(filename, "w") as f:
-            f.write(text)
+class CMakeLists(object):
+    def __init__(self, path):
+        self._path = os.path.join(os.getcwd(), path)
+        self._txt = []
+
+    def __iadd__(self, rhs):
+        self._txt += rhs
+        return self
+
+    def add_library(self, target, files):
+        self._txt += [
+            "add_library(" + target + " SHARED " + files + ")",
+            "set_target_properties(" + target + " PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
+            "install(TARGETS " + target + " LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})",
+        ]
+
+    def add_executable(self, target, files):
+        self._txt += [
+            "add_executable(" + target + " " + files + ")",
+            "set_target_properties(" + target + " PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
+            "install(TARGETS " + target + " DESTINATION ${CMAKE_INSTALL_BINDIR})",
+        ]
+
+    def write(self):
+        text = self._txt
+        if type(text) == list:
+            text = "\n".join(text)
+        filename = os.path.join(self._path, "CMakeLists.txt")
+        if not os.path.exists(filename):
+            with open(filename, "w") as f:
+                f.write(text)
+        with open(filename, "r") as f:
+            old_text = f.read()
+        if old_text != text:
+            with open(filename, "w") as f:
+                f.write(text)
 
 
 def lcg_dict_sources(lib_name, n_dicts):
@@ -24,7 +53,9 @@ def write_cmake_if_not_same(path, text):
     if type(text) == list:
         text = "\n".join(text)
     filename = os.path.join(path, "CMakeLists.txt")
-    write_cmake_if_not_existing(path, text)
+    if not os.path.exists(filename):
+        with open(filename, "w") as f:
+            f.write(text)
     with open(filename, "r") as f:
         old_text = f.read()
     if old_text != text:
@@ -70,7 +101,9 @@ def cmake_dependency_lines(target, dependency, config):
     dependency = dependency.replace("/", "")
 
     if dependency in config["requirements-include-dir"]:
-        cmake += ["include_directories(" + config["requirements-include-dir"][dependency] + ")"]
+        cmake += [
+            "target_include_directories(" + target + " PUBLIC " + config["requirements-include-dir"][dependency] + ")"
+        ]
 
     if dependency in config["requirements-nolink"]:
         return cmake
@@ -87,8 +120,6 @@ def cmake_dependency_lines(target, dependency, config):
         ]
     elif dependency == "eigen":
         cmake += ["find_package (Eigen3 3.3 REQUIRED NO_MODULE)", "target_link_libraries(" + target + " Eigen3::Eigen)"]
-    elif dependency == "tensorflow_cc":
-        cmake += ["include_directories(/usr/include/tensorflow)", "target_link_libraries(" + target + " tensorflow_cc)"]
     else:
         cmake += ["target_link_libraries(" + target + " " + dependency + ")"]
 
@@ -120,6 +151,11 @@ def parse_elements(target, root_node, config):
 
     for elem in root_node:
         if elem.tag == "flags":
+            if elem.get("cppflags"):
+                cmake += [
+                    "set_target_properties(" + target + ' PROPERTIES COMPILE_FLAGS "' + elem.get("cppflags") + '")'
+                ]
+                cmake += ["set_target_properties(" + target + ' PROPERTIES PREFIX "plugin")']
             if elem.get("EDM_PLUGIN"):
                 cmake += ["set_target_properties(" + target + ' PROPERTIES PREFIX "plugin")']
             if elem.get("LCG_DICT_HEADER"):
@@ -148,19 +184,6 @@ def parse_elements(target, root_node, config):
     return cmake, flags
 
 
-def cmake_install_library(lib_name):
-    return [
-        "install(TARGETS ",
-        lib_name,
-        "LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}",
-        "PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})",
-    ]
-
-
-def cmake_install_executable(bin_name):
-    return ["install(TARGETS ", bin_name, "DESTINATION ${CMAKE_INSTALL_BINDIR})"]
-
-
 def interpret_files(file):
     files = []
     for f in file.split(","):
@@ -179,42 +202,44 @@ def lcg_dict_generation(lib_name, headers, xmls):
         cmake += [
             """
 add_custom_command(OUTPUT """
-    + source
-    + """
+            + source
+            + """
     COMMAND genreflex ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-    + header
-    + """
+            + header
+            + """
     -s ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-    + xml
-    + """
+            + xml
+            + """
     -o """
-    + source
-    + """
+            + source
+            + """
     --deep
     --rootmap=${CMAKE_BINARY_DIR}/lib/"""
-    + lib_name
-    + """_xr.rootmap
+            + lib_name
+            + """_xr.rootmap
     --rootmap-lib=${CMAKE_BINARY_DIR}/lib/lib"""
-    + lib_name
-    + """.so
+            + lib_name
+            + """.so
     --library ${CMAKE_BINARY_DIR}/lib/lib"""
-    + lib_name
-    + """.so --multiDict
+            + lib_name
+            + """.so --multiDict
     -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-    + header
-    + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
-    + xml
-    + """
+            + header
+            + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+            + xml
+            + """
 )""",
             "",
         ]
     return cmake
 
 
-def build_xml_to_cmake(build_file, default_lib_name=None, in_plugin_dir=False):
+def build_xml_to_cmake(root, build_file, default_lib_name=None, in_plugin_dir=False):
 
-    cmake = [
+    cmake = CMakeLists(root)
+
+    cmake += [
         "",
         "list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})",
         "find_package(ROOT REQUIRED COMPONENTS Core MathCore)",
@@ -243,14 +268,10 @@ def build_xml_to_cmake(build_file, default_lib_name=None, in_plugin_dir=False):
             if lib_name is None:
                 lib_name = files.split(" ")[0].split(".")[0]
 
-            cmake += [
-                "add_library(" + lib_name + " SHARED " + files + ")",
-                "set_target_properties(" + lib_name + " PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
-            ]
+            cmake.add_library(lib_name, files)
             cmake += parse_elements(lib_name, elem, config)[0]
             for dependency in global_dependencies:
                 cmake += cmake_dependency_lines(lib_name, dependency, config)
-            cmake += cmake_install_library(lib_name)
         if elem.tag == "bin":
             bin_name = elem.get("name")
             files = interpret_files(elem.get("file"))
@@ -258,16 +279,12 @@ def build_xml_to_cmake(build_file, default_lib_name=None, in_plugin_dir=False):
             if bin_name is None:
                 bin_name = files.split(" ")[0].split(".")[0]
 
-            cmake += [
-                "add_executable(" + bin_name + " " + files + ")",
-                "set_target_properties(" + bin_name + " PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
-            ]
+            cmake.add_executable(bin_name, files)
             cmake += parse_elements(bin_name, elem, config)[0]
             for dependency in global_dependencies:
                 cmake += cmake_dependency_lines(bin_name, dependency, config)
-            cmake += cmake_install_executable(bin_name)
 
-    return cmake
+    cmake.write()
 
 
 if __name__ == "__main__":
@@ -315,11 +332,9 @@ if __name__ == "__main__":
 
         if root.count("/") == 2:
 
-            cmake = []
-
-            subfolders = [f.path for f in os.scandir(root) if f.is_dir()]
-
             if os.path.exists(os.path.join(root, "BuildFile.xml")):
+
+                cmake = CMakeLists(root)
 
                 build_file = os.path.join(root, "BuildFile.xml")
                 lib_name = subsystem + package
@@ -357,19 +372,11 @@ if __name__ == "__main__":
 
                 gen_sources = lcg_dict_sources(lib_name, len(flags["LCG_DICT_HEADER"]))
 
-                cmake += [
-                    "add_library(" + lib_name + " SHARED ${SOURCE_FILES} " + " ".join(gen_sources) + ")",
-                    "set_target_properties("
-                    + lib_name
-                    + " PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
-                ]
+                cmake.add_library(lib_name, "${SOURCE_FILES} " + " ".join(gen_sources))
 
                 cmake += cmake_from_build_file
 
-                cmake += cmake_install_library(lib_name)
-
-            if len(source_files) > 0 or len(gen_sources) > 0:
-                write_cmake_if_not_same(root, cmake)
+                cmake.write()
 
         for file in files:
             if (
@@ -384,17 +391,21 @@ if __name__ == "__main__":
                 root_node = root_node_from_build_file(
                     build_file, default_lib_name=subsystem + package, in_plugin_dir=os.path.basename(root) == "plugins"
                 )
-                write_cmake_if_not_same(root, build_xml_to_cmake(build_file, root_node))
+
+                build_xml_to_cmake(root, build_file, root_node)
 
     # Finally, include all subdirectories into which we have written CMakeList files
-    cmake = ["include_directories(.)", ""]
+    cmake = CMakeLists(".")
+    cmake += ["include_directories(.)", ""]
     for subsystem, packages in packages_in_subsystem.items():
         for package in packages:
             for root, _, files in os.walk(os.path.join(subsystem, package)):
                 if "CMakeLists.txt" in files:
                     cmake += ["add_subdirectory(" + root + ")"]
-    write_cmake_if_not_same(".", cmake)
+    cmake.write()
 
     os.chdir("..")
 
-    write_cmake_if_not_same(".", config["cmake-lists-root"])
+    cmake = CMakeLists(".")
+    cmake += config["cmake-lists-root"]
+    cmake.write()

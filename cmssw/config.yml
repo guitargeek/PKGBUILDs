@@ -62,10 +62,6 @@ subsystems:
     # HiggsAnalysis:
     # IOMC
     IOPool:
-        whitelist:
-          - TFileAdaptor
-          - Input
-          - Common
     # IORawData:
     # IgTools
     # JetMETAnalysis
@@ -135,6 +131,7 @@ requirements-nolink:
   - vdt_headers
   - ofast-flag
   - sigcpp
+  - IORawDataDTCommissioning
   - CondFormatsExternal
   - SimDataFormatsJetMatching
   - DataFormatsCLHEP 
