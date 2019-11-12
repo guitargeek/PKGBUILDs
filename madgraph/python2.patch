@@ -1,0 +1,22 @@
+diff -ur tests/acceptance_tests/test_histograms.py tests/acceptance_tests/test_histograms.py
+--- a/tests/acceptance_tests/test_histograms.py
++++ b/tests/acceptance_tests/test_histograms.py
+@@ -47,5 +47,4 @@
+           histo_list.output(pjoin('%s','HistoOut'), format = 'gnuplot');
+         ''' % (sys.path, _file_path, self.IOpath)
+ 
+-        os.system('echo "%s" | python' % line) 
+-
++++ b/       os.system('echo "%s" | python2' % line)
+diff -ur tests/acceptance_tests/test_model_equivalence.py tests/acceptance_tests/test_model_equivalence.py
+--- a/tests/acceptance_tests/test_model_equivalence.py
++++ b/tests/acceptance_tests/test_model_equivalence.py
+@@ -322,7 +322,7 @@
+             pass
+         # prepare for a local compilation
+         
+-        subprocess.call(['python','write_param_card.py'], cwd=os.path.join(MG5DIR,'models','sm'),
++++ b/       subprocess.call(['python2','write_param_card.py'], cwd=os.path.join(MG5DIR,'models','sm'),
+                         stdout=subprocess.PIPE)
+         files.cp(os.path.join(MG5DIR,'models','sm','param_card.dat'),
+                  join('param_card.dat'))
