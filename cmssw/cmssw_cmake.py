@@ -167,7 +167,7 @@ def parse_elements(target, root_node, config):
                 cmake += cmake_dependency_lines(target, elem.get("name"), config)
             else:
                 cmake += cmake_dependency_lines(target, elem.get("Name"), config)
-        if elem.tag == "lib" and not elem.get("name") is "1":
+        if elem.tag == "lib" and elem.get("name") != "1":
             if not elem.get("name") is None:
                 cmake += cmake_dependency_lines(target, elem.get("name"), config)
             else:
@@ -178,7 +178,7 @@ def parse_elements(target, root_node, config):
             for elem2 in elem:
                 if elem2.tag == "use":
                     cmake += cmake_dependency_lines(target, elem2.get("name"), config)
-                if elem2.tag == "lib" and not elem2.get("name") is "1":
+                if elem2.tag == "lib" and elem2.get("name") != "1":
                     cmake += cmake_dependency_lines(target, elem2.get("name"), config)
 
     return cmake, flags

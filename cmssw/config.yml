@@ -2,7 +2,7 @@ subsystems:
     # Alignment:
     # AnalysisAlgos:
     # AnalysisDataFormats:
-    # BigProducts:
+    BigProducts:
     # CalibCalorimetry:
     # CalibFormats:
     # CalibMuon:
@@ -14,7 +14,10 @@ subsystems:
         whitelist:
           - UtilAlgos
           - Utils
-    # CondCore:
+    CondCore:
+        whitelist:
+          - DBOutputService
+          - CondDB
     CondFormats:
         whitelist:
           - RPCObjects
@@ -22,58 +25,55 @@ subsystems:
           - AlignmentRecord
           - HIObjects
           - DataRecord
+          - PhysicsToolsObjects
           - Common
+          - RunInfo
           - Alignment
           - RPCObjects
           - Serialization
     # CondTools:
-    # Configuration
-    # DPGAnalysis
-    # DQM
-    # DQMOffline
-    # DQMServices
+    # Configuration:
+    # DPGAnalysis:
+    # DQM:
+    # DQMOffline:
+    # DQMServices:
     DataFormats:
-        blacklist:
-          - L1TMuon
     # DetectorDescription:
-    # DiffractiveForwardAnalysis
-    # Documentation
-    # EgammaAnalysis
-    # ElectroWeakAnalysis
+    # DiffractiveForwardAnalysis:
+    # Documentation:
+    # EgammaAnalysis:
+    # ElectroWeakAnalysis:
     # EventFilter:
     FWCore:
-        blacklist:
-          - TestProcessor
     # FastSimDataFormats:
-    # FastSimulation
-    # Fireworks
-    # GeneratorInterface
+    # FastSimulation:
+    # Fireworks:
+    # GeneratorInterface:
     Geometry:
         whitelist:
-          - CommonDetUnit
           - CommonTopologies
           - Records
           - CaloGeometry
     # GeometryReaders
     # HLTrigger:
-    # HLTriggerOffline
-    # HeavyFlavorAnalysis
-    # HeterogeneousCore
+    # HLTriggerOffline:
+    # HeavyFlavorAnalysis:
+    # HeterogeneousCore:
     # HiggsAnalysis:
-    # IOMC
+    # IOMC:
     IOPool:
     # IORawData:
-    # IgTools
-    # JetMETAnalysis
+    IgTools:
+    # JetMETAnalysis:
     # JetMETCorrections:
     # L1Trigger:
     # L1TriggerConfig:
-    # L1TriggerOffline:
+    L1TriggerOffline:
     # MagneticField:
-    # Mixing:
-    # MuonAnalysis
-    # OnlineDB
-    # PerfTools
+    Mixing:
+    # MuonAnalysis:
+    # OnlineDB:
+    # PerfTools:
     # PhysicsTools:
     # QCDAnalysis:
     # RecoBTag:
@@ -83,7 +83,7 @@ subsystems:
     # RecoEcal:
     # RecoEgamma:
     # RecoHGCal:
-    # RecoHI
+    # RecoHI:
     # RecoJets:
     # RecoLocalCalo:
     # RecoLocalFastTime:
@@ -95,35 +95,35 @@ subsystems:
     # RecoMuon:
     # RecoParticleFlow:
     # RecoPixelVertexing:
-    # RecoRomanPot
+    # RecoRomanPot:
     # RecoTBCalo:
-    # RecoTauTag
+    # RecoTauTag:
     # RecoTracker:
     # RecoVertex:
     # SLHCUpgradeSimulations:
     # SUSYBSMAnalysis:
     # SimCalorimetry:
     SimDataFormats:
-        blacklist:
-          - ValidationFormats
-    # SimFastTiming
-    # SimG4CMS
-    # SimG4Core
+    # SimFastTiming:
+    # SimG4CMS:
+    # SimG4Core:
     # SimGeneral:
     # SimMuon:
     # SimPPS:
-    # SimRomanPot
+    # SimRomanPot:
     # SimTracker:
     TBDataFormats:
-    # TauAnalysis
-    # TopQuarkAnalysis
+    # TauAnalysis:
+    # TopQuarkAnalysis:
     # TrackPropagation:
     # TrackingTools:
     Utilities:
-        whitelist:
-          - StorageFactory
-          - XrdAdaptor
-    # Validation
+        blacklist:
+          - DavixAdaptor
+          - DCacheAdaptor
+          - PPS
+          - StaticAnalyzers
+    # Validation:
 
 requirements-nolink:
   - boost_header
@@ -144,11 +144,13 @@ requirements-nolink:
   - DataFormatsTrajectoryState
   - CondCorePluginSystem
   - RecoCaloToolsSelectors
+  - GeometryCommonDetUnit
   - roofit
   - eigen
   - gcc-atomic
   - xrootd
   - catch2
+  - geant4core
 
 requirements-rename:
     libuuid: uuid
@@ -162,7 +164,7 @@ requirements-rename:
     tensorflow-cc: tensorflow_cc
     py2-pybind11: python2.7
     python: python2.7
-    python3: python3.7m
+    python3: python3
 
 requirements-include-dir:
     py2-pybind11: /usr/include/python2.7
