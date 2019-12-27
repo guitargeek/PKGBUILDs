@@ -1,12 +1,12 @@
 # Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
 
-pkgname=coral
+pkgname=cmssw-coral
 pkgver=2.3.21
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-externals/coral"
 makedepends=("git")
-provides=("coral")
+provides=("cmssw-coral")
 source=("git+https://github.com/cms-externals/coral"
         "0001-refresh-coral-for-cmake-compilation.patch")
 sha512sums=('SKIP'
