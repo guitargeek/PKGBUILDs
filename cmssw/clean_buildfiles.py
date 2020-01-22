@@ -22,30 +22,43 @@ def package_included(package, path):
 
 directory = "."
 
-package_dirs = []
+build_file_dirs = []
 
 for root, directories, files in os.walk(directory):
     for f in files:
-        if os.path.basename(f) == "BuildFile.xml" and not root.split(directory)[-1][1:].count("/") != 1:
-            package_dirs.append(root)
+        if os.path.basename(f) == "BuildFile.xml":
+            build_file_dirs.append(root)
 
-for package_dir in package_dirs:
+for build_file_dir in build_file_dirs:
 
-    build_file = os.path.join(package_dir, "BuildFile.xml")
+    build_file = os.path.join(build_file_dir, "BuildFile.xml")
 
-    root_node = root_node_from_build_file(build_file)
+    try:
+        root_node = root_node_from_build_file(build_file)
+    except:
+        print("Skipping", build_file_dir, "because xml was not well formed")
+        continue
+
     unused_dependencies = []
+
+    is_library = not build_file_dir.split("/")[-1] in ["test", "plugins", "bin"]
+    print(build_file_dir)
 
     for elem in root_node:
         if elem.tag == "use":
             dependency = elem.get("name")
+            if not dependency:
+                continue
             if "/" in dependency:
-                if( not (
-                    package_included(dependency, os.path.join(package_dir, "interface")) or
-                    package_included(dependency, os.path.join(package_dir, "src"))
-                    )):
-                    unused_dependencies.append(dependency)
+                if is_library:
+                    if( not (
+                        package_included(dependency, os.path.join(build_file_dir, "interface")) or
+                        package_included(dependency, os.path.join(build_file_dir, "src"))
+                        )):
+                        unused_dependencies.append(dependency)
+                else:
+                    if not package_included(dependency, build_file_dir):
+                        unused_dependencies.append(dependency)
 
-    print(package_dir)
     for dependency in unused_dependencies:
         os.system("sed -i '/"+dependency.replace("/", "\/")+"/d' " + build_file)
