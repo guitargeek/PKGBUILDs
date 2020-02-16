@@ -1,4 +1,4 @@
-# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+# Mantainer: Jonas Rembser <jonas.rembser@gmail.com>
 
 #PKGEXT='.pkg.tar.xz'
 PKGEXT='.pkg.tar'
@@ -13,7 +13,7 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre2.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre3.tar.gz"
         "portable_iarchive.patch"
         "portable_oarchive.patch"
         "templateInstantiations.patch"
@@ -34,7 +34,7 @@ options=('!strip')
 
 prepare() {
     PATCH_DIR=$PWD
-    mv cmssw-CMSSW_${_pkgver}_pre2 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre3 cmssw
     patch cmssw/CondFormats/Serialization/interface/eos/portable_iarchive.hpp $PATCH_DIR/portable_iarchive.patch
     patch cmssw/CondFormats/Serialization/interface/eos/portable_oarchive.hpp $PATCH_DIR/portable_oarchive.patch
     patch cmssw/CondFormats/Serialization/src/templateInstantiations.cc $PATCH_DIR/templateInstantiations.patch
@@ -47,13 +47,11 @@ prepare() {
 
     # remove unnsecessary BuildFiles, because they build no sources..
     rm CondCore/ESSources/bin/BuildFile.xml
-    rm CondCore/PluginSystem/BuildFile.xml
     rm CondFormats/External/BuildFile.xml
     rm BigProducts/Simulation/BuildFile.xml
     rm IORawData/DTCommissioning/BuildFile.xml
     rm RecoCaloTools/Navigation/BuildFile.xml
     rm RecoCaloTools/Selectors/BuildFile.xml
-    rm Utilities/ReleaseScripts/BuildFile.xml
     rm DQMServices/StreamerIO/BuildFile.xml
 
     # .. or because they make no sense for the build
