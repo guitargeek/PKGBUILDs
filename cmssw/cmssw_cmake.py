@@ -214,9 +214,11 @@ add_custom_command(OUTPUT """
             + source
             + """
     --deep
-    --rootmap=${CMAKE_BINARY_DIR}/lib/"""
+    --rootmap=${CMAKE_BINARY_DIR}/lib/lib"""
             + lib_name
-            + """_xr.rootmap
+            + "_"
+            + source.replace(".cxx", ".rootmap")
+            + """
     --rootmap-lib=${CMAKE_BINARY_DIR}/lib/lib"""
             + lib_name
             + """.so
