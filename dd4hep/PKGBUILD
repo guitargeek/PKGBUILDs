@@ -1,24 +1,21 @@
 # Maintainer: Jonas Rembser <jonas.rembser gmail com>
 
 pkgname=dd4hep
-pkgver=01.11
+pkgver=01.12.01
 _pkgver=$( echo ${pkgver} | tr '.' '-' ) 
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/AIDASoft/DD4hep"
 provides=("dd4hep")
 source=("https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
-        "tbb_fix_1.patch"
-        "tbb_fix_2.patch")
-sha512sums=('3acd4e4e002e3a9fa4c72632c3b6b222b0e6ccbe5e92852ae7dfe4a3992c8e337783e9308a97427278ebc1a4c0079b7f518a9127a483335abfecc96cacb6d30d'
-            '4f28c4abf23c73cfb5529d1ee3ca6ffe3f90d730a15778a753d8c23730fe1a59a2b899ab3faeda55322c272673d486264f2177ce9da0c8e11ddfdefad802fe60'
-            '3893c932175d28bfdfe420408962ba21321234543f8a7a47aece1b672cd07eddcf16d2c2722546c84fb08e24d29b290d60cdd2d837b8ce8cf032f109d274d5a9')
+        "DigiKernel.patch")
+sha512sums=('cac7d6ea3468e923e8dbe65ac690820d444b022ea15809facfb6407a411192a3a6051ee872f44f0316a32cb6f255e0fdbe68ef47b25c756876a2839b6a860709'
+            'af22ff1a9c50a829c1b745e1d16fffe8379d9a54724990f64d1ff08221d7e7a93e1defeee64f4535811f00b3ee228f7255f5e18f6e358fdcb8cbd077a0456e0e')
 
 prepare() {
-    patch DD4hep-${_pkgver}/DDDigi/CMakeLists.txt tbb_fix_1.patch
-    patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp tbb_fix_2.patch
+    patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp DigiKernel.patch
 
-    mkdir build
+    mkdir -p build
 }
 
 build() {
