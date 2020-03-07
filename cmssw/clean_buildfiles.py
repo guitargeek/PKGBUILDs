@@ -31,6 +31,9 @@ for root, directories, files in os.walk(directory):
 
 for build_file_dir in build_file_dirs:
 
+    # if not "DataFormats" in build_file_dir:
+        # continue
+
     build_file = os.path.join(build_file_dir, "BuildFile.xml")
 
     try:

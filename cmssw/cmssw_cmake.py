@@ -213,7 +213,6 @@ add_custom_command(OUTPUT """
     -o """
             + source
             + """
-    --deep
     --rootmap=${CMAKE_BINARY_DIR}/lib/lib"""
             + lib_name
             + "_"

@@ -4,7 +4,10 @@ subsystems:
     # AnalysisDataFormats:
     BigProducts:
     # CalibCalorimetry:
-    # CalibFormats:
+    CalibFormats:
+        whitelist:
+          - CaloObjects
+          - CastorObjects
     # CalibMuon:
     # CalibPPS:
     # CalibTracker:
@@ -20,6 +23,8 @@ subsystems:
           - CondDB
     CondFormats:
         whitelist:
+          - CastorObjects
+          - EgammaObjects
           - RPCObjects
           - L1TObjects
           - AlignmentRecord
