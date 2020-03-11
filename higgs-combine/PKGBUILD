@@ -57,6 +57,9 @@ install(TARGETS combine DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)' > CMakeLists.t
     # as it is required by ROOT to load the dictionaries or something like that
     mv src/classes.h interface/classes.h
 
+    # This script makes trouble with python-modernize, so let's just move it away for a second
+    mv python/ShapeTools.py ../
+
     # This step takes some time, but otherwise the code gives indentation errors
     echo "formatting python code to avoid indentation errors..."
     autopep8 -i -r .
@@ -67,7 +70,11 @@ install(TARGETS combine DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)' > CMakeLists.t
     # This was done in the original Makefile, so we do it here too
     python -m compileall -q python
 
-    mkdir build
+    # Get back the troublesome script
+    mv ../ShapeTools.py python/
+
+    cd ../../
+    mkdir -p build
 }
 
 build() {
