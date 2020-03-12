@@ -18,7 +18,16 @@ def package_included(package, path):
     if not os.path.isdir(path):
         return False
     cmd = 'cd ' + path + ' && git --no-pager grep "' + package + '"'
-    return os.popen(cmd).read().strip() != ""
+
+
+    out = os.popen(cmd).read()
+
+    # We need to make sure the hit was not in a BuildFile
+    hits = out.split("\n")
+    hits = [h for h in hits if not "BuildFile.xml" in h]
+    cleaned_out = "\n".join(hits)
+
+    return cleaned_out.strip() != ""
 
 directory = "."
 
@@ -31,9 +40,6 @@ for root, directories, files in os.walk(directory):
 
 for build_file_dir in build_file_dirs:
 
-    # if not "DataFormats" in build_file_dir:
-        # continue
-
     build_file = os.path.join(build_file_dir, "BuildFile.xml")
 
     try:
@@ -45,7 +51,6 @@ for build_file_dir in build_file_dirs:
     unused_dependencies = []
 
     is_library = not build_file_dir.split("/")[-1] in ["test", "plugins", "bin"]
-    print(build_file_dir)
 
     for elem in root_node:
         if elem.tag == "use":
