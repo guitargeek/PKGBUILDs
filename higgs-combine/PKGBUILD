@@ -7,8 +7,10 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit"
 depends=("python" "root" "cmake")
 provides=("higgs-combine")
-source=(https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/archive/v8.0.1.tar.gz)
-md5sums=('b50c47cae0f100124a2455effddeae07')
+source=(https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/archive/v8.0.1.tar.gz
+        RooMultiPdf.patch)
+md5sums=('b50c47cae0f100124a2455effddeae07'
+         '325c5730cca4737231fe3053e89707d3')
 
 prepare() {
     mkdir HiggsAnalysis
@@ -19,7 +21,7 @@ cmake_minimum_required(VERSION 3.2)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++17 -lvdt -m64 -O2 -rdynamic -Wno-deprecated-declarations ")
 
-find_package(ROOT REQUIRED COMPONENTS Core RooFit RooFitCore RooStats Minuit HistFactory)
+find_package(ROOT REQUIRED COMPONENTS Core MathMore RooFit RooFitCore RooStats Minuit HistFactory)
 include(${ROOT_USE_FILE})
 
 find_package(Boost 1.45.0 COMPONENTS program_options filesystem system)
@@ -50,6 +52,9 @@ install(TARGETS ${LIBNAME}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${COMBINE_DIR}/interface
 )
 install(TARGETS combine DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)' > CMakeLists.txt
+
+    # Apply patches to compile with ROOT 6.20
+    patch HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h < RooMultiPdf.patch
 
     cd HiggsAnalysis/CombinedLimit
 
