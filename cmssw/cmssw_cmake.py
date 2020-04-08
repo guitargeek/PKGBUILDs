@@ -39,6 +39,12 @@ class CMakeLists(object):
                 f.write(text)
 
 
+def name(elem):
+    if not elem.get("name") is None:
+        return elem.get("name")
+    return elem.get("Name")
+
+
 def lcg_dict_sources(lib_name, n_dicts):
     sources = []
     if n_dicts == 1:
@@ -131,7 +137,6 @@ def root_node_from_build_file(build_file, default_lib_name=None, in_plugin_dir=F
     with open(build_file) as f:
         xml = f.read()
 
-    xml_strip = xml.strip()
     auto = not "<bin" in xml and not "<library" in xml
 
     if auto and in_plugin_dir:
@@ -140,9 +145,7 @@ def root_node_from_build_file(build_file, default_lib_name=None, in_plugin_dir=F
     if auto:
         xml = '<library   file="*.cc" name="' + default_lib_name + '">\n' + xml + "\n</library>"
 
-    root_node = ET.fromstring("<root>" + xml + "</root>")
-
-    return root_node
+    return ET.fromstring("<root>" + xml + "</root>")
 
 
 def parse_elements(target, root_node, config):
@@ -162,24 +165,10 @@ def parse_elements(target, root_node, config):
                 flags["LCG_DICT_HEADER"] = elem.get("LCG_DICT_HEADER").split(" ")
             if elem.get("LCG_DICT_XML"):
                 flags["LCG_DICT_XML"] = elem.get("LCG_DICT_XML").split(" ")
-        if elem.tag == "use":
-            if not elem.get("name") is None:
-                cmake += cmake_dependency_lines(target, elem.get("name"), config)
-            else:
-                cmake += cmake_dependency_lines(target, elem.get("Name"), config)
-        if elem.tag == "lib" and elem.get("name") != "1":
-            if not elem.get("name") is None:
-                cmake += cmake_dependency_lines(target, elem.get("name"), config)
-            else:
-                cmake += cmake_dependency_lines(target, elem.get("Name"), config)
+        if elem.tag == "use" or elem.tag == "lib" and name(elem) != "1":
+            cmake += cmake_dependency_lines(target, name(elem), config)
         if elem.tag == "lib":
-            cmake += ["target_link_libraries(" + target + " " + elem.get("name") + ")"]
-        if elem.tag == "export":
-            for elem2 in elem:
-                if elem2.tag == "use":
-                    cmake += cmake_dependency_lines(target, elem2.get("name"), config)
-                if elem2.tag == "lib" and elem2.get("name") != "1":
-                    cmake += cmake_dependency_lines(target, elem2.get("name"), config)
+            cmake += ["target_link_libraries(" + target + " " + name(elem) + ")"]
 
     return cmake, flags
 
@@ -195,7 +184,7 @@ def interpret_files(file):
     return " ".join(files)
 
 
-def lcg_dict_generation(lib_name, headers, xmls):
+def lcg_dict_generation(lib_name, headers, xmls, include_dirs):
     sources = lcg_dict_sources(lib_name, len(headers))
     cmake = []
     for header, xml, source in zip(headers, xmls, sources):
@@ -225,6 +214,9 @@ add_custom_command(OUTPUT """
             + lib_name
             + """.so --multiDict
     -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
+    """
+            + " ".join(["-I" + d for d in include_dirs])
+            + """
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
             + header
             + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
@@ -236,7 +228,34 @@ add_custom_command(OUTPUT """
     return cmake
 
 
-def build_xml_to_cmake(root, build_file, default_lib_name=None, in_plugin_dir=False):
+def get_global_dependencies(build_file):
+    with open(build_file) as f:
+        xml = f.read()
+
+    root_node = ET.fromstring("<root>" + xml + "</root>")
+
+    global_dependencies = []
+
+    for elem in root_node:
+        if elem.tag == "use":
+            global_dependencies.append(name(elem).replace("/", ""))
+        if elem.tag == "environment":
+            for sub_elem in elem:
+                if sub_elem.tag == "use":
+                    global_dependencies.append(name(sub_elem).replace("/", ""))
+
+    return global_dependencies
+
+
+def get_include_dirs(deps, include_dir_dict):
+    out = []
+    for dep in deps:
+        if dep in include_dir_dict:
+            out.append(include_dir_dict[dep])
+    return out
+
+
+def build_xml_to_cmake(root, build_file, root_node):
 
     cmake = CMakeLists(root)
 
@@ -252,38 +271,25 @@ def build_xml_to_cmake(root, build_file, default_lib_name=None, in_plugin_dir=Fa
         "",
     ]
 
-    global_dependencies = []
+    global_dependencies = get_global_dependencies(build_file)
 
     for elem in root_node:
-        if elem.tag == "use":
-            global_dependencies.append(elem.get("name").replace("/", ""))
-        if elem.tag == "environment":
-            for sub_elem in elem:
-                if sub_elem.tag == "use":
-                    global_dependencies.append(sub_elem.get("name").replace("/", ""))
-        if elem.tag == "library":
-            lib_name = elem.get("name")
+        if elem.tag in ["library", "bin"]:
+            target = name(elem)
 
             files = interpret_files(elem.get("file"))
 
-            if lib_name is None:
-                lib_name = files.split(" ")[0].split(".")[0]
+            if target is None:
+                target = files.split(" ")[0].split(".")[0]
 
-            cmake.add_library(lib_name, files)
-            cmake += parse_elements(lib_name, elem, config)[0]
+            if elem.tag == "library":
+                cmake.add_library(target, files)
+            if elem.tag == "bin":
+                cmake.add_executable(target, files)
+
+            cmake += parse_elements(target, elem, config)[0]
             for dependency in global_dependencies:
-                cmake += cmake_dependency_lines(lib_name, dependency, config)
-        if elem.tag == "bin":
-            bin_name = elem.get("name")
-            files = interpret_files(elem.get("file"))
-
-            if bin_name is None:
-                bin_name = files.split(" ")[0].split(".")[0]
-
-            cmake.add_executable(bin_name, files)
-            cmake += parse_elements(bin_name, elem, config)[0]
-            for dependency in global_dependencies:
-                cmake += cmake_dependency_lines(bin_name, dependency, config)
+                cmake += cmake_dependency_lines(target, dependency, config)
 
     cmake.write()
 
@@ -351,6 +357,10 @@ if __name__ == "__main__":
                     "",
                 ]
 
+                global_include_dirs = get_include_dirs(
+                    get_global_dependencies(build_file), config["requirements-include-dir"]
+                )
+
                 source_files = glob.glob(os.path.join(root, "src/*.cc"))
 
                 root_node = root_node_from_build_file(build_file, default_lib_name=lib_name)
@@ -369,7 +379,9 @@ if __name__ == "__main__":
                     flags["LCG_DICT_HEADER"] = ["classes.h"]
                     flags["LCG_DICT_XML"] = ["classes_def.xml"]
 
-                cmake += lcg_dict_generation(lib_name, flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"])
+                cmake += lcg_dict_generation(
+                    lib_name, flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"], global_include_dirs
+                )
 
                 gen_sources = lcg_dict_sources(lib_name, len(flags["LCG_DICT_HEADER"]))
 

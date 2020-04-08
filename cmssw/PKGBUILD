@@ -13,23 +13,19 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre4.tar.gz"
-        "SimDataFormatsValidationFormats.patch"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre5.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
-md5sums=('c94d010a141dd9ac80390a777cfdfec2'
-         '33c87c7bf713c1c3ee4a3940044683cd'
+md5sums=('4ccab538b183b42d8f5177ac30e531a6'
          'SKIP'
          'SKIP')
 options=('!strip')
 
 prepare() {
-    PATCH_DIR=$PWD
-    mv cmssw-CMSSW_${_pkgver}_pre4 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre5 cmssw
 
     cd cmssw
-    patch -p 1 -d . < $PATCH_DIR/SimDataFormatsValidationFormats.patch
 
     # remove empty and confusing BuildFile
     rm -rf CondCore/DBOutputService/bin
@@ -38,10 +34,8 @@ prepare() {
     rm CondCore/ESSources/bin/BuildFile.xml
     rm CondFormats/External/BuildFile.xml
     rm BigProducts/Simulation/BuildFile.xml
-    rm IORawData/DTCommissioning/BuildFile.xml
     rm RecoCaloTools/Navigation/BuildFile.xml
     rm RecoCaloTools/Selectors/BuildFile.xml
-    rm DQMServices/StreamerIO/BuildFile.xml
 
     # .. or because they make no sense for the build
     rm Utilities/ReleaseScripts/scripts/BuildFile.xml
