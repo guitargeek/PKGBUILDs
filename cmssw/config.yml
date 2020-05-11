@@ -2,7 +2,7 @@ subsystems:
     # Alignment:
     # AnalysisAlgos:
     # AnalysisDataFormats:
-    BigProducts:
+    # BigProducts:
     # CalibCalorimetry:
     CalibFormats:
         whitelist:
@@ -127,6 +127,7 @@ subsystems:
           - DavixAdaptor
           - DCacheAdaptor
           - PPS
+          - ReleaseScripts
           - StaticAnalyzers
     # Validation:
 

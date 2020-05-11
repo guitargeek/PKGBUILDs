@@ -13,35 +13,17 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre6.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre7.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
-md5sums=('68055eb0bbf5bf6b85333bbba9518099'
+md5sums=('03e334fad409b90fca2deba9adcb62d0'
          'SKIP'
          'SKIP')
 options=('!strip')
 
 prepare() {
-    mv cmssw-CMSSW_${_pkgver}_pre6 cmssw
-
-    cd cmssw
-
-    # remove empty and confusing BuildFile
-    rm -rf CondCore/DBOutputService/bin
-
-    # remove unnsecessary BuildFiles, because they build no sources..
-    rm CondCore/ESSources/bin/BuildFile.xml
-    rm CondFormats/External/BuildFile.xml
-    rm BigProducts/Simulation/BuildFile.xml
-    rm RecoCaloTools/Navigation/BuildFile.xml
-    rm RecoCaloTools/Selectors/BuildFile.xml
-
-    # .. or because they make no sense for the build
-    rm Utilities/ReleaseScripts/scripts/BuildFile.xml
-
-    cd ..
-
+    mv cmssw-CMSSW_${_pkgver}_pre7 cmssw
     mkdir build
 }
 

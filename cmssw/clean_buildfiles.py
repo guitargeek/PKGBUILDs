@@ -17,8 +17,7 @@ def root_node_from_build_file(build_file):
 def package_included(package, path):
     if not os.path.isdir(path):
         return False
-    cmd = 'cd ' + path + ' && git --no-pager grep "' + package + '"'
-
+    cmd = "cd " + path + ' && git --no-pager grep "' + package + '"'
 
     out = os.popen(cmd).read()
 
@@ -28,6 +27,7 @@ def package_included(package, path):
     cleaned_out = "\n".join(hits)
 
     return cleaned_out.strip() != ""
+
 
 directory = "."
 
@@ -59,14 +59,14 @@ for build_file_dir in build_file_dirs:
                 continue
             if "/" in dependency:
                 if is_library:
-                    if( not (
-                        package_included(dependency, os.path.join(build_file_dir, "interface")) or
-                        package_included(dependency, os.path.join(build_file_dir, "src"))
-                        )):
+                    if not (
+                        package_included(dependency, os.path.join(build_file_dir, "interface"))
+                        or package_included(dependency, os.path.join(build_file_dir, "src"))
+                    ):
                         unused_dependencies.append(dependency)
                 else:
                     if not package_included(dependency, build_file_dir):
                         unused_dependencies.append(dependency)
 
     for dependency in unused_dependencies:
-        os.system("sed -i '/"+dependency.replace("/", "\/")+"/d' " + build_file)
+        os.system("sed -i '/" + dependency.replace("/", "\/") + "/d' " + build_file)

@@ -63,6 +63,9 @@ package() {
     find . -type f -exec sed -i -e 's/from . import pyrootutil/import pyrootutil/g' {} \;
     find . -type f -exec sed -i -e 's/from . import plottery_wrapper/import plottery_wrapper/g' {} \;
 
+    # does not work anymore in python3.8 and is not needed aparently
+    find . -type f -exec sed -i -e 's/from pytable import/#from pytable import/g' {} \;
+
     mkdir -p $pkgdir/usr/bin
     cp *.sh $pkgdir/usr/bin/
 
