@@ -15,22 +15,23 @@ sha512sums=('cac7d6ea3468e923e8dbe65ac690820d444b022ea15809facfb6407a411192a3a60
 prepare() {
     patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp DigiKernel.patch
 
+    # There is something strange with a missing newline, so let's add it
+    echo "" > DD4hep-01-12-01/DDParsers/src/Spirit/ParserStandardList_Mapstring_bool.cpp
+
     mkdir -p build
 }
 
 build() {
     cd build
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+    cmake -E env CXXFLAGS="-fno-var-tracking-assignments" cmake \
+          -DCMAKE_INSTALL_PREFIX:PATH=/usr \
           -DDD4HEP_USE_GEANT4=ON \
           -DDD4HEP_IGNORE_GEANT4_TLS=True \
           -DBoost_NO_BOOST_CMAKE=OFF \
           -DDD4HEP_USE_LCIO=OFF \
           -DBUILD_TESTING=ON \
           -DROOT_DIR=$ROOTSYS \
-          -DCMAKE_CXX_STANDARD=17 \
-          -DTBB_INCLUDE_DIR=/usr/include/tbb \
-          -DTBB_LIBRARY=tbb \
           ../DD4hep-${_pkgver}
 
     make -j8
