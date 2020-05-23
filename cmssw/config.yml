@@ -79,14 +79,19 @@ subsystems:
     # MuonAnalysis:
     # OnlineDB:
     # PerfTools:
-    # PhysicsTools:
+    PhysicsTools:
+        whitelist:
+          - SelectorUtils
+          - Utilities
     # QCDAnalysis:
     # RecoBTag:
     # RecoBTau:
     # RecoCTPPS:
     # RecoCaloTools:
     # RecoEcal:
-    # RecoEgamma:
+    RecoEgamma:
+        whitelist:
+          - EgammaMCTools
     # RecoHGCal:
     # RecoHI:
     # RecoJets:
