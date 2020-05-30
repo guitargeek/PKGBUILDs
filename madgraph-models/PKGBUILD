@@ -14,6 +14,7 @@ source=(
         "http://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/AnomalousGaugeCoupling/SM_LS012_UFO.tgz"
         "http://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/AnomalousGaugeCoupling/all.tgz"
         "http://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/AnomalousGaugeCoupling/SM_LS012_LM017_LT012_Ind5_UFO_June19.tar.gz"
+        "https://cms-project-generators.web.cern.ch/cms-project-generators/SM_Ltotal_Ind5v2020v2_UFO.zip"
 )
 noextract=(
         "SM_LS_LM_LT_UFO.tar.gz"
@@ -22,16 +23,25 @@ noextract=(
         "SM_LS012_UFO.tgz"
         "all.tgz"
         "SM_LS012_LM017_LT012_Ind5_UFO_June19.tar.gz"
+        "SM_Ltotal_Ind5v2020v2_UFO.zip"
 )
 md5sums=('3b4351497a8cfadd65cb30ef9fc99755'
          'bcd5ffbc2bb78ef9cce6e846edd9378a'
          '0eacb70c2ca0e07349e68faa8e6edfe8'
          'ab421e4c8f79e18eecf5b8023888c4e3'
          'b731635e072a9c7f7d534affab6c03de'
-         'dda775e045823de8768493f9943e3c5c')
+         'dda775e045823de8768493f9943e3c5c'
+         'd787429b4eb6621750ed7651d5811f5e'
+         )
 
 # Check out this hypernews for discussion about SM_LS_LM_LT_UFO vs SM_LSMT_Ind5_UFOv2:
 # https://hypernews.cern.ch/HyperNews/CMS/get/generators/4512.html
+
+# May 2020:
+# added SM_Ltotal_Ind5v2020v2_UFO.zip which is the most recent model for quartic couplings,
+# also used by Sapta in:
+# https://indico.cern.ch/event/921820/contributions/3872891/attachments/2042604/3421359/UpdateOnSampleProduction.pdf
+# Model is retrieved from the cms-project-generators.web.cern.ch website for compatibility with the CMS infrastructure
 
 prepare() {
     mkdir AnomalousGaugeCoupling
@@ -42,6 +52,7 @@ prepare() {
     NAME=SM_LS012_UFO && mkdir $NAME && tar -xf ../$NAME.tgz --directory $NAME/
     NAME=all && mkdir $NAME && tar -xf ../$NAME.tgz --directory $NAME/
     NAME=SM_LS012_LM017_LT012_Ind5_UFO_June19 && mkdir $NAME && tar -xf ../$NAME.tar.gz --directory $NAME/
+    NAME=SM_Ltotal_Ind5v2020v2_UFO && mkdir $NAME && unzip ../$NAME.zip -d $NAME/
     cd ..
 }
 
@@ -74,4 +85,5 @@ package() {
     _copy_models AnomalousGaugeCoupling/SM_LS012_UFO
     _copy_models AnomalousGaugeCoupling/all
     _copy_models AnomalousGaugeCoupling/SM_LS012_LM017_LT012_Ind5_UFO_June19
+    _copy_models AnomalousGaugeCoupling/SM_Ltotal_Ind5v2020v2_UFO
 }
