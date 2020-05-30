@@ -52,7 +52,14 @@ prepare() {
     NAME=SM_LS012_UFO && mkdir $NAME && tar -xf ../$NAME.tgz --directory $NAME/
     NAME=all && mkdir $NAME && tar -xf ../$NAME.tgz --directory $NAME/
     NAME=SM_LS012_LM017_LT012_Ind5_UFO_June19 && mkdir $NAME && tar -xf ../$NAME.tar.gz --directory $NAME/
+
     NAME=SM_Ltotal_Ind5v2020v2_UFO && mkdir $NAME && unzip ../$NAME.zip -d $NAME/
+    # fix permissions
+    cd $NAME/$NAME
+    ls
+    chmod 644 *
+    cd ..
+
     cd ..
 }
 
