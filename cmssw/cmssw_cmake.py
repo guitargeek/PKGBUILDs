@@ -10,16 +10,26 @@ class CMakeLists(object):
         self._txt += rhs
         return self
 
-    def add_library(self, target, files):
+    def add_interface_library(self, target):
+        # In CMake, one should optimally specify the interface files after the INTERFACE property.
+        # But since this is CMSSW, this does not make much sense here.
+        # http://mariobadr.com/creating-a-header-only-library-with-cmake.html
+        # https://cmake.org/cmake/help/latest/command/add_library.html#interface-libraries
         self._txt += [
-            "add_library(" + target + " SHARED " + files + ")",
+            "add_library(" + target + " INTERFACE)",
+        ]
+
+    def add_library(self, target, source_files):
+
+        self._txt += [
+            "add_library(" + target + " SHARED " + " ".join(source_files) + ")",
             "set_target_properties(" + target + " PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
             "install(TARGETS " + target + " LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})",
         ]
 
-    def add_executable(self, target, files):
+    def add_executable(self, target, source_files):
         self._txt += [
-            "add_executable(" + target + " " + files + ")",
+            "add_executable(" + target + " " + " ".join(source_files) + ")",
             "set_target_properties(" + target + " PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
             "install(TARGETS " + target + " DESTINATION ${CMAKE_INSTALL_BINDIR})",
         ]
@@ -28,6 +38,10 @@ class CMakeLists(object):
         text = self._txt
         if type(text) == list:
             text = "\n".join(text)
+
+        if "<target>" in text:
+            raise RuntimeError("There are still <target> placeholders in the CMake file!")
+
         filename = os.path.join(self._path, "CMakeLists.txt")
         if not os.path.exists(filename):
             with open(filename, "w") as f:
@@ -37,6 +51,10 @@ class CMakeLists(object):
         if old_text != text:
             with open(filename, "w") as f:
                 f.write(text)
+
+
+def fill_target(cmake_lines, target):
+    return list(map(lambda l: l.replace("<target>", target), cmake_lines))
 
 
 def name(elem):
@@ -101,15 +119,13 @@ def load_config(config_file):
     return config
 
 
-def cmake_dependency_lines(target, dependency, config):
-    cmake = []
+def cmake_dependency_lines(dependency, config):
+    cmake = [""]
 
     dependency = dependency.replace("/", "")
 
     if dependency in config["requirements-include-dir"]:
-        cmake += [
-            "target_include_directories(" + target + " PUBLIC " + config["requirements-include-dir"][dependency] + ")"
-        ]
+        cmake += ["target_include_directories(<target> PUBLIC " + config["requirements-include-dir"][dependency] + ")"]
 
     if dependency in config["requirements-nolink"]:
         return cmake
@@ -118,16 +134,16 @@ def cmake_dependency_lines(target, dependency, config):
         dependency = config["requirements-rename"][dependency]
 
     if dependency.startswith("root"):
-        cmake += ["target_link_libraries(" + target + " ${ROOT_LIBRARIES})"]
+        cmake += ["target_link_libraries(<target> ${ROOT_LIBRARIES})"]
     elif dependency == "boost":
         cmake += [
             "find_package( Boost COMPONENTS filesystem program_options thread REQUIRED )",
-            "target_link_libraries(" + target + " ${Boost_LIBRARIES})",
+            "target_link_libraries(<target> ${Boost_LIBRARIES})",
         ]
     elif dependency == "eigen":
-        cmake += ["find_package (Eigen3 3.3 REQUIRED NO_MODULE)", "target_link_libraries(" + target + " Eigen3::Eigen)"]
+        cmake += ["find_package (Eigen3 3.3 REQUIRED NO_MODULE)", "target_link_libraries(<target> Eigen3::Eigen)"]
     else:
-        cmake += ["target_link_libraries(" + target + " " + dependency + ")"]
+        cmake += ["target_link_libraries(<target> " + dependency + ")"]
 
     return cmake
 
@@ -148,27 +164,25 @@ def root_node_from_build_file(build_file, default_lib_name=None, in_plugin_dir=F
     return ET.fromstring("<root>" + xml + "</root>")
 
 
-def parse_elements(target, root_node, config):
+def parse_elements(root_node, config):
     cmake = []
     flags = {"LCG_DICT_HEADER": [], "LCG_DICT_XML": []}
 
     for elem in root_node:
         if elem.tag == "flags":
             if elem.get("cppflags"):
-                cmake += [
-                    "set_target_properties(" + target + ' PROPERTIES COMPILE_FLAGS "' + elem.get("cppflags") + '")'
-                ]
-                cmake += ["set_target_properties(" + target + ' PROPERTIES PREFIX "plugin")']
+                cmake += ['set_target_properties(<target> PROPERTIES COMPILE_FLAGS "' + elem.get("cppflags") + '")']
+                cmake += ['set_target_properties(<target> PROPERTIES PREFIX "plugin")']
             if elem.get("EDM_PLUGIN"):
-                cmake += ["set_target_properties(" + target + ' PROPERTIES PREFIX "plugin")']
+                cmake += ['set_target_properties(<target> PROPERTIES PREFIX "plugin")']
             if elem.get("LCG_DICT_HEADER"):
                 flags["LCG_DICT_HEADER"] = elem.get("LCG_DICT_HEADER").split(" ")
             if elem.get("LCG_DICT_XML"):
                 flags["LCG_DICT_XML"] = elem.get("LCG_DICT_XML").split(" ")
         if elem.tag == "use" or elem.tag == "lib" and name(elem) != "1":
-            cmake += cmake_dependency_lines(target, name(elem), config)
+            cmake += cmake_dependency_lines(name(elem), config)
         if elem.tag == "lib":
-            cmake += ["target_link_libraries(" + target + " " + name(elem) + ")"]
+            cmake += ["target_link_libraries(<target> " + name(elem) + ")"]
 
     return cmake, flags
 
@@ -181,7 +195,7 @@ def interpret_files(file):
             files += [g[len(root) + 1 :] for g in globbed]
         else:
             files.append(f)
-    return " ".join(files)
+    return files
 
 
 def lcg_dict_generation(lib_name, headers, xmls, include_dirs):
@@ -271,6 +285,8 @@ def build_xml_to_cmake(root, build_file, root_node):
         "",
     ]
 
+    n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
+
     global_dependencies = get_global_dependencies(build_file)
 
     for elem in root_node:
@@ -280,16 +296,28 @@ def build_xml_to_cmake(root, build_file, root_node):
             files = interpret_files(elem.get("file"))
 
             if target is None:
-                target = files.split(" ")[0].split(".")[0]
+                target = files[0].split(".")[0]
+
+            is_interface = False
 
             if elem.tag == "library":
-                cmake.add_library(target, files)
+                n_files = n_globbed_files + len(files)
+                if n_files == 0:
+                    cmake.add_interface_library(target)
+                    is_interface = True
+                else:
+                    cmake.add_library(target, files)
             if elem.tag == "bin":
                 cmake.add_executable(target, files)
 
-            cmake += parse_elements(target, elem, config)[0]
+            cmake += parse_elements(elem, config)[0]
             for dependency in global_dependencies:
-                cmake += cmake_dependency_lines(target, dependency, config)
+                cmake += cmake_dependency_lines(dependency, config)
+
+            if is_interface:
+                cmake._txt = fill_target(cmake._txt, target + " INTERFACE")
+            else:
+                cmake._txt = fill_target(cmake._txt, target)
 
     cmake.write()
 
@@ -361,7 +389,7 @@ if __name__ == "__main__":
                     get_global_dependencies(build_file), config["requirements-include-dir"]
                 )
 
-                source_files = glob.glob(os.path.join(root, "src/*.cc"))
+                n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
 
                 root_node = root_node_from_build_file(build_file, default_lib_name=lib_name)
 
@@ -371,7 +399,7 @@ if __name__ == "__main__":
                     if element.tag == "library":
                         lib_node = element
 
-                cmake_from_build_file, flags = parse_elements(lib_name, lib_node, config)
+                cmake_from_build_file, flags = parse_elements(lib_node, config)
 
                 if not len(flags["LCG_DICT_HEADER"]) == 0 in flags and os.path.exists(
                     os.path.join(root, "src/classes.h")
@@ -385,9 +413,20 @@ if __name__ == "__main__":
 
                 gen_sources = lcg_dict_sources(lib_name, len(flags["LCG_DICT_HEADER"]))
 
-                cmake.add_library(lib_name, "${SOURCE_FILES} " + " ".join(gen_sources))
+                is_interface = False
+                n_files = n_globbed_files + len(gen_sources)
+                if n_files == 0:
+                    is_interface = True
+                    cmake.add_interface_library(lib_name)
+                else:
+                    cmake.add_library(lib_name, ["${SOURCE_FILES}"] + gen_sources)
 
                 cmake += cmake_from_build_file
+
+                if is_interface:
+                    cmake._txt = fill_target(cmake._txt, lib_name + " INTERFACE")
+                else:
+                    cmake._txt = fill_target(cmake._txt, lib_name)
 
                 cmake.write()
 
