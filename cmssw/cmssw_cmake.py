@@ -2,22 +2,17 @@ import glob
 
 
 class CMakeLists(object):
-    def __init__(self, path):
-        self._path = os.path.join(os.getcwd(), path)
+    def __init__(self):
         self._txt = []
+
+        self._target_started = False
 
     def __iadd__(self, rhs):
         self._txt += rhs
         return self
 
-    def _has_target_placeholder(self):
-        for l in self._txt:
-            if "<target>" in l:
-                return True
-        return False
-
     def add_interface_library(self):
-        if self._has_target_placeholder():
+        if self._target_started:
             raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
 
         # In CMake, one should optimally specify the interface files after the INTERFACE property.
@@ -27,10 +22,11 @@ class CMakeLists(object):
         self._txt += [
             "add_library(<target>)",
         ]
+        self._target_started = True
 
     def add_library(self, source_files):
 
-        if self._has_target_placeholder():
+        if self._target_started:
             raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
 
         self._txt += [
@@ -38,10 +34,11 @@ class CMakeLists(object):
             "set_target_properties(<target> PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
             "install(TARGETS <target> LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})",
         ]
+        self._target_started = True
 
     def add_executable(self, source_files):
 
-        if self._has_target_placeholder():
+        if self._target_started:
             raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
 
         self._txt += [
@@ -49,11 +46,15 @@ class CMakeLists(object):
             "set_target_properties(<target> PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
             "install(TARGETS <target> DESTINATION ${CMAKE_INSTALL_BINDIR})",
         ]
+        self._target_started = True
 
     def fill_target(self, target):
         self._txt = list(map(lambda l: l.replace("<target>", target), self._txt))
+        self._target_started = False
 
-    def write(self):
+    def write(self, path):
+        self._path = os.path.join(os.getcwd(), path)
+
         text = self._txt
         if type(text) == list:
             text = "\n".join(text)
@@ -76,16 +77,6 @@ def name(elem):
     if not elem.get("name") is None:
         return elem.get("name")
     return elem.get("Name")
-
-
-def lcg_dict_sources(lib_name, n_dicts):
-    sources = []
-    if n_dicts == 1:
-        sources.append(lib_name + "_xr.cxx")
-    if n_dicts > 1:
-        for i in range(1, n_dicts + 1):
-            sources.append(lib_name + f"_x{i}r.cxx")
-    return sources
 
 
 def write_cmake_if_not_same(path, text):
@@ -149,7 +140,12 @@ def cmake_dependency_lines(dependency, config):
         dependency = config["requirements-rename"][dependency]
 
     if dependency.startswith("root"):
-        cmake += ["target_link_libraries(<target> ${ROOT_LIBRARIES})"]
+        cmake += [
+            "list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})",
+            "find_package(ROOT REQUIRED COMPONENTS Core MathCore)",
+            "include(${ROOT_USE_FILE})",
+            "target_link_libraries(<target> ${ROOT_LIBRARIES})",
+        ]
     elif dependency == "boost":
         cmake += [
             "find_package( Boost COMPONENTS filesystem program_options thread REQUIRED )",
@@ -213,9 +209,20 @@ def interpret_files(file):
     return files
 
 
-def lcg_dict_generation(lib_name, headers, xmls, include_dirs):
-    sources = lcg_dict_sources(lib_name, len(headers))
+def lcg_dict_generation(headers, xmls, include_dirs):
+    def make_source_names(n_dicts):
+        sources = []
+        if n_dicts == 1:
+            sources.append("<target>_xr.cxx")
+        if n_dicts > 1:
+            for i in range(1, n_dicts + 1):
+                sources.append(f"<target>_x{i}r.cxx")
+        return sources
+
+    sources = make_source_names(len(headers))
     cmake = []
+    if len(sources) > 0:
+        cmake += ['list(APPEND SOURCE_FILES "' + '" "'.join(sources) + '")']
     for header, xml, source in zip(headers, xmls, sources):
         cmake += [
             """
@@ -232,15 +239,15 @@ add_custom_command(OUTPUT """
             + source
             + """
     --rootmap=${CMAKE_BINARY_DIR}/lib/lib"""
-            + lib_name
+            + "<target>"
             + "_"
             + source.replace(".cxx", ".rootmap")
             + """
     --rootmap-lib=${CMAKE_BINARY_DIR}/lib/lib"""
-            + lib_name
+            + "<target>"
             + """.so
     --library ${CMAKE_BINARY_DIR}/lib/lib"""
-            + lib_name
+            + "<target>"
             + """.so --multiDict
     -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
     """
@@ -286,17 +293,11 @@ def get_include_dirs(deps, include_dir_dict):
 
 def build_xml_to_cmake(root, build_file, root_node):
 
-    cmake = CMakeLists(root)
+    cmake = CMakeLists()
 
     cmake += [
         "",
-        "list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})",
-        "find_package(ROOT REQUIRED COMPONENTS Core MathCore)",
-        "include(${ROOT_USE_FILE})",
-        "",
         'file(GLOB_RECURSE SOURCE_FILES "src/*.cc")',
-        "",
-        "include_directories(.)",
         "",
     ]
 
@@ -334,7 +335,52 @@ def build_xml_to_cmake(root, build_file, root_node):
             else:
                 cmake.fill_target(target)
 
-    cmake.write()
+    return cmake
+
+
+def package_root_build_xml_to_cmake(root, build_file, root_node):
+    cmake = CMakeLists()
+
+    cmake += [
+        "",
+        'file(GLOB_RECURSE SOURCE_FILES "src/*.cc")',
+        "",
+    ]
+
+    n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
+
+    global_include_dirs = get_include_dirs(get_global_dependencies(build_file), config["requirements-include-dir"])
+
+    lib_node = None
+
+    for element in root_node:
+        if element.tag == "library":
+            lib_node = element
+
+    cmake_from_build_file, flags = parse_elements(lib_node, config)
+
+    if not len(flags["LCG_DICT_HEADER"]) == 0 in flags and os.path.exists(os.path.join(root, "src/classes.h")):
+        flags["LCG_DICT_HEADER"] = ["classes.h"]
+        flags["LCG_DICT_XML"] = ["classes_def.xml"]
+
+    cmake += lcg_dict_generation(flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"], global_include_dirs)
+
+    is_interface = False
+    n_files = n_globbed_files + len(flags["LCG_DICT_HEADER"])
+    if n_files == 0:
+        is_interface = True
+        cmake.add_interface_library()
+    else:
+        cmake.add_library(["${SOURCE_FILES}"])
+
+    cmake += cmake_from_build_file
+
+    if is_interface:
+        cmake.fill_target(lib_name + " INTERFACE")
+    else:
+        cmake.fill_target(lib_name)
+
+    return cmake
 
 
 if __name__ == "__main__":
@@ -384,66 +430,12 @@ if __name__ == "__main__":
 
             if os.path.exists(os.path.join(root, "BuildFile.xml")):
 
-                cmake = CMakeLists(root)
-
                 build_file = os.path.join(root, "BuildFile.xml")
                 lib_name = subsystem + package
-                cmake += [
-                    "",
-                    "list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})",
-                    "find_package(ROOT REQUIRED COMPONENTS Core MathCore)",
-                    "include(${ROOT_USE_FILE})",
-                    "",
-                    'file(GLOB_RECURSE SOURCE_FILES "src/*.cc")',
-                    "",
-                    "include_directories(.)",
-                    "",
-                ]
-
-                global_include_dirs = get_include_dirs(
-                    get_global_dependencies(build_file), config["requirements-include-dir"]
-                )
-
-                n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
-
                 root_node = root_node_from_build_file(build_file, default_lib_name=lib_name)
 
-                lib_node = None
-
-                for element in root_node:
-                    if element.tag == "library":
-                        lib_node = element
-
-                cmake_from_build_file, flags = parse_elements(lib_node, config)
-
-                if not len(flags["LCG_DICT_HEADER"]) == 0 in flags and os.path.exists(
-                    os.path.join(root, "src/classes.h")
-                ):
-                    flags["LCG_DICT_HEADER"] = ["classes.h"]
-                    flags["LCG_DICT_XML"] = ["classes_def.xml"]
-
-                cmake += lcg_dict_generation(
-                    lib_name, flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"], global_include_dirs
-                )
-
-                gen_sources = lcg_dict_sources(lib_name, len(flags["LCG_DICT_HEADER"]))
-
-                is_interface = False
-                n_files = n_globbed_files + len(gen_sources)
-                if n_files == 0:
-                    is_interface = True
-                    cmake.add_interface_library()
-                else:
-                    cmake.add_library(["${SOURCE_FILES}"] + gen_sources)
-
-                cmake += cmake_from_build_file
-
-                if is_interface:
-                    cmake.fill_target(lib_name + " INTERFACE")
-                else:
-                    cmake.fill_target(lib_name)
-
-                cmake.write()
+                cmake = package_root_build_xml_to_cmake(root, build_file, root_node)
+                cmake.write(root)
 
         for file in files:
             if (
@@ -459,20 +451,21 @@ if __name__ == "__main__":
                     build_file, default_lib_name=subsystem + package, in_plugin_dir=os.path.basename(root) == "plugins"
                 )
 
-                build_xml_to_cmake(root, build_file, root_node)
+                cmake = build_xml_to_cmake(root, build_file, root_node)
+                cmake.write(root)
 
     # Finally, include all subdirectories into which we have written CMakeList files
-    cmake = CMakeLists(".")
+    cmake = CMakeLists()
     cmake += ["include_directories(.)", ""]
     for subsystem, packages in packages_in_subsystem.items():
         for package in packages:
             for root, _, files in os.walk(os.path.join(subsystem, package)):
                 if "CMakeLists.txt" in files:
                     cmake += ["add_subdirectory(" + root + ")"]
-    cmake.write()
+    cmake.write(".")
 
     os.chdir("..")
 
-    cmake = CMakeLists(".")
+    cmake = CMakeLists()
     cmake += config["cmake-lists-root"]
-    cmake.write()
+    cmake.write(".")
