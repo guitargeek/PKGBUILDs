@@ -1,4 +1,6 @@
 import glob
+import os
+import xml.etree.ElementTree as ET
 
 
 class CMakeLists(object):
@@ -79,20 +81,6 @@ def name(elem):
     return elem.get("Name")
 
 
-def write_cmake_if_not_same(path, text):
-    if type(text) == list:
-        text = "\n".join(text)
-    filename = os.path.join(path, "CMakeLists.txt")
-    if not os.path.exists(filename):
-        with open(filename, "w") as f:
-            f.write(text)
-    with open(filename, "r") as f:
-        old_text = f.read()
-    if old_text != text:
-        with open(filename, "w") as f:
-            f.write(text)
-
-
 def load_config(config_file):
     import yaml
 
@@ -112,15 +100,8 @@ def load_config(config_file):
     if not "requirements-rename" in config:
         config["requirements-rename"] = {}
 
-    if "build-bin" in config:
-        config["build-bin"] = bool(config["build-bin"])
-    else:
-        config["build-bin"] = True
-
-    if "build-test" in config:
-        config["build-test"] = bool(config["build-test"])
-    else:
-        config["build-test"] = True
+    config["build-bin"] = bool(config["build-bin"]) if "build-bin" in config else True
+    config["build-test"] = bool(config["build-test"]) if "build-test" in config else True
 
     return config
 
@@ -198,9 +179,9 @@ def parse_elements(root_node, config):
     return cmake, flags
 
 
-def interpret_files(file):
+def interpret_files(root, file_expressions):
     files = []
-    for f in file.split(","):
+    for f in file_expressions.split(","):
         if "*" in f:
             globbed = glob.glob(os.path.join(root, f))
             files += [g[len(root) + 1 :] for g in globbed]
@@ -252,8 +233,7 @@ add_custom_command(OUTPUT """
     -DCMS_DICT_IMPL -D_REENTRANT -DGNUSOURCE -D__STRICT_ANSI__ -DCMSSW_REFLEX_DICT -I${PROJECT_SOURCE_DIR}/cmssw
     """
             + " ".join(["-I" + d for d in include_dirs])
-            + """
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
+            + """    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
             + header
             + """ ${CMAKE_CURRENT_SOURCE_DIR}/src/"""
             + xml
@@ -295,13 +275,9 @@ def build_xml_to_cmake(root, build_file, root_node, config):
 
     cmake = CMakeLists()
 
-    cmake += [
-        "",
-        'file(GLOB_RECURSE SOURCE_FILES "src/*.cc")',
-        "",
-    ]
-
     n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
+
+    cmake += ['file(GLOB_RECURSE SOURCE_FILES "src/*.cc")']
 
     global_dependencies = get_global_dependencies(build_file)
     global_include_dirs = get_include_dirs(global_dependencies, config["requirements-include-dir"])
@@ -310,7 +286,7 @@ def build_xml_to_cmake(root, build_file, root_node, config):
         if elem.tag in ["library", "bin"]:
             target = name(elem)
 
-            files = interpret_files(elem.get("file"))
+            files = interpret_files(root, elem.get("file"))
 
             if target is None:
                 target = files[0].split(".")[0]
@@ -340,31 +316,17 @@ def build_xml_to_cmake(root, build_file, root_node, config):
 
             cmake += cmake_from_build_file
 
-            if is_interface:
-                cmake.fill_target(target + " INTERFACE")
-            else:
-                cmake.fill_target(target)
+            cmake.fill_target(target + " INTERFACE" * (0 + is_interface))
 
     return cmake
 
 
-if __name__ == "__main__":
+def cmssw_to_cmake(cmssw_src_dir, config_path):
+    config = load_config(config_path)
 
-    import argparse
-    import os
-    import subprocess
-    import xml.etree.ElementTree as ET
+    os.chdir(cmssw_src_dir)
 
-    parser = argparse.ArgumentParser(description="Generate CMakeLists for CMSSW.")
-    parser.add_argument("config", type=str, help="path to yaml config file")
-
-    args = parser.parse_args()
-
-    config = load_config(args.config)
-
-    os.chdir("cmssw")
-
-    packages_in_subsystem = {subsystem: set() for subsystem in config["subsystems"]}
+    cmake_in_subsystem = {subsystem: {} for subsystem in config["subsystems"]}
 
     for root, directories, files in os.walk("."):
 
@@ -389,44 +351,64 @@ if __name__ == "__main__":
         ):
             continue
 
-        packages_in_subsystem[subsystem].add(package)
-
-        if root.count("/") == 2:
-
-            if os.path.exists(os.path.join(root, "BuildFile.xml")):
-
-                build_file = os.path.join(root, "BuildFile.xml")
-                lib_name = subsystem + package
-                root_node = root_node_from_build_file(build_file, default_lib_name=lib_name)
-
-                cmake = build_xml_to_cmake(root, build_file, root_node, config)
-                cmake.write(root)
-
-        for file in files:
-            if (
-                file == "BuildFile.xml"
-                and root.count("/") == 3
+        def accept_as_build_file(filename):
+            return (
+                filename == "BuildFile.xml"
+                and root.count("/") <= 3
                 and (not root.endswith("test") or config["build-test"])
                 and (not root.endswith("bin") or config["build-bin"])
                 and not root.endswith("python")
-            ):
+            )
 
-                build_file = os.path.join(root, file)
-                root_node = root_node_from_build_file(
-                    build_file, default_lib_name=subsystem + package, in_plugin_dir=os.path.basename(root) == "plugins"
-                )
+        for file in filter(accept_as_build_file, files):
+            build_file = os.path.join(root, file)
+            lib_name = subsystem + package
+            in_plugin_dir = os.path.basename(root) == "plugins"
+            root_node = root_node_from_build_file(build_file, default_lib_name=lib_name, in_plugin_dir=in_plugin_dir)
 
-                cmake = build_xml_to_cmake(root, build_file, root_node, config)
-                cmake.write(root)
+            cmake = build_xml_to_cmake(root, build_file, root_node, config)
+            # don't write cmake files immediately, we might want to change them later
+            cmake_in_subsystem[subsystem]["/".join(root_split[2:])] = cmake
 
     # Finally, include all subdirectories into which we have written CMakeList files
     cmake = CMakeLists()
     cmake += ["include_directories(.)", ""]
-    for subsystem, packages in packages_in_subsystem.items():
+    for subsystem, cmakes in cmake_in_subsystem.items():
+        if len(cmakes) > 0:
+            cmake += [f"add_subdirectory({subsystem})"]
+        else:
+            continue
+
+        packages = sorted(list(set(map(lambda p: p.split("/")[0], cmakes.keys()))))
+
+        subdirectories_to_include = {package: [] for package in packages}
+
+        for dir_in_subsystem in cmakes.keys():
+            package = dir_in_subsystem.split("/")[0]
+            if "/" in dir_in_subsystem:
+                subdirectories_to_include[package].append("/".join(dir_in_subsystem.split("/")[1:]))
+
+        subdirectories_included = {package: len(subdirectories_to_include[package]) == 0 for package in packages}
+
+        for dir_in_subsystem, cmake_i in cmakes.items():
+            package = dir_in_subsystem.split("/")[0]
+            if not "/" in dir_in_subsystem:
+                for subdir in subdirectories_to_include[package]:
+                    cmake_i += [f"add_subdirectory({subdir})"]
+                subdirectories_included[package] = True
+            cmake_i.write(os.path.join(subsystem, dir_in_subsystem))
+
+        for package in subdirectories_to_include:
+            if not subdirectories_included[package]:
+                cmake_i = CMakeLists()
+                for subdir in subdirectories_to_include[package]:
+                    cmake_i += [f"add_subdirectory({subdir})"]
+                cmake_i.write(os.path.join(subsystem, package))
+
+        cmake_package = CMakeLists()
         for package in packages:
-            for root, _, files in os.walk(os.path.join(subsystem, package)):
-                if "CMakeLists.txt" in files:
-                    cmake += ["add_subdirectory(" + root + ")"]
+            cmake_package += [f"add_subdirectory({package})"]
+        cmake_package.write(subsystem)
     cmake.write(".")
 
     os.chdir("..")
@@ -434,3 +416,15 @@ if __name__ == "__main__":
     cmake = CMakeLists()
     cmake += config["cmake-lists-root"]
     cmake.write(".")
+
+
+if __name__ == "__main__":
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate CMakeLists for CMSSW.")
+    parser.add_argument("config", type=str, help="path to yaml config file")
+
+    args = parser.parse_args()
+
+    cmssw_to_cmake("cmssw", args.config)
