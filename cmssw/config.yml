@@ -15,26 +15,28 @@ subsystems:
     # CalibOnlineTools:
     CommonTools:
         whitelist:
+          - Egamma
           - UtilAlgos
           - Utils
     CondCore:
         whitelist:
-          - DBOutputService
           - CondDB
+          - DBOutputService
+          - PluginSystem
     CondFormats:
         whitelist:
-          - CastorObjects
-          - EgammaObjects
-          - RPCObjects
-          - L1TObjects
-          - AlignmentRecord
-          - HIObjects
-          - DataRecord
-          - PhysicsToolsObjects
-          - Common
-          - RunInfo
           - Alignment
+          - AlignmentRecord
+          - CastorObjects
+          - Common
+          - DataRecord
+          - EgammaObjects
+          - External
+          - HIObjects
+          - L1TObjects
+          - PhysicsToolsObjects
           - RPCObjects
+          - RunInfo
           - Serialization
     # CondTools:
     # Configuration:
@@ -56,9 +58,10 @@ subsystems:
     # GeneratorInterface:
     Geometry:
         whitelist:
+          - CaloGeometry
+          - CommonDetUnit
           - CommonTopologies
           - Records
-          - CaloGeometry
     # GeometryReaders
     # HLTrigger:
     # HLTriggerOffline:
@@ -67,7 +70,9 @@ subsystems:
     # HiggsAnalysis:
     # IOMC:
     IOPool:
-    # IORawData:
+    IORawData:
+        whitelist:
+          - DTCommissioning
     IgTools:
     # JetMETAnalysis:
     # JetMETCorrections:
@@ -87,7 +92,7 @@ subsystems:
     # RecoBTag:
     # RecoBTau:
     # RecoCTPPS:
-    # RecoCaloTools:
+    RecoCaloTools:
     # RecoEcal:
     RecoEgamma:
         whitelist:
@@ -142,20 +147,6 @@ requirements-nolink:
   - vdt_headers
   - ofast-flag
   - sigcpp
-  - IORawDataDTCommissioning
-  - CondFormatsExternal
-  - SimDataFormatsJetMatching
-  - DataFormatsCLHEP 
-  - DataFormatsStdDictionaries
-  - DataFormatsWrappedStdDictionaries
-  - DataFormatsPhase2TrackerCluster 
-  - DataFormatsPhase2TrackerDigi
-  - DataFormatsTrackCandidate
-  - DataFormatsTrajectorySeed
-  - DataFormatsTrajectoryState
-  - CondCorePluginSystem
-  - RecoCaloToolsSelectors
-  - GeometryCommonDetUnit
   - roofit
   - eigen
   - gcc-atomic

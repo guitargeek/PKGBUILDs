@@ -6,24 +6,26 @@ PKGEXT='.pkg.tar'
 MAKEFLAGS="-j$(nproc)"
 
 pkgname=cmssw
-pkgver=11.1.0
+pkgver=11.2.0
 _pkgver=$( echo ${pkgver} | tr '.' '_' ) 
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre8.tar.gz"
+#source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre1.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_11_2_X_2020-06-09-2300.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
-md5sums=('af2ba688a13b4d183fdd460de89ad406'
+md5sums=('a02ba84e9a0044cb09c2141170236639'
          'SKIP'
          'SKIP')
 options=('!strip')
 
 prepare() {
-    mv cmssw-CMSSW_${_pkgver}_pre8 cmssw
+    #mv cmssw-CMSSW_${_pkgver}_pre8 cmssw
+    mv cmssw-CMSSW_11_2_X_2020-06-09-2300 cmssw
     mkdir build
 }
 
@@ -31,7 +33,7 @@ build() {
     python cmssw_cmake.py config.yml
     cd build
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/CMSSW_${_pkgver} ..
-    make || return 1
+    make -j$((`nproc`+1)) || return 1
 }
 
 package() {

@@ -10,29 +10,48 @@ class CMakeLists(object):
         self._txt += rhs
         return self
 
-    def add_interface_library(self, target):
+    def _has_target_placeholder(self):
+        for l in self._txt:
+            if "<target>" in l:
+                return True
+        return False
+
+    def add_interface_library(self):
+        if self._has_target_placeholder():
+            raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
+
         # In CMake, one should optimally specify the interface files after the INTERFACE property.
         # But since this is CMSSW, this does not make much sense here.
         # http://mariobadr.com/creating-a-header-only-library-with-cmake.html
         # https://cmake.org/cmake/help/latest/command/add_library.html#interface-libraries
         self._txt += [
-            "add_library(" + target + " INTERFACE)",
+            "add_library(<target>)",
         ]
 
-    def add_library(self, target, source_files):
+    def add_library(self, source_files):
+
+        if self._has_target_placeholder():
+            raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
 
         self._txt += [
-            "add_library(" + target + " SHARED " + " ".join(source_files) + ")",
-            "set_target_properties(" + target + " PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
-            "install(TARGETS " + target + " LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})",
+            "add_library(<target> SHARED " + " ".join(source_files) + ")",
+            "set_target_properties(<target> PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)",
+            "install(TARGETS <target> LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})",
         ]
 
-    def add_executable(self, target, source_files):
+    def add_executable(self, source_files):
+
+        if self._has_target_placeholder():
+            raise RuntimeError("CMakeLists object already has an added target, fill it's name first!")
+
         self._txt += [
-            "add_executable(" + target + " " + " ".join(source_files) + ")",
-            "set_target_properties(" + target + " PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
-            "install(TARGETS " + target + " DESTINATION ${CMAKE_INSTALL_BINDIR})",
+            "add_executable(<target> " + " ".join(source_files) + ")",
+            "set_target_properties(<target> PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)",
+            "install(TARGETS <target> DESTINATION ${CMAKE_INSTALL_BINDIR})",
         ]
+
+    def fill_target(self, target):
+        self._txt = list(map(lambda l: l.replace("<target>", target), self._txt))
 
     def write(self):
         text = self._txt
@@ -51,10 +70,6 @@ class CMakeLists(object):
         if old_text != text:
             with open(filename, "w") as f:
                 f.write(text)
-
-
-def fill_target(cmake_lines, target):
-    return list(map(lambda l: l.replace("<target>", target), cmake_lines))
 
 
 def name(elem):
@@ -306,18 +321,18 @@ def build_xml_to_cmake(root, build_file, root_node):
                     cmake.add_interface_library(target)
                     is_interface = True
                 else:
-                    cmake.add_library(target, files)
+                    cmake.add_library(files)
             if elem.tag == "bin":
-                cmake.add_executable(target, files)
+                cmake.add_executable(files)
 
             cmake += parse_elements(elem, config)[0]
             for dependency in global_dependencies:
                 cmake += cmake_dependency_lines(dependency, config)
 
             if is_interface:
-                cmake._txt = fill_target(cmake._txt, target + " INTERFACE")
+                cmake.fill_target(target + " INTERFACE")
             else:
-                cmake._txt = fill_target(cmake._txt, target)
+                cmake.fill_target(target)
 
     cmake.write()
 
@@ -417,16 +432,16 @@ if __name__ == "__main__":
                 n_files = n_globbed_files + len(gen_sources)
                 if n_files == 0:
                     is_interface = True
-                    cmake.add_interface_library(lib_name)
+                    cmake.add_interface_library()
                 else:
-                    cmake.add_library(lib_name, ["${SOURCE_FILES}"] + gen_sources)
+                    cmake.add_library(["${SOURCE_FILES}"] + gen_sources)
 
                 cmake += cmake_from_build_file
 
                 if is_interface:
-                    cmake._txt = fill_target(cmake._txt, lib_name + " INTERFACE")
+                    cmake.fill_target(lib_name + " INTERFACE")
                 else:
-                    cmake._txt = fill_target(cmake._txt, lib_name)
+                    cmake.fill_target(lib_name)
 
                 cmake.write()
 
