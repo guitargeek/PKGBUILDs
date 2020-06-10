@@ -291,7 +291,7 @@ def get_include_dirs(deps, include_dir_dict):
     return out
 
 
-def build_xml_to_cmake(root, build_file, root_node):
+def build_xml_to_cmake(root, build_file, root_node, config):
 
     cmake = CMakeLists()
 
@@ -304,6 +304,7 @@ def build_xml_to_cmake(root, build_file, root_node):
     n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
 
     global_dependencies = get_global_dependencies(build_file)
+    global_include_dirs = get_include_dirs(global_dependencies, config["requirements-include-dir"])
 
     for elem in root_node:
         if elem.tag in ["library", "bin"]:
@@ -314,71 +315,35 @@ def build_xml_to_cmake(root, build_file, root_node):
             if target is None:
                 target = files[0].split(".")[0]
 
+            cmake_from_build_file, flags = parse_elements(elem, config)
+
+            if not len(flags["LCG_DICT_HEADER"]) == 0 in flags and os.path.exists(os.path.join(root, "src/classes.h")):
+                flags["LCG_DICT_HEADER"] = ["classes.h"]
+                flags["LCG_DICT_XML"] = ["classes_def.xml"]
+
+            cmake += lcg_dict_generation(flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"], global_include_dirs)
+
             is_interface = False
 
             if elem.tag == "library":
-                n_files = n_globbed_files + len(files)
+                n_files = n_globbed_files + len(files) + len(flags["LCG_DICT_HEADER"])
                 if n_files == 0:
-                    cmake.add_interface_library(target)
                     is_interface = True
+                    cmake.add_interface_library()
                 else:
-                    cmake.add_library(files)
+                    cmake.add_library(["${SOURCE_FILES}"] + files)
             if elem.tag == "bin":
                 cmake.add_executable(files)
 
-            cmake += parse_elements(elem, config)[0]
             for dependency in global_dependencies:
                 cmake += cmake_dependency_lines(dependency, config)
+
+            cmake += cmake_from_build_file
 
             if is_interface:
                 cmake.fill_target(target + " INTERFACE")
             else:
                 cmake.fill_target(target)
-
-    return cmake
-
-
-def package_root_build_xml_to_cmake(root, build_file, root_node):
-    cmake = CMakeLists()
-
-    cmake += [
-        "",
-        'file(GLOB_RECURSE SOURCE_FILES "src/*.cc")',
-        "",
-    ]
-
-    n_globbed_files = len(glob.glob(os.path.join(root, "src/*.cc")))
-
-    global_include_dirs = get_include_dirs(get_global_dependencies(build_file), config["requirements-include-dir"])
-
-    lib_node = None
-
-    for element in root_node:
-        if element.tag == "library":
-            lib_node = element
-
-    cmake_from_build_file, flags = parse_elements(lib_node, config)
-
-    if not len(flags["LCG_DICT_HEADER"]) == 0 in flags and os.path.exists(os.path.join(root, "src/classes.h")):
-        flags["LCG_DICT_HEADER"] = ["classes.h"]
-        flags["LCG_DICT_XML"] = ["classes_def.xml"]
-
-    cmake += lcg_dict_generation(flags["LCG_DICT_HEADER"], flags["LCG_DICT_XML"], global_include_dirs)
-
-    is_interface = False
-    n_files = n_globbed_files + len(flags["LCG_DICT_HEADER"])
-    if n_files == 0:
-        is_interface = True
-        cmake.add_interface_library()
-    else:
-        cmake.add_library(["${SOURCE_FILES}"])
-
-    cmake += cmake_from_build_file
-
-    if is_interface:
-        cmake.fill_target(lib_name + " INTERFACE")
-    else:
-        cmake.fill_target(lib_name)
 
     return cmake
 
@@ -434,7 +399,7 @@ if __name__ == "__main__":
                 lib_name = subsystem + package
                 root_node = root_node_from_build_file(build_file, default_lib_name=lib_name)
 
-                cmake = package_root_build_xml_to_cmake(root, build_file, root_node)
+                cmake = build_xml_to_cmake(root, build_file, root_node, config)
                 cmake.write(root)
 
         for file in files:
@@ -451,7 +416,7 @@ if __name__ == "__main__":
                     build_file, default_lib_name=subsystem + package, in_plugin_dir=os.path.basename(root) == "plugins"
                 )
 
-                cmake = build_xml_to_cmake(root, build_file, root_node)
+                cmake = build_xml_to_cmake(root, build_file, root_node, config)
                 cmake.write(root)
 
     # Finally, include all subdirectories into which we have written CMakeList files
