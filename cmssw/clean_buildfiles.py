@@ -52,11 +52,15 @@ for build_file_dir in build_file_dirs:
 
     is_library = not build_file_dir.split("/")[-1] in ["test", "plugins", "bin"]
 
-    for elem in root_node:
+    print(build_file)
+
+    def process(elem):
+        for inner_elem in elem:
+            process(inner_elem)
         if elem.tag == "use":
             dependency = elem.get("name")
             if not dependency:
-                continue
+                return
             if "/" in dependency:
                 if is_library:
                     if not (
@@ -67,6 +71,9 @@ for build_file_dir in build_file_dirs:
                 else:
                     if not package_included(dependency, build_file_dir):
                         unused_dependencies.append(dependency)
+
+    for elem in root_node:
+        process(elem)
 
     for dependency in unused_dependencies:
         os.system("sed -i '/" + dependency.replace("/", "\/") + "/d' " + build_file)
