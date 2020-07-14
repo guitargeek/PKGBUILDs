@@ -13,11 +13,11 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre1.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre2.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
-md5sums=('a6a17b14e5b9566ca8dc9ff2a818fe7d'
+md5sums=('d5f4c70a59a9ded38caa619dcadff8e2'
          'SKIP'
          'SKIP')
 options=('!strip')
