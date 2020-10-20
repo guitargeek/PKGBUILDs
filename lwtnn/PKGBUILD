@@ -2,10 +2,11 @@
 
 pkgname=lwtnn
 pkgver=2.9
-pkgrel=1
+pkgrel=2
 arch=("i686" "x86_64")
 url="https://github.com/lwtnn/lwtnn"
 license=('MIT')
+depends=("eigen")
 makedepends=("git" "cmake")
 provides=("lwtnn")
 source=("git+https://github.com/lwtnn/lwtnn#tag=v${pkgver}")
