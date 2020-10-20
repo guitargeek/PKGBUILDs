@@ -1,21 +1,21 @@
 # Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
 
 pkgname=heppdt
-pkgver=3.04.01
-pkgrel=1
+pkgver=3.03.00
+pkgrel=2
 arch=("i686" "x86_64")
-url="http://lcgapp.cern.ch/project/simu/HepPDT"
+url="https://github.com/cms-externals/heppdt"
 provides=("heppdt")
-source=("http://lcgapp.cern.ch/project/simu/HepPDT/download/HepPDT-${pkgver}.tar.gz")
-sha512sums=('33a93b7d18c0cc64ab13923eb5edca89ed753a7f888a31c1d6a5f84f735e4042e2eaaf04e221d487976603a40fbd84cede4b4dd2bcd2e7479d97cc637dda637b')
+source=("git+https://github.com/cms-externals/heppdt#branch=cms/3.03.00")
+sha512sums=('SKIP')
 
 build() {
-    cd HepPDT-${pkgver}
-    ./configure --prefix=/usr
+    cd heppdt
+    ./configure --prefix=/usr CPPFLAGS="-O2 -std=c++14" CXXFLAGS="-O2 -std=c++14"
     make -j8
 }
 
 package() {
-    cd HepPDT-${pkgver}
+    cd heppdt
     make DESTDIR="$pkgdir/" install
 }
