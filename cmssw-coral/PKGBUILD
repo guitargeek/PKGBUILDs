@@ -2,9 +2,10 @@
 
 pkgname=cmssw-coral
 pkgver=2.3.21
-pkgrel=1
+pkgrel=2
 arch=("i686" "x86_64")
 url="https://github.com/cms-externals/coral"
+depends=("xerces-c")
 makedepends=("git")
 provides=("cmssw-coral")
 source=("git+https://github.com/cms-externals/coral"
@@ -139,9 +140,11 @@ include(GNUInstallDirs)" > CMakeLists.txt
 
 build() {
     cd build
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=lib ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+          -DCMAKE_CXX_FLAGS="-Wno-register" \
+          ..
 
-    make -j8
+    make -j9
 }
 
 package() {
