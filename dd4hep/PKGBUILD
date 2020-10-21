@@ -1,7 +1,7 @@
 # Maintainer: Jonas Rembser <jonas.rembser gmail com>
 
 pkgname=dd4hep
-pkgver=01.12.01
+pkgver=01.14.01
 _pkgver=$( echo ${pkgver} | tr '.' '-' ) 
 pkgrel=1
 arch=("i686" "x86_64")
@@ -9,14 +9,14 @@ url="https://github.com/AIDASoft/DD4hep"
 provides=("dd4hep")
 source=("https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
         "DigiKernel.patch")
-sha512sums=('cac7d6ea3468e923e8dbe65ac690820d444b022ea15809facfb6407a411192a3a6051ee872f44f0316a32cb6f255e0fdbe68ef47b25c756876a2839b6a860709'
+sha512sums=('f14eaf8bd9372b2f6f85a474958b76db46268259d998b7fd17d24d3aa076a543fdd1ee118441cb0eea28062a4647ac89fd0ca88cf8a790342cb4924a53cb15c2'
             'af22ff1a9c50a829c1b745e1d16fffe8379d9a54724990f64d1ff08221d7e7a93e1defeee64f4535811f00b3ee228f7255f5e18f6e358fdcb8cbd077a0456e0e')
 
 prepare() {
-    patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp DigiKernel.patch
+    #patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp DigiKernel.patch
 
     # There is something strange with a missing newline, so let's add it
-    echo "" > DD4hep-01-12-01/DDParsers/src/Spirit/ParserStandardList_Mapstring_bool.cpp
+    #echo "" > DD4hep-01-12-01/DDParsers/src/Spirit/ParserStandardList_Mapstring_bool.cpp
 
     mkdir -p build
 }
@@ -34,7 +34,7 @@ build() {
           -DROOT_DIR=$ROOTSYS \
           ../DD4hep-${_pkgver}
 
-    make -j8
+    make -j2
 }
 
 package() {
