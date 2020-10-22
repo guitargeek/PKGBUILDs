@@ -172,6 +172,8 @@ def parse_elements(root_node, config):
             if elem.get("LCG_DICT_XML"):
                 flags["LCG_DICT_XML"] = elem.get("LCG_DICT_XML").split(" ")
         if elem.tag == "use" or elem.tag == "lib" and name(elem) != "1":
+            if elem.get("source_only") == "1":
+                continue
             cmake += cmake_dependency_lines(name(elem), config)
         if elem.tag == "lib":
             cmake += ["target_link_libraries(<target> " + name(elem) + ")"]
@@ -253,7 +255,7 @@ def get_global_dependencies(build_file):
     global_dependencies = []
 
     for elem in root_node:
-        if elem.tag == "use":
+        if elem.tag == "use" and elem.get("source_only") != "1":
             global_dependencies.append(name(elem).replace("/", ""))
         if elem.tag == "environment":
             for sub_elem in elem:
