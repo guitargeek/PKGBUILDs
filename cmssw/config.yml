@@ -4,25 +4,25 @@ subsystems:
     # AnalysisDataFormats:
     # BigProducts:
     # CalibCalorimetry:
-    #CalibFormats:
-        #whitelist:
-          #- CaloObjects
-          #- CastorObjects
+    CalibFormats:
+        whitelist:
+          - CaloObjects
+          - CastorObjects
     # CalibMuon:
     # CalibPPS:
     # CalibTracker:
     # Calibration:
     # CalibOnlineTools:
-    #CommonTools:
-        #whitelist:
-          #- Egamma
-          #- UtilAlgos
-          #- Utils
-    #CondCore:
-        #whitelist:
-          #- CondDB
-          #- DBOutputService
-          #- PluginSystem
+    CommonTools:
+        whitelist:
+          - Egamma
+          - UtilAlgos
+          - Utils
+    CondCore:
+        whitelist:
+          - CondDB
+          - DBOutputService
+          - PluginSystem
     CondFormats:
         whitelist:
           - Alignment
@@ -69,34 +69,34 @@ subsystems:
     # HeterogeneousCore:
     # HiggsAnalysis:
     # IOMC:
-    #IOPool:
-    #IORawData:
-        #whitelist:
-          #- DTCommissioning
-    #IgTools:
+    IOPool:
+    IORawData:
+        whitelist:
+          - DTCommissioning
+    IgTools:
     # JetMETAnalysis:
     # JetMETCorrections:
     # L1Trigger:
     # L1TriggerConfig:
-    #L1TriggerOffline:
+    L1TriggerOffline:
     # MagneticField:
-    #Mixing:
+    Mixing:
     # MuonAnalysis:
     # OnlineDB:
     # PerfTools:
-    #PhysicsTools:
-        #whitelist:
-          #- SelectorUtils
-          #- Utilities
+    PhysicsTools:
+        whitelist:
+          - SelectorUtils
+          - Utilities
     # QCDAnalysis:
     # RecoBTag:
     # RecoBTau:
     # RecoCTPPS:
-    #RecoCaloTools:
+    RecoCaloTools:
     # RecoEcal:
-    #RecoEgamma:
-        #whitelist:
-          #- EgammaMCTools
+    RecoEgamma:
+        whitelist:
+          - EgammaMCTools
     # RecoHGCal:
     # RecoHI:
     # RecoJets:
@@ -127,7 +127,7 @@ subsystems:
     # SimPPS:
     # SimRomanPot:
     # SimTracker:
-    #TBDataFormats:
+    TBDataFormats:
     # TauAnalysis:
     # TopQuarkAnalysis:
     # TrackPropagation:
