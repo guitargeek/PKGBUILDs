@@ -1,14 +1,14 @@
 # Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
 
 pkgname=libfastforest
-pkgver=0.0.1
+pkgver=0.3
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/guitargeek/XGBoost-FastForest"
 license=('MIT')
 makedepends=("git" "cmake")
 provides=("fastforest")
-source=("git+https://github.com/guitargeek/XGBoost-FastForest#tag=${pkgver}")
+source=("git+https://github.com/guitargeek/XGBoost-FastForest#tag=v${pkgver}")
 sha512sums=('SKIP')
 
 
