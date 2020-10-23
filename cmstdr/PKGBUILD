@@ -1,0 +1,37 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+# last update: 2020-10-23
+
+pkgname=cmstdr
+pkgver=0.0.1
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://gitlab.cern.ch/tdr/papers/XXX-08-000"
+depends=()
+provides=("cmstdr")
+source=(
+    "http://duck.jonaslan.de/download/cmstdr/XXX-08-000_cb153c3c.tar.gz"
+    "http://duck.jonaslan.de/download/cmstdr/utils_a8961ee9.tar.gz"
+)
+md5sums=('d3fcc3e4594f6e9b342022896e0cf532'
+         'f9e633113d6bd0d03af78fa32c293043')
+
+prepare() {
+  #tar -xf XXX-08-000
+  #tar -xf utils_a8961ee9
+  mv utils XXX-08-000/
+  cd XXX-08-000
+}
+
+build() {
+  cd XXX-08-000
+  mkdir output
+  perl utils/tdr --style paper  --temp_dir=output b
+}
+
+package() {
+  cd XXX-08-000
+
+  mkdir -p $pkgdir/usr/share/texmf/bibtex/bst
+  cp output/auto_generated.bst $pkgdir/usr/share/texmf/bibtex/bst/cmstdr.bst
+}
