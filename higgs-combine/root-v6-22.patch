@@ -1,0 +1,161 @@
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D_Expanded.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D_Expanded.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D_Expanded.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D_Expanded.h	2020-10-24 13:03:46.330358983 +0200
+@@ -17,6 +17,7 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
+ 
+ 
+ class HZZ4L_RooCTauPdf_1D_Expanded : public RooAbsPdf {
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D.h	2020-10-24 13:06:04.940361960 +0200
+@@ -17,6 +17,7 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
+ 
+ 
+ class HZZ4L_RooCTauPdf_1D : public RooAbsPdf {
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_2D.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_2D.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_2D.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_2D.h	2020-10-24 13:05:26.577027803 +0200
+@@ -17,6 +17,7 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
+ 
+ 
+ class HZZ4L_RooCTauPdf_2D : public RooAbsPdf {
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D.h	2020-10-24 13:08:23.163698263 +0200
+@@ -17,6 +17,8 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
++
+ using namespace RooFit;
+ 
+ class HZZ4L_RooSpinZeroPdf_1D : public RooAbsPdf {
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D.h	2020-10-24 13:07:39.063697315 +0200
+@@ -17,6 +17,7 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
+ 
+ using namespace RooFit;
+ 
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf.h	2020-10-24 13:04:34.393693348 +0200
+@@ -17,6 +17,8 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
++
+ using namespace RooFit;
+ class HZZ4L_RooSpinZeroPdf : public RooAbsPdf {
+ protected:
+diff -ur HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase.h HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase.h
+--- HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase.h	2020-10-24 13:06:50.470362942 +0200
+@@ -17,6 +17,8 @@
+ #include "TH1.h"
+ #include "RooDataHist.h"
+ #include "RooHistFunc.h"
++#include "RooListProxy.h"
++
+ using namespace RooFit;
+ class HZZ4L_RooSpinZeroPdf_phase : public RooAbsPdf {
+ protected:
+diff -ur HiggsAnalysis/CombinedLimit/interface/MultiDimFit.h HiggsAnalysis/CombinedLimit/interface/MultiDimFit.h
+--- HiggsAnalysis/CombinedLimit/interface/MultiDimFit.h	2020-10-24 13:34:21.240398629 +0200
++++ HiggsAnalysis/CombinedLimit/interface/MultiDimFit.h	2020-10-24 13:10:50.823701454 +0200
+@@ -10,6 +10,7 @@
+  */
+ #include "HiggsAnalysis/CombinedLimit/interface/FitterAlgoBase.h"
+ #include <RooRealVar.h>
++#include "TFile.h"
+ #include <vector>
+ 
+ class MultiDimFit : public FitterAlgoBase {
+diff -ur HiggsAnalysis/CombinedLimit/interface/SimpleCacheSentry.h HiggsAnalysis/CombinedLimit/interface/SimpleCacheSentry.h
+--- HiggsAnalysis/CombinedLimit/interface/SimpleCacheSentry.h	2020-10-24 13:34:21.243731963 +0200
++++ HiggsAnalysis/CombinedLimit/interface/SimpleCacheSentry.h	2020-10-24 12:54:53.837014167 +0200
+@@ -27,14 +27,14 @@
+         virtual RooAbsArg *createFundamental(const char* newname=0) const { return 0; }
+         virtual Bool_t readFromStream(std::istream& is, Bool_t compact, Bool_t verbose=kFALSE) { return false; }
+         virtual void writeToStream(std::ostream& os, Bool_t compact) const { }
+-        virtual Bool_t operator==(const RooAbsArg& other) { return this == &other; }
++        virtual Bool_t operator==(const RooAbsArg& other) const { return this == &other; }
+         virtual void syncCache(const RooArgSet* nset=0) {}
+         virtual void copyCache(const RooAbsArg* source, Bool_t valueOnly=kFALSE, Bool_t setValDirty=kTRUE) {}
+         virtual void attachToTree(TTree& t, Int_t bufSize=32000) {}
+         virtual void attachToVStore(RooVectorDataStore& vstore) {}
+         virtual void setTreeBranchStatus(TTree& t, Bool_t active) {}
+         virtual void fillTreeBranch(TTree& t) {}
+-	virtual Bool_t isIdentical(const RooAbsArg& other, Bool_t assumeSameType=kFALSE) ;
++        virtual Bool_t isIdentical(const RooAbsArg& other, Bool_t assumeSameType=kFALSE) const ;
+     private:
+         RooSetProxy _deps;
+         ClassDef(SimpleCacheSentry,1) 
+diff -ur HiggsAnalysis/CombinedLimit/src/CachingNLL.cc HiggsAnalysis/CombinedLimit/src/CachingNLL.cc
+--- HiggsAnalysis/CombinedLimit/src/CachingNLL.cc	2020-10-24 13:34:21.250398630 +0200
++++ HiggsAnalysis/CombinedLimit/src/CachingNLL.cc	2020-10-24 13:02:26.817023928 +0200
+@@ -1162,7 +1162,7 @@
+     //utils::printRDH((RooAbsData*)&data);
+     for (int i = 0; i < ne; ++i) {
+         data.get(i); if (data.weight() == 0 && !includeZeroWeightsAny) continue;
+-        int ib = cat->getBin();
++        int ib = cat->getBin((const char*)0);
+         //std::cout << "Event " << i << " of weight " << data.weight() << " is in bin " << ib << " label " << cat->getLabel() << std::endl;
+         if (data.weight() > 0 || includeZeroWeights[ib]) datasets_[ib]->add(obs, data.weight());
+     }
+diff -ur HiggsAnalysis/CombinedLimit/src/SimpleCacheSentry.cc HiggsAnalysis/CombinedLimit/src/SimpleCacheSentry.cc
+--- HiggsAnalysis/CombinedLimit/src/SimpleCacheSentry.cc	2020-10-24 13:34:21.263731963 +0200
++++ HiggsAnalysis/CombinedLimit/src/SimpleCacheSentry.cc	2020-10-24 13:11:23.917035499 +0200
+@@ -55,7 +55,7 @@
+ }
+ 
+ Bool_t SimpleCacheSentry::isIdentical(const RooAbsArg& other, 
+-            Bool_t /*assumeSameType*/) {
++            Bool_t /*assumeSameType*/) const {
+   bool ret = kFALSE;
+   SimpleCacheSentry const& otherSentry = dynamic_cast<SimpleCacheSentry const&>(other);
+   RooAbsCollection * common = _deps.selectCommon(otherSentry._deps);
+diff -ur HiggsAnalysis/CombinedLimit/src/SimplerLikelihoodRatioTestStatExt.cc HiggsAnalysis/CombinedLimit/src/SimplerLikelihoodRatioTestStatExt.cc
+--- HiggsAnalysis/CombinedLimit/src/SimplerLikelihoodRatioTestStatExt.cc	2020-10-24 13:34:21.263731963 +0200
++++ HiggsAnalysis/CombinedLimit/src/SimplerLikelihoodRatioTestStatExt.cc	2020-10-24 13:12:37.503703760 +0200
+@@ -122,7 +122,7 @@
+     for (i = 0; i < n; ++i) {
+         data.get(i); 
+         double w = data.weight(); if (w == 0) continue;
+-        int bin = cat->getBin();
++        int bin = cat->getBin((const char*)0);
+         assert(bin < int(components.size()) && "Bin outside range");
+         if (components[bin] == 0) continue;
+         sum  += -w*components[bin]->getLogVal(obs_);
+diff -ur HiggsAnalysis/CombinedLimit/src/utils.cc HiggsAnalysis/CombinedLimit/src/utils.cc
+--- HiggsAnalysis/CombinedLimit/src/utils.cc	2020-10-24 13:34:21.263731963 +0200
++++ HiggsAnalysis/CombinedLimit/src/utils.cc	2020-10-24 13:21:08.713714826 +0200
+@@ -1107,8 +1107,8 @@
+ 
+ void utils::RooAddPdfFixer::Fix(RooAddPdf & fixme) {
+   RooAddPdfFixer & fixme_casted = static_cast<RooAddPdfFixer &>(fixme);
+-  delete[] fixme_casted.RooAddPdf::_coefCache;
+-  fixme_casted.RooAddPdf::_coefCache = new Double_t[fixme_casted.RooAddPdf::_pdfList.getSize()];
++  fixme_casted.RooAddPdf::_coefCache.clear();
++  fixme_casted.RooAddPdf::_coefCache.resize(fixme_casted.RooAddPdf::_pdfList.getSize());
+ }
+ 
+ void utils::RooAddPdfFixer::FixAll(RooWorkspace & w) {

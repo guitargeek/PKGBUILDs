@@ -1,0 +1,22 @@
+--- python/ShapeTools.py	2020-10-24 14:53:50.140501563 +0200
++++ python/ShapeTools.py	2020-10-24 14:54:09.027168634 +0200
+@@ -1064,8 +1064,8 @@
+             if shape.ClassName().startswith("TH1"):
+                 if self.options.useHistPdf == "never":
+                     shape = self.rebinH1(shape)
+-                    list = ROOT.TList()
+-                    list.Add(shape)
++                    list_ = ROOT.TList()
++                    list_.Add(shape)
+                     if channelBinParFlag:
+                         rhp = ROOT.CMSHistFunc("%sPdf" % shape.GetName(), "", self.out.var(
+                             self.TH1Observables[channel]), shape)
+@@ -1075,7 +1075,7 @@
+                             rhp.setActiveBins(shape._original_bins)
+                     else:
+                         rhp = ROOT.FastVerticalInterpHistPdf2("%sPdf" % shape.GetName(
+-                        ), "", self.out.var(self.TH1Observables[channel]), list, ROOT.RooArgList())
++                        ), "", self.out.var(self.TH1Observables[channel]), list_, ROOT.RooArgList())
+                     _cache[shape.GetName()+"Pdf"] = rhp
+                 else:
+                     rdh = self.shape2Data(shape, channel, process)
