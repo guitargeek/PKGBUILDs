@@ -3,7 +3,7 @@ My custom packages for Arch Linux.
 
 ## CMSSW related packages
 
-Once I tried to build CMSSW on my laptop, therefore we have here many packages which are either dependencies of CMSSW of
+Once I tried to build CMSSW on my laptop, therefore we have here many packages which are either dependencies of CMSSW or
 represent CMSSW itself:
 
 * [classlib](classlib)
