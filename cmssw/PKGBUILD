@@ -6,14 +6,14 @@ PKGEXT='.pkg.tar'
 MAKEFLAGS="-j$(nproc)"
 
 pkgname=cmssw
-pkgver=11.2.0
+pkgver=11.3.0
 _pkgver=$( echo ${pkgver} | tr '.' '_' )
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake" "fmt" "tinyxml2" "hepmc2" "clhep" "jemalloc" "gperftools" "xrootd")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre11.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre2.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
@@ -23,7 +23,7 @@ md5sums=('SKIP'
 options=('!strip')
 
 prepare() {
-    mv cmssw-CMSSW_${_pkgver}_pre11 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre2 cmssw
     mkdir build
 }
 

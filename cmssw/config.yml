@@ -28,6 +28,7 @@ subsystems:
           - Alignment
           - AlignmentRecord
           - CastorObjects
+          - CSCObjects
           - Common
           - DataRecord
           - EgammaObjects
@@ -143,6 +144,7 @@ subsystems:
 
 requirements-nolink:
   - boost_header
+  - boost_python
   - clhepheader
   - vdt_headers
   - ofast-flag
