@@ -1,0 +1,69 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=cms-higgs-combine
+pkgver=10.2.0
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit"
+depends=("python" "root" "cmake")
+provides=("cms-higgs-combine")
+conflicts=("cms-higgs-combine-8")
+source=(
+    "git+https://github.com/guitargeek/HiggsAnalysis-CombinedLimit/#branch=102x_arch-linux"
+    "CMakeLists.txt"
+)
+md5sums=('SKIP'
+         '2a5d9b49095cbb4238ea44dbca4d7788')
+
+prepare() {
+    mkdir HiggsAnalysis
+    mv ${srcdir}/HiggsAnalysis-CombinedLimit HiggsAnalysis/CombinedLimit
+
+    cd HiggsAnalysis/CombinedLimit
+
+    # This is necessary so that the file gets installed in the system,
+    # as it is required by ROOT to load the dictionaries or something like that
+    mv src/classes.h interface/classes.h
+
+    # This step takes some time, but otherwise the code gives indentation errors
+    echo "formatting python code to avoid indentation errors..."
+    autopep8 -i -r .
+
+    # We want to use python3
+    python-modernize -w -n . > /dev/null
+
+    # This was done in the original Makefile, so we do it here too
+    python -m compileall -q python
+
+    cd ../../
+
+    mkdir -p build
+}
+
+build() {
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+    make -j3 || return 1
+}
+
+package() {
+    mkdir -p $pkgdir/usr/bin
+    cp HiggsAnalysis/CombinedLimit/scripts/* $pkgdir/usr/bin/
+
+    # The python package will be installed in such a way that the  original CMSSW-style
+    # directory structure is kept, for maximal compatibility
+
+    PYTHON_VERSION=$(python -c "import sys; print('{0}.{1}'.format(sys.version_info.major, sys.version_info.minor))")
+    PYTHON_SITE_PACKAGES=$pkgdir/usr/lib/python$PYTHON_VERSION/site-packages
+    PYTHON_INSTALL_DIR=$PYTHON_SITE_PACKAGES/HiggsAnalysis/CombinedLimit
+
+    mkdir -p $PYTHON_INSTALL_DIR
+
+    cp -r HiggsAnalysis/CombinedLimit/python/* $PYTHON_INSTALL_DIR/
+
+    touch $PYTHON_SITE_PACKAGES/HiggsAnalysis/__init__.py
+    touch $PYTHON_SITE_PACKAGES/HiggsAnalysis/CombinedLimit/__init__.py
+
+    cd build
+    make DESTDIR="$pkgdir/" install
+}

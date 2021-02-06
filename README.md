@@ -8,7 +8,7 @@ represent CMSSW itself:
 
 * [classlib](classlib)
 * [cmssw](cmssw)
-* [coral](coral)
+* [cmssw-coral](cmssw-coral)
 * [dd4hep](dd4hep)
 * [heppdt](heppdt)
 * [libcms-md5](libcms-md5)
@@ -33,22 +33,13 @@ continue where it left off after you fixed the error.
 
 ## Other general CMS packages
 
-Nicely safe-contained, there is a package for the [HiggsAnalysis-CombinedLimit](https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit) tool:
+There is a self-contained package for the [HiggsAnalysis-CombinedLimit](https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit) tool:
 
-* [higgs-combine](higgs-combine)
-
-## Personal analysis related packages
-
-A few packages are probably not of interest to anyone, because I use them for my personal physics analysis. These
-packages are:
-
-* [aminnj-pyfiles](aminnj-pyfiles)
-* [python-plottery](python-plottery)
-* [rooutil](rooutil)
+* [cms-higgs-combine](cms-higgs-combine) follows the most recent development branch of combine
+* [cms-higgs-combine-8](cms-higgs-combine-8) for the latest recommended release for users (v8.1.0)
 
 ## Other packages
 
 Some packages don't fall in any of the previous categories:
 
 * [fastforest](fastforest)
-* [onnxruntime](onnxruntime)

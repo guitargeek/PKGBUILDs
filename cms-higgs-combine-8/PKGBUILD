@@ -1,12 +1,13 @@
 # Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
 
-pkgname=higgs-combine
+pkgname=cms-higgs-combine-8
 pkgver=8.1.0
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit"
 depends=("python" "root" "cmake")
-provides=("higgs-combine")
+provides=("cms-higgs-combine-8")
+conflicts=("cms-higgs-combine")
 source=(
     "https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/archive/v${pkgver}.tar.gz"
     "root-v6-20.patch"
@@ -41,10 +42,10 @@ prepare() {
     echo "formatting python code to avoid indentation errors..."
     autopep8 -i -r .
 
-    # We want to use python3
+    ## We want to use python3
     python-modernize -w -n . > /dev/null
 
-    # This was done in the original Makefile, so we do it here too
+    ## This was done in the original Makefile, so we do it here too
     python -m compileall -q python
 
     cd ../../
