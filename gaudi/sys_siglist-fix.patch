@@ -1,0 +1,12 @@
+--- GaudiUtils/src/component/SignalMonitorSvc.cpp	2021-02-28 20:26:45.170803403 +0100
++++ GaudiUtils/src/component/SignalMonitorSvc.cpp	2021-02-28 20:26:25.320803105 +0100
+@@ -202,7 +202,9 @@
+       return 0;
+     }
+ #else
+-    return sys_siglist[signum];
++    // Replaced sys_siglist with strsignal as advised in https://bugs.gentoo.org/738176
++    //return sys_siglist[signum];
++    return strsignal(signum);
+ #endif
+   }

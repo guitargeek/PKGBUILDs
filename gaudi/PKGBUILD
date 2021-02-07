@@ -1,0 +1,43 @@
+# Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
+
+pkgname=gaudi
+pkgver=35.1
+_pkgver=$( echo v${pkgver} | tr '.' 'r' )
+pkgrel=1
+arch=("i686" "x86_64")
+url="https://gaudi.web.cern.ch/gaudi/"
+depends=("cmake" "nlohmann-json" "microsoft-gsl" "range-v3" "cppunit" "heppdt")
+provides=("gaudi")
+source=(
+    "https://gitlab.cern.ch/gaudi/Gaudi/-/archive/v35r1/Gaudi-${_pkgver}.tar.gz"
+    "sys_siglist-fix.patch"
+)
+md5sums=('5d51e6f104789571ca9782578dc0c9c1'
+         '238f075d0f8e3faf9734c3b9f4876716')
+
+prepare() {
+    mkdir -p build
+
+    patch ${srcdir}/Gaudi-${_pkgver}/GaudiUtils/src/component/SignalMonitorSvc.cpp < sys_siglist-fix.patch
+}
+
+build() {
+    cd build
+    cmake -DGAUDI_USE_AIDA=OFF \
+          -DGAUDI_USE_HEPPDT=OFF \
+          -DGAUDI_USE_CLHEP=OFF \
+          -DGAUDI_USE_GPERFTOOLS=OFF \
+          -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+          ${srcdir}/Gaudi-${_pkgver}
+
+    make -j2 || return 1
+}
+
+package() {
+    mkdir $pkgdir/usr
+    cd ${srcdir}/build
+    make DESTDIR="$pkgdir/" install
+
+    # rename listcomponents to avoid clash with dd4hep package
+    mv $pkgdir/usr/bin/listcomponents $pkgdir/usr/bin/gaudi_listcomponents
+}
