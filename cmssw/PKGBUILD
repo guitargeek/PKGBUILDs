@@ -13,7 +13,7 @@ arch=("i686" "x86_64")
 url="https://github.com/cms-sw/cmssw"
 depends=("python" "root" "cmake" "fmt" "tinyxml2" "hepmc2" "clhep" "jemalloc" "gperftools" "xrootd")
 provides=("rooutil")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre2.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre3.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
@@ -23,7 +23,7 @@ md5sums=('SKIP'
 options=('!strip')
 
 prepare() {
-    mv cmssw-CMSSW_${_pkgver}_pre2 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre3 cmssw
     mkdir build
 }
 

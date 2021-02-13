@@ -143,6 +143,7 @@ subsystems:
     # Validation:
 
 requirements-nolink:
+  - DataFormatsMuonData
   - boost_header
   - boost_python
   - clhepheader
