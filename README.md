@@ -7,11 +7,11 @@ Once I tried to build CMSSW on my laptop, therefore we have here many packages w
 represent CMSSW itself:
 
 * [classlib](classlib)
+* [cms-md5](cms-md5)
 * [cmssw](cmssw)
 * [cmssw-coral](cmssw-coral)
 * [dd4hep](dd4hep)
 * [heppdt](heppdt)
-* [libcms-md5](libcms-md5)
 * [lwtnn](lwtnn)
 
 ### Note on the CMSSW package

@@ -1,12 +1,12 @@
 # Maintainer: Jonas Rembser <jonas.rembser@gmail.com>
 
-pkgname=libcms-md5
+pkgname=cms-md5
 pkgver=1.0.0
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-externals/md5"
 makedepends=("git")
-provides=("libcms-md5")
+provides=("cms-md5")
 source=("git+https://github.com/cms-externals/md5#branch=cms/${pkgver}")
 sha512sums=('SKIP')
 
