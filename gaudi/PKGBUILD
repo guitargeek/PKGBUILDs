@@ -6,7 +6,18 @@ _pkgver=$( echo v${pkgver} | tr '.' 'r' )
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://gaudi.web.cern.ch/gaudi/"
-depends=("cmake" "nlohmann-json" "microsoft-gsl" "range-v3" "cppunit" "heppdt")
+depends=(
+    "cmake"
+    "cppunit"
+    "doxygen"
+    "heppdt"
+    "microsoft-gsl"
+    "nlohmann-json"
+    "range-v3"
+)
+makedepends=(
+    "python-nose"
+)
 provides=("gaudi")
 source=(
     "https://gitlab.cern.ch/gaudi/Gaudi/-/archive/v35r1/Gaudi-${_pkgver}.tar.gz"
@@ -30,7 +41,7 @@ build() {
           -DCMAKE_INSTALL_PREFIX:PATH=/usr \
           ${srcdir}/Gaudi-${_pkgver}
 
-    make -j2 || return 1
+    make -j$((`nproc`+1)) || return 1
 }
 
 package() {

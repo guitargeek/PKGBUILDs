@@ -6,6 +6,7 @@ pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit"
 depends=("python" "root" "cmake")
+makedepends=("autopep8")
 provides=("cms-higgs-combine-8")
 conflicts=("cms-higgs-combine")
 source=(

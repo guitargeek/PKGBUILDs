@@ -7,7 +7,7 @@ pkgver=0.0.1
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://gitlab.cern.ch/tdr/papers/XXX-08-000"
-depends=()
+depends=("texlive-most")
 provides=("bibtex-cmstdr")
 source=(
     "http://duck.jonaslan.de/download/cmstdr/XXX-08-000_cb153c3c.tar.gz"
