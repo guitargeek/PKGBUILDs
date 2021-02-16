@@ -1,22 +1,22 @@
 # Maintainer: Jonas Rembser <jonas.rembser gmail com>
 
 pkgname=dd4hep
-pkgver=01.14.01
+pkgver=01.15
 _pkgver=$( echo ${pkgver} | tr '.' '-' ) 
 pkgrel=1
 arch=("i686" "x86_64")
 url="https://github.com/AIDASoft/DD4hep"
 provides=("dd4hep")
-source=("https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
-        "DigiKernel.patch")
-sha512sums=('f14eaf8bd9372b2f6f85a474958b76db46268259d998b7fd17d24d3aa076a543fdd1ee118441cb0eea28062a4647ac89fd0ca88cf8a790342cb4924a53cb15c2'
-            'af22ff1a9c50a829c1b745e1d16fffe8379d9a54724990f64d1ff08221d7e7a93e1defeee64f4535811f00b3ee228f7255f5e18f6e358fdcb8cbd077a0456e0e')
+source=(
+    "https://github.com/AIDASoft/DD4hep/archive/v${_pkgver}.tar.gz"
+    "DD4hepBuild.cmake.patch"
+)
+sha512sums=('342f4c223541261ca5124a316248fe8f85c65eaa746caba32e7b55fb7988d266f6311b28c0b3a6a7c9517704460d2473b11312af3c2e9cd75d7c823e94b8fc96'
+            'f793af6fec6bb31f9f12ebcbd88b769b152989784250db6e51c9dc83948681fa3b7cfc14fdef2f29435c5647f9333555631faaca81d30025dfde347aa670d4f4')
 
 prepare() {
-    #patch DD4hep-${_pkgver}/DDDigi/src/DigiKernel.cpp DigiKernel.patch
 
-    # There is something strange with a missing newline, so let's add it
-    #echo "" > DD4hep-01-12-01/DDParsers/src/Spirit/ParserStandardList_Mapstring_bool.cpp
+    patch DD4hep-${_pkgver}/cmake/DD4hepBuild.cmake < DD4hepBuild.cmake.patch
 
     mkdir -p build
 }
@@ -34,7 +34,7 @@ build() {
           -DROOT_DIR=$ROOTSYS \
           ../DD4hep-${_pkgver}
 
-    make -j2
+    make -j$((`nproc`+1)) || return 1
 }
 
 package() {
