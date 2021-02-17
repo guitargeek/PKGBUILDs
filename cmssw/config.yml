@@ -3,6 +3,7 @@ subsystems:
     # AnalysisAlgos:
     # AnalysisDataFormats:
     # BigProducts:
+    # CUDADataFormats
     # CalibCalorimetry:
     CalibFormats:
         whitelist:
@@ -47,10 +48,8 @@ subsystems:
     # DQMServices:
     DataFormats:
     # DetectorDescription:
-    # DiffractiveForwardAnalysis:
     # Documentation:
     # EgammaAnalysis:
-    # ElectroWeakAnalysis:
     # EventFilter:
     FWCore:
     # FastSimDataFormats:
@@ -67,8 +66,8 @@ subsystems:
     # HLTrigger:
     # HLTriggerOffline:
     # HeavyFlavorAnalysis:
+    # HeavyIonsAnalysis:
     # HeterogeneousCore:
-    # HiggsAnalysis:
     # IOMC:
     IOPool:
     IORawData:
@@ -89,10 +88,8 @@ subsystems:
         whitelist:
           - SelectorUtils
           - Utilities
-    # QCDAnalysis:
     # RecoBTag:
     # RecoBTau:
-    # RecoCTPPS:
     RecoCaloTools:
     # RecoEcal:
     RecoEgamma:
@@ -109,6 +106,7 @@ subsystems:
     # RecoMET:
     # RecoMTD:
     # RecoMuon:
+    # RecoPPS:
     # RecoParticleFlow:
     # RecoPixelVertexing:
     # RecoRomanPot:
@@ -117,7 +115,6 @@ subsystems:
     # RecoTracker:
     # RecoVertex:
     # SLHCUpgradeSimulations:
-    # SUSYBSMAnalysis:
     # SimCalorimetry:
     SimDataFormats:
     # SimFastTiming:
@@ -128,6 +125,7 @@ subsystems:
     # SimPPS:
     # SimRomanPot:
     # SimTracker:
+    # SimTransport:
     TBDataFormats:
     # TauAnalysis:
     # TopQuarkAnalysis:

@@ -34,17 +34,17 @@ makedepends=(
     "pybind11"
 )
 provides=("cmssw")
-source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre3.tar.gz"
+source=("https://github.com/cms-sw/cmssw/archive/CMSSW_${_pkgver}_pre4.tar.gz"
         "cmssw_cmake.py"
         "config.yml"
         )
-md5sums=('SKIP'
-         'SKIP'
-         'SKIP')
+md5sums=('a8f0d14a2ce12d1c1408edd46f092d8b'
+         '734a3db4fcdabfd4c0f47d15357a0aec'
+         '1e869aa0b2016a0b6c1b1ddb31e9b616')
 options=('!strip')
 
 prepare() {
-    mv cmssw-CMSSW_${_pkgver}_pre3 cmssw
+    mv cmssw-CMSSW_${_pkgver}_pre4 cmssw
     mkdir build
 }
 
