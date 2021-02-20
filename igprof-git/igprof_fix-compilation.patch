@@ -1,0 +1,76 @@
+From be89c81105466e32199a9c72715dada7c68b2651 Mon Sep 17 00:00:00 2001
+From: Jonas Rembser <jonas.rembser@cern.ch>
+Date: Mon, 4 Mar 2019 10:54:38 +0100
+Subject: [PATCH] fix compilation
+
+---
+ src/profile-energy.cc |  2 +-
+ src/profile-perf.cc   |  2 +-
+ src/profile.cc        | 26 +++++++++++++-------------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/src/profile-energy.cc b/src/profile-energy.cc
+index 7de3f4e..a950ce2 100644
+--- a/src/profile-energy.cc
++++ b/src/profile-energy.cc
+@@ -217,7 +217,7 @@ static inline double tv2sec(const timeval &tv)
+     the correct thread.  Skip ticks when this profiler is not
+     enabled.  */
+ static void
+-profileSignalHandler(int /* nsig */, siginfo_t * /* info */, void * /* ctx */)
++profileSignalHandler(int)
+ {
+   void *addresses[IgProfTrace::MAX_DEPTH];
+   if (LIKELY(igprof_disable()))
+diff --git a/src/profile-perf.cc b/src/profile-perf.cc
+index f32d037..9704455 100644
+--- a/src/profile-perf.cc
++++ b/src/profile-perf.cc
+@@ -50,7 +50,7 @@ static inline double tv2sec(const timeval &tv)
+     the correct thread.  Skip ticks when this profiler is not
+     enabled.  */
+ static void
+-profileSignalHandler(int /* nsig */, siginfo_t * /* info */, void * /* ctx */)
++profileSignalHandler(int)
+ {
+   void *addresses[IgProfTrace::MAX_DEPTH];
+   if (LIKELY(igprof_disable()))
+diff --git a/src/profile.cc b/src/profile.cc
+index 33f069c..049c8fd 100644
+--- a/src/profile.cc
++++ b/src/profile.cc
+@@ -576,19 +576,19 @@ igprof_init(const char *id, void (*threadinit)(void), bool perthread, double clo
+                program_invocation_name, s_mainthread);
+   igprof_debug("profiler options: %s\n", options);
+ 
+-  // Report override function use.
+-  if (igprof_abort != &abort)
+-    igprof_debug("abort() from system %p, app had %p\n",
+-                 __extension__ (void *) igprof_abort,
+-		 __extension__ (void *) &abort);
+-  if (igprof_getenv != &getenv)
+-    igprof_debug("getenv() from system %p, app had %p\n",
+-                 __extension__ (void *) igprof_getenv,
+-		 __extension__ (void *) &getenv);
+-  if (igprof_unsetenv != &unsetenv)
+-    igprof_debug("unsetenv() from system %p, app had %p\n",
+-                 __extension__ (void *) igprof_unsetenv,
+-		 __extension__ (void *) &unsetenv);
++  //// Report override function use.
++  //if (igprof_abort != &abort)
++    //igprof_debug("abort() from system %p, app had %p\n",
++                 //__extension__ (void *) igprof_abort,
++		 //__extension__ (void *) &abort);
++  //if (igprof_getenv != &getenv)
++    //igprof_debug("getenv() from system %p, app had %p\n",
++                 //__extension__ (void *) igprof_getenv,
++		 //__extension__ (void *) &getenv);
++  //if (igprof_unsetenv != &unsetenv)
++    //igprof_debug("unsetenv() from system %p, app had %p\n",
++                 //__extension__ (void *) igprof_unsetenv,
++		 //__extension__ (void *) &unsetenv);
+ 
+   // Remember clock resolution.
+   if (clockres > 0)
+-- 
+2.22.0

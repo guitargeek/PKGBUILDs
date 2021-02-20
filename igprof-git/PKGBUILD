@@ -1,0 +1,39 @@
+# Maintainer: Chiu-Hsiang Hsu <wdv4758h@gmail.com>
+# Adapted from AUR version by: Jonas Rembser <jonas.rembser@cern.ch>
+
+pkgname=igprof-git
+pkgver=v5.9.16.r3.g03d16c1
+pkgrel=1
+pkgdesc="A simple tool for measuring and analysing application memory and performance characteristics"
+arch=('i686' 'x86_64')
+url="http://igprof.org/"
+license=('GPL')
+groups=()
+depends=('libatomic_ops'
+         'libunwind'
+         'pcre'
+         'python')
+makedepends=('cmake')
+source=("$pkgname::git+https://github.com/igprof/igprof/"
+        "igprof_fix-compilation.patch")
+md5sums=('SKIP'
+         "491e8f142453f74b7eb9d692ee131902")
+
+pkgver() {
+    patchdir=$PWD
+    cd $pkgname
+    git describe --long --tags | sed -r 's/([^-]*-g)/r\1/;s/-/./g;s/release.//g'
+    git apply $patchdir/igprof_fix-compilation.patch
+}
+
+build() {
+    cd $pkgname
+    sed -i 's|-Werror||g' CMakeLists.txt
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O3" .
+    make
+}
+
+package() {
+    cd $pkgname
+    make DESTDIR="${pkgdir}" install
+}
